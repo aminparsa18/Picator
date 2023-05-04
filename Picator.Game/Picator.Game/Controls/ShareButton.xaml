@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:effects="http://xamarin.com/schemas/2020/toolkit" 
+             x:Class="Picator.Game.Controls.ShareButton">
+    <ContentView.Content>
+        <Frame CornerRadius="24" BackgroundColor="{StaticResource Sky}" HorizontalOptions="CenterAndExpand" Padding="8" WidthRequest="48" HeightRequest="48"
+               effects:TouchEffect.PressedOpacity="0.8" effects:TouchEffect.PressedScale="1.2"
+              effects:TouchEffect.AnimationEasing="Linear" effects:TouchEffect.AnimationDuration="400"
+              effects:TouchEffect.Command="{Binding ShareCommand}">
+                <Path
+                Data="M5.35853 12.0159L4.14654 16.046C3.38055 18.593 5.86709 20.8673 8.112 19.6729L17.431 14.715C19.5212 13.6029 19.5235 10.4241 17.4348 9.30862L8.11093 4.32915C5.86721 3.13088 3.37713 5.40233 4.14065 7.95083L5.35853 12.0159ZM5.35853 12.0159H8.32953"
+                Stroke="#ffffff"
+                StrokeThickness="3"
+                Aspect="Uniform"
+                WidthRequest="32"
+                HeightRequest="32"
+                StrokeLineCap="Round"
+                HorizontalOptions="CenterAndExpand"
+                VerticalOptions="CenterAndExpand" />
+        </Frame>
+    </ContentView.Content>
+</ContentView>

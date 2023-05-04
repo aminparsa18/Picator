@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:controls="clr-namespace:Picator.Game.Controls"
+             xmlns:viewmodels="clr-namespace:Picator.Game.ViewModels"
+             x:Class="Picator.Game.Views.StartNewGamePage"
+             x:DataType="viewmodels:StartNewGameViewModel"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="#ff5995">
+    <ContentPage.BindingContext>
+        <viewmodels:StartNewGameViewModel/>
+    </ContentPage.BindingContext>
+    <ContentPage.Content>
+        <StackLayout Margin="24,48,24,24" VerticalOptions="CenterAndExpand">
+            <Frame Padding="0" HorizontalOptions="CenterAndExpand" CornerRadius="12">
+                <controls:QrImage Source="kheeilidadiii" 
+                              HeightRequest="172"
+                              WidthRequest="172"
+                              HorizontalOptions="CenterAndExpand"
+                              BackgroundColor="White">
+                </controls:QrImage>
+            </Frame>
+            
+            <Label Text="Waiting for friend to join" FontSize="24" HorizontalOptions="CenterAndExpand" Margin="24"/>
+            <Grid Margin="24">
+                <controls:ShareButton />
+                <controls:CopyButton Grid.Column="1"/>
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

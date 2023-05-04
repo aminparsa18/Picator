@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:admob="clr-namespace:MarcTron.Plugin.Controls;assembly=Plugin.MtAdmob" 
+             xmlns:viewModels="clr-namespace:Picator.Game.ViewModels"
+             x:Class="Picator.Game.Views.MainPage"
+             x:DataType="viewModels:MainViewModel"
+             BackgroundColor="#ff5995"
+             NavigationPage.HasNavigationBar="False">
+    <ContentPage.BindingContext>
+        <viewModels:MainViewModel />
+    </ContentPage.BindingContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="64" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="80" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <!--Profile Button-->
+        <ImageButton Grid.Column="1" Margin="8" CornerRadius="500" HorizontalOptions="EndAndExpand" WidthRequest="48" HeightRequest="48" Padding="8" Source="user.png" BackgroundColor="{StaticResource Sky}" />
+        <!--Text Logo-->
+        <Image Source="logo_text" Grid.Row="1" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand"/>
+        <!--Random Play Menu-->
+        <Frame Grid.Row="2" Margin="24,8,8,16" CornerRadius="24"  Padding="0">
+            <Grid>
+                <Image Source="random_game.png" HorizontalOptions="FillAndExpand" Aspect="AspectFill"/>
+                <Grid BackgroundColor="#26000000"/>
+                <Label Text="Play with your friend" Margin="12" TextColor="Black" FontSize="36" FontAttributes="Bold"/>
+            </Grid>
+            <Frame.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding NavigateToStartGameCommand}"/>
+            </Frame.GestureRecognizers>
+        </Frame>
+        <Frame Grid.Row="2" Margin="8,8,24,16" Grid.Column="1" CornerRadius="24" Padding="0">
+            <Grid>
+                <Image Source="new_game.png" Aspect="AspectFill"/>
+                <Grid BackgroundColor="#26000000"/>
+                <Label Text="Join a random game" Margin="12" TextColor="Black" FontSize="36" FontAttributes="Bold"/>
+            </Grid>
+        </Frame>
+        <Frame Grid.Row="3" Margin="24,16" Grid.ColumnSpan="2" CornerRadius="24" Padding="0">
+            <Grid>
+                <Image Source="room.png" Aspect="AspectFill"/>
+                <Grid BackgroundColor="#26000000"/>
+                <Label Text="Rooms" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Margin="12" TextColor="Black" FontSize="36" FontAttributes="Bold"/>
+            </Grid>
+        </Frame>
+        <Frame Grid.Row="4" Margin="24,16" Grid.ColumnSpan="2" CornerRadius="24" Padding="0">
+            <Grid>
+                <Image Source="instructions.png" Aspect="AspectFill"/>
+                <Grid BackgroundColor="#26000000"/>
+                <Label Text="How to play" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Margin="12" TextColor="Black" FontSize="36" FontAttributes="Bold"/>
+            </Grid>
+        </Frame>
+        <admob:MTAdView Grid.Row="5" Grid.ColumnSpan="2" HeightRequest="50" AdsId="{OnPlatform Android='ca-app-pub-3940256099942544/6300978111', 
+                                   iOS='ca-app-pub-3940256099942544/2934735716'}" HorizontalOptions="FillAndExpand" VerticalOptions="EndAndExpand"/>
+    </Grid>
+</ContentPage>
