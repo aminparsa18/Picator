@@ -1,7 +1,5 @@
 ﻿using SkiaSharp;
 using SkiaSharp.Views.Forms;
-using System;
-using Xamarin.Forms;
 
 namespace Picator.Game.Controls;
 

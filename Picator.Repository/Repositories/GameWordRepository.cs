@@ -12,7 +12,11 @@ public class GameWordRepository : BaseRepository<GameWord>, IGameWordRepository
 
     public Task<string?> GetRandomWord(int randomIndex)
     {
-        var random = new Random();
         return Context.GameWord.Skip(randomIndex).Take(1).Select(g => g.Word).FirstOrDefaultAsync();
+    }
+
+    public Task<List<string>> GetRandomWords()
+    {
+        return Context.GameWord.OrderBy(g=> Guid.NewGuid()).Take(16).Select(g => g.Word).ToListAsync();
     }
 }

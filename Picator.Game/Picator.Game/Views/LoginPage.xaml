@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:viewmodels="clr-namespace:Picator.Game.ViewModels" xmlns:controls="clr-namespace:Picator.Game.Controls"
+             x:Class="Picator.Game.Views.LoginPage"
+             x:DataType="viewmodels:LoginViewModel">
+    <ContentPage.BindingContext>
+        <viewmodels:LoginViewModel />
+    </ContentPage.BindingContext>
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Login"/>
+            <controls:BorderedEntry Placeholder="Username"
+                                    Text="{Binding LoginUsername.Value}"
+                                    Errors="{Binding LoginUsername.Errors}" />
+            <controls:BorderedEntry x:Name="LoginPassEntry"
+                                        Placeholder="Password"
+                                        Text="{Binding LoginPassword.Value}"
+                                        Errors="{Binding LoginPassword.Errors}" 
+                                        IsPassword="True" />
+
+            <Button Margin="48,8" Text="Continue" Command="{Binding GoogleCommand}" />
+            <Label Text="Privacy Policy" HorizontalOptions="CenterAndExpand"
+                                   Margin="0,16" FontSize="Small" />
+            <Label Text="Signup"/>
+            <controls:BorderedEntry Placeholder="Your email address"
+                                    Text="{Binding Username.Value}"
+                                    Errors="{Binding Username.Errors}" />
+
+            <controls:BorderedEntry x:Name="RegisterPassEntry"
+                                                            Text="{Binding Password.Value,Mode=TwoWay}"
+                                                            Placeholder="Password"
+                                                            Errors="{Binding Password.Errors}" IsPassword="True" />
+            <controls:BorderedEntry x:Name="ConfPassEntry"
+                                                            Text="{Binding ConfirmPassword.Value,Mode=TwoWay}"
+                                                            Placeholder="Confirm Password"
+                                                            IsPassword="True"
+                                                            Errors="{Binding ConfirmPassword.Errors}" />
+            <Button Margin="48,8" Text="Continue" Command="{Binding RegisterCommand}" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

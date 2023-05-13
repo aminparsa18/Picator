@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Android.Graphics;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Android.Graphics;
-using Java.Lang;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamDrawingView.Views.DrawingView;
@@ -12,7 +11,7 @@ using Point = Xamarin.Forms.Point;
 
 namespace Xamarin.CommunityToolkit.UI.Views
 {
-	static class DrawingViewService
+    static class DrawingViewService
 	{
 		public static Stream GetImageStream(IList<Line>? lines,
 			Size imageSize,

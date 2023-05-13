@@ -1,4 +1,6 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Picator.Common.Data.Dtos.Api.Auth;
 using Picator.Common.Data.Dtos.Data.Dtos.Api;
 using Picator.Common.Data.Dtos.Users;
@@ -8,14 +10,8 @@ using Picator.Entities.Models;
 using Picator.Repository;
 using Picator.Service.Contracts.Identity;
 using Picator.Service.Contracts.Users;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace Picator.Service.Services.Users;
 
@@ -23,11 +19,11 @@ public class UserConfirmService : IUserConfirmService
 {
     private readonly ITokenService _tokenService;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IValidator<ConfirmPhoneRequest> _validator;
+    private readonly IValidator<ConfirmEmailRequest> _validator;
     private readonly RoleManager<Role> _roleManager;
     private readonly UserManager<User> _userManager;
 
-    public UserConfirmService(IValidator<ConfirmPhoneRequest> validator, RoleManager<Role> roleManager,
+    public UserConfirmService(IValidator<ConfirmEmailRequest> validator, RoleManager<Role> roleManager,
         IUnitOfWork unitOfWork, ITokenService tokenService, UserManager<User> userManager)
     {
         _tokenService = tokenService;
@@ -37,7 +33,7 @@ public class UserConfirmService : IUserConfirmService
         _userManager = userManager;
     }
 
-    public async Task<AuthResult> Confirm(ConfirmPhoneRequest request)
+    public async Task<AuthResult> Confirm(ConfirmEmailRequest request)
     {
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid)
@@ -46,7 +42,7 @@ public class UserConfirmService : IUserConfirmService
                 StatusCode = ApiResultStatusCode.BadRequest,
                 Errors = validationResult.Errors.Select(e => e.ErrorMessage)
             };
-        var existingUser = await _userManager.Users.FirstOrDefaultAsync(e => e.PhoneNumber == request.PhoneNo);
+        var existingUser = await _userManager.Users.FirstOrDefaultAsync(e => e.Email == request.Email);
         if (existingUser == null)
         {
             return new AuthResult()
@@ -56,7 +52,7 @@ public class UserConfirmService : IUserConfirmService
             };
         }
 
-        var result = await _userManager.ChangePhoneNumberAsync(existingUser, request.PhoneNo, request.Token);
+        var result = await _userManager.ChangeEmailAsync(existingUser, request.Email, request.Token);
         if (!result.Succeeded)
             return new AuthResult()
             {

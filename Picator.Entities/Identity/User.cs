@@ -23,8 +23,7 @@ public sealed class User : IdentityUser<Guid>
     /// <summary>
     /// Display name.
     /// </summary>
-    [Required]
-    public string DisplayName { get; set; } = default!;
+    public string? DisplayName { get; set; }
 
     /// <summary>
     /// Indicates if user is suspended.

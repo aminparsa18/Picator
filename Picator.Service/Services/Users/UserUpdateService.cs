@@ -41,7 +41,7 @@ public class UserUpdateService : IUserUpdateService
         }
 
         user.DisplayName = request.Name;
-        user.Image = request.Image;
+        user.Avatar = request.Image;
         await _userManager.UpdateAsync(user);
         return new ApiResult() { IsSuccess = true };
     }

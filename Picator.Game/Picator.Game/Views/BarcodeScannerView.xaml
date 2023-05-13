@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:gv="clr-namespace:BarcodeScanner.Mobile;assembly=BarcodeScanner.Mobile.XamarinForms"
+             x:Class="Picator.Game.Views.BarcodeScannerView">
+    <ContentPage.Content>
+        <ScrollView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <gv:CameraView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" OnDetected="CameraView_OnDetected" Grid.Row="1"
+                           ScanInterval="50" x:Name="Camera"/>
+
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

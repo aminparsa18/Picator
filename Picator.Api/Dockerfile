@@ -6,9 +6,15 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+
 WORKDIR /src
+
 COPY ["Picator.Api/Picator.Api.csproj", "Picator.Api/"]
 RUN dotnet restore "Picator.Api/Picator.Api.csproj"
+
+COPY Picator.Api/nuget.config .
+RUN dotnet restore "Picator.Api/Picator.Api.csproj" --configfile nuget.config
+
 COPY . .
 WORKDIR "/src/Picator.Api"
 RUN dotnet build "Picator.Api.csproj" -c Release -o /app/build

@@ -69,14 +69,14 @@ public class UserLoginService : IUserLoginService
             };
         }
 
-        if (!user.PhoneNumberConfirmed)
+        if (user.EmailConfirmed)
         {
             var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
             //smsSender.SendAuthSmsAsync(token, user.PhoneNumber);
             return new AuthResult()
             {
                 StatusCode = ApiResultStatusCode.Forbidden,
-                Errors = new[] { "Phone number is not confirmed" },
+                Errors = new[] { "Email address is not confirmed" },
                 Token = user.PhoneNumber
             };
         }

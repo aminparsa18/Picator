@@ -1,52 +1,54 @@
 ﻿using Grpc.Core;
 using MagicOnion.Client;
 using Picator.Realtime.Common.Services;
-using System;
-using System.Threading.Tasks;
-using Xamarin.Forms;
 
-namespace Picator.Game.Services;
+namespace Picator.Game.Hubs;
 
 public class GameHub : IGameDrawingReceiver
 {
-    IGameHub client;
+    private IGameHub? _client;
+    private static GameHub? _instance;
+    private static readonly object _padlock = new();
+    public event EventHandler<Point>? PointReceived;
+    public event EventHandler? LineCompleted;
+    public event EventHandler? PlayerJoined;
+    public event EventHandler<string?>? WordReceived;
 
-    public event EventHandler<Point> PointReceived;
-    public event EventHandler LineCompleted;
-    public event EventHandler PlayerJoined;
-    public event EventHandler<string> WordReceived;
-
-    public async Task<string> ConnectAsync(ChannelBase grpcChannel)
+    public async Task<IGameHub> ConnectAsync(ChannelBase grpcChannel)
     {
-        client = await StreamingHubClient.ConnectAsync<IGameHub, IGameDrawingReceiver>(grpcChannel, this);
-        return client.CreateGameAsync();
+        return await StreamingHubClient.ConnectAsync<IGameHub, IGameDrawingReceiver>(grpcChannel, this);
     }
 
-    public async ValueTask joinJoinGameAsync(string gameCode)
+    public async ValueTask CreateGameAsync(string gameCode)
     {
-        await client.JoinGameAsync(gameCode);
+        await _client.CreateGameAsync(gameCode);
     }
 
-    public async ValueTask SendDrawingPoint(float x, float y)
+    public async ValueTask JoinGameAsync(string gameCode)
     {
-        await client.SendDrawingPoint("test", x, y);
+        await _client.JoinGameAsync(gameCode);
     }
 
-    public async ValueTask SendDrawingCompleted()
+    public async ValueTask SendDrawingPoint(string gameCode, float x, float y)
     {
-        await client.SendDrawingCompleted("test");
+        await _client.SendDrawingPoint(gameCode, x, y);
+    }
+
+    public async ValueTask SendDrawingCompleted(string gameCode)
+    {
+        await _client.SendDrawingCompleted(gameCode);
     }
 
     // dispose client-connection before channel.ShutDownAsync is important!
     public Task DisposeAsync()
     {
-        return client.DisposeAsync();
+        return _client.DisposeAsync();
     }
 
     // You can watch connection state, use this for retry etc.
     public Task WaitForDisconnect()
     {
-        return client.WaitForDisconnect();
+        return _client.WaitForDisconnect();
     }
 
     public void OnPointAdded(float x, float y)
@@ -68,4 +70,17 @@ public class GameHub : IGameDrawingReceiver
     {
         WordReceived?.Invoke(this, word);
     }
+
+    public static GameHub Instance
+    {
+        get
+        {
+            lock (_padlock)
+            {
+                return _instance ??= new GameHub();
+            }
+        }
+    }
+
+    public IGameHub Client => _client;
 }

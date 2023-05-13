@@ -1,6 +1,7 @@
 ﻿using FastEndpoints;
 using FastEndpoints.Swagger;
 using FluentValidation;
+using MemoryPack;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -37,9 +38,9 @@ public static class ServiceCollectionExtentions
         //  services.AddHangfire(x => x.UseSqlServerStorage(configuration.GetConnectionString("HangfireContext")));
         // services.AddHangfireServer();
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("MafiatorContext")).EnableSensitiveDataLogging());
+            options.UseSqlServer(configuration.GetConnectionString("PicatorContext")).EnableSensitiveDataLogging());
         GlobalConfiguration.Setup().UseSqlServer();
-        services.AddTransient<IDbConnection>(sp => new SqlConnection(configuration.GetConnectionString("MafiatorContext")));
+        services.AddTransient<IDbConnection>(sp => new SqlConnection(configuration.GetConnectionString("PicatorContext")));
         return services;
     }
 
@@ -177,7 +178,18 @@ public static class ServiceCollectionExtentions
         app.UseAuthorization();
         app.UseFastEndpoints(c =>
         {
-            c.Serializer.Options.PropertyNamingPolicy = null;
+            c.Serializer.ResponseSerializer = (rsp, dto, cType, ct) =>
+            {
+                rsp.ContentType = "application/x-memorypack";
+                return MemoryPackSerializer.SerializeAsync(dto.GetType(), rsp.Body, dto, cancellationToken: ct).AsTask();
+            };
+
+            c.Serializer.RequestDeserializer = async (req, tDto, ct) =>
+            {
+                return MemoryPackSerializer.DeserializeAsync(tDto, req.Body);
+            };
+
+            // c.Serializer.Options.PropertyNamingPolicy = null;
 
             c.Endpoints.ShortNames = false;
             c.Endpoints.Filter = ep => ep.EndpointTags?.Contains("exclude") is not true;

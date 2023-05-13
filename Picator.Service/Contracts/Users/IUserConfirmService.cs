@@ -5,5 +5,5 @@ namespace Picator.Service.Contracts.Users;
 
 public interface IUserConfirmService
 {
-    Task<AuthResult> Confirm(ConfirmPhoneRequest request);
+    Task<AuthResult> Confirm(ConfirmEmailRequest request);
 }

@@ -1,8 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Picator.Game.Services;
-using Xamarin.Forms;
-
-namespace Picator.Game.ViewModels;
+﻿namespace Picator.Game.ViewModels;
 
 public partial class ViewModelBase : ObservableObject
 {

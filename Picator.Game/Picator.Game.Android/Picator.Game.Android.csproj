@@ -44,6 +44,9 @@
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <AndroidCreatePackagePerAbi>true</AndroidCreatePackagePerAbi>
+    <AndroidSupportedAbis>arm64-v8a</AndroidSupportedAbis>
+    <AndroidLinkTool>r8</AndroidLinkTool>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />
@@ -55,26 +58,36 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MarcTron.Admob">
-      <Version>1.9.0.3</Version>
+    <PackageReference Include="BarcodeScanner.Mobile.XamarinForms" Version="6.3.0.25" />
+    <PackageReference Include="Grpc.Core" Version="2.46.6" />
+    <PackageReference Include="Grpc.Core.Api">
+      <Version>2.53.0</Version>
     </PackageReference>
+    <PackageReference Include="Grpc.Core.Xamarin" Version="2.44.0" />
     <PackageReference Include="Plugin.MediaManager">
       <Version>1.1.1</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.AndroidX.Work.Runtime">
-      <Version>2.8.1.1</Version>
+    <PackageReference Include="Xamarin.Android.Support.CustomTabs">
+      <Version>28.0.0.3</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.FFImageLoading">
       <Version>2.4.11.982</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2578" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.7.5" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2599-pre1" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.8.0-preview1" />
+    <PackageReference Include="Xamarin.GooglePlayServices.Ads.Lite">
+      <Version>121.4.0.1</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActivityCustomUrlSchemeInterceptor.cs" />
     <Compile Include="Helpers\ToastHelper.cs" />
     <Compile Include="Helpers\Toasty.cs" />
     <Compile Include="Helpers\ToastyUtils.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="Renderers\AdBannerRenderer.cs" />
+    <Compile Include="Renderers\CustomWebViewRenderer.cs" />
+    <Compile Include="Renderers\ExtendedEntryRenderer.cs" />
     <Compile Include="Renderers\QrImageRenderer.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -93,12 +106,8 @@
     <AndroidResource Include="Resources\drawable\logo_text.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Xam.FancyQrGenerator.Binding\Xam.FancyQrGenerator.Binding.csproj">
-      <Project>{5f8870f7-3053-43d0-a516-aeaf4b71e57e}</Project>
-      <Name>Xam.FancyQrGenerator.Binding</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Picator.Game\Picator.Game.csproj">
-      <Project>{2AE7DFE4-49E4-4478-B68C-6ACA23F8337F}</Project>
+      <Project>{06c8ed20-e966-4d7e-b932-6dcc5d2c81f9}</Project>
       <Name>Picator.Game</Name>
     </ProjectReference>
   </ItemGroup>
@@ -219,5 +228,13 @@
   <ItemGroup>
     <AndroidResource Include="Resources\xml\file_paths.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\photo_night.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties XamarinHotReloadDebuggerTimeoutExceptionPicatorGameAndroidHideInfoBar="True" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

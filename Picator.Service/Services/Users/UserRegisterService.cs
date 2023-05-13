@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Picator.Common.Data.Dtos.Api;
 using Picator.Common.Data.Dtos.Data.Dtos.Api;
 using Picator.Common.Data.Dtos.Users;
+using Picator.Common.Helpers;
+using Picator.Data;
+using Picator.Data.Mappers;
 using Picator.Entities.Identity;
 using Picator.Service.Contracts.Users;
 using RepoDb;
@@ -33,7 +36,7 @@ public class UserRegisterService : IUserRegisterService
                 Errors = validationResult.Errors.Select(e => e.ErrorMessage)
             };
         var users = await _dbConnection.ExecuteQueryAsync<User>(
-           "SELECT TOP 1 * FROM [Users] WHERE Username = @username", new { username = request.Username });
+           "SELECT TOP 1 * FROM [Users] WHERE Username = @username", new { username = request.UserName });
         if (users.Any())
         {
             return new ApiResult()
@@ -43,22 +46,23 @@ public class UserRegisterService : IUserRegisterService
             };
         }
 
-        //var user = _mapper.Map<RegisterUserRequest, User>(request);
-        //user.Id = Guid.NewGuid(); ;
-        //user.Code = RandomHelper.CreateRandomText(10);
-        //user.Score = 100;
-        //var createdUser = await _userManager.CreateAsync(user, request.Password);
-        //if (!createdUser.Succeeded)
-        //{
-        //    return new ApiResult()
-        //    {
-        //        StatusCode = ApiResultStatusCode.LogicError,
-        //        Errors = createdUser.Errors.Select(x => x.Description)
-        //    };
-        //}
+        var user = new UserMapper().RegisterRequestToUser(request);
+        user.Email = user.UserName;
+        user.Id = Guid.NewGuid(); ;
+        user.Code = RandomHelper.CreateRandomText(10);
+        user.Score = 100;
+        var createdUser = await _userManager.CreateAsync(user, request.Password ?? "");
+        if (!createdUser.Succeeded)
+        {
+            return new ApiResult()
+            {
+                StatusCode = ApiResultStatusCode.LogicError,
+                Errors = createdUser.Errors.Select(x => x.Description)
+            };
+        }
 
-        //await _userManager.AddToRoleAsync(user, Constants.PlayerRole);
-        //var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
+        await _userManager.AddToRoleAsync(user, Constants.PlayerRole);
+        var token = await _userManager.GenerateChangeEmailTokenAsync(user, user.Email ?? "");
         return new ApiResult()
         {
             IsSuccess = true

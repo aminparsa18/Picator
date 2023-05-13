@@ -1,10 +1,7 @@
 using Picator.Common.Extensions;
-using Mafiator.IocConfig.Extensions;
-using Mafiator.IocConfig.Middleware;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+using Picator.Configuration.Extensions;
+using Picator.Configuration.Middleware;
 using Serilog;
-using System;
 
 try
 {
@@ -26,22 +23,15 @@ try
         .ConfigureCustomServices(builder.Configuration)
         .ConfigureCustomIdentityServices(builder.Configuration, builder.Environment);
 
-    builder.Services.AddApplicationInsightsTelemetry(options =>
-    {
-        options.ConnectionString = builder.Configuration["APPINSIGHTS_CONNECTIONSTRING"];
-    });
+    //builder.Services.AddApplicationInsightsTelemetry(options =>
+    //{
+    //    options.ConnectionString = builder.Configuration["APPINSIGHTS_CONNECTIONSTRING"];
+    //});
 
 
     WebApplication app = builder.Build();
 
     app.AddCustomMiddleware();
-    //app.UseHangfireDashboard("/hangfire", new DashboardOptions
-    //{
-    //    Authorization = new[]
-    //    {
-    //    new HangfireAuthorizationFilter()
-    //    }
-    //});
     app.Run();
 }
 catch (Exception ex)
@@ -53,7 +43,7 @@ finally
     Log.CloseAndFlush();
 }
 
-namespace Mafiator.Api
+namespace Picator.Api
 {
     public partial class Program { }
 }

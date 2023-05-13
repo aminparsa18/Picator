@@ -130,10 +130,4 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.7.0" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
-  <ItemGroup>
-    <ProjectReference Include="..\Picator.Game\Picator.Game.csproj">
-      <Project>{2AE7DFE4-49E4-4478-B68C-6ACA23F8337F}</Project>
-      <Name>Picator.Game</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>

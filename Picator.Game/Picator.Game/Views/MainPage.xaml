@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-             xmlns:admob="clr-namespace:MarcTron.Plugin.Controls;assembly=Plugin.MtAdmob" 
-             xmlns:viewModels="clr-namespace:Picator.Game.ViewModels"
+             xmlns:viewModels="clr-namespace:Picator.Game.ViewModels" xmlns:controls="clr-namespace:Picator.Game.Controls"
              x:Class="Picator.Game.Views.MainPage"
              x:DataType="viewModels:MainViewModel"
              BackgroundColor="#ff5995"
@@ -24,7 +23,7 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <!--Profile Button-->
-        <ImageButton Grid.Column="1" Margin="8" CornerRadius="500" HorizontalOptions="EndAndExpand" WidthRequest="48" HeightRequest="48" Padding="8" Source="user.png" BackgroundColor="{StaticResource Sky}" />
+        <ImageButton Grid.Column="1" Margin="8" CornerRadius="500" HorizontalOptions="EndAndExpand" WidthRequest="48" HeightRequest="48" Padding="8" Source="user.png" BackgroundColor="{StaticResource Sky}" Command="{Binding NavigateToLoginCommand}" />
         <!--Text Logo-->
         <Image Source="logo_text" Grid.Row="1" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand"/>
         <!--Random Play Menu-->
@@ -59,7 +58,6 @@
                 <Label Text="How to play" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Margin="12" TextColor="Black" FontSize="36" FontAttributes="Bold"/>
             </Grid>
         </Frame>
-        <admob:MTAdView Grid.Row="5" Grid.ColumnSpan="2" HeightRequest="50" AdsId="{OnPlatform Android='ca-app-pub-3940256099942544/6300978111', 
-                                   iOS='ca-app-pub-3940256099942544/2934735716'}" HorizontalOptions="FillAndExpand" VerticalOptions="EndAndExpand"/>
+        <controls:AdBanner Grid.Row="5" Grid.ColumnSpan="2" HeightRequest="50" BackgroundColor="Red" HorizontalOptions="FillAndExpand" VerticalOptions="EndAndExpand"/>
     </Grid>
 </ContentPage>

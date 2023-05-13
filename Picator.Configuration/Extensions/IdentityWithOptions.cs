@@ -27,9 +27,10 @@ public static class AddIdentityWithOptionsExtensions
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
-                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._+";
-                options.User.RequireUniqueEmail = false;
-                options.SignIn.RequireConfirmedEmail = false;
+                options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;
+                options.SignIn.RequireConfirmedPhoneNumber = false;
+
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(20);
                 options.Lockout.MaxFailedAccessAttempts = 3;
             })

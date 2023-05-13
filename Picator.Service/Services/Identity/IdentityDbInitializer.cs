@@ -54,16 +54,19 @@ public class IdentityDbInitializer : IIdentityDbInitializer
         using var serviceScope = _scopeFactory.CreateScope();
         var identityDbSeedData = serviceScope.ServiceProvider.GetService<IIdentityDbInitializer>();
         var result = identityDbSeedData?.SeedDatabaseWithAdminUserAsync().Result;
-
     }
 
     public async Task<IdentityResult> SeedDatabaseWithAdminUserAsync()
     {
-        //var fakeAvatars = FakeDbData.InitFakeAvatars(10);
-        //using var serviceScope = _scopeFactory.CreateScope();
-        //using var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
-        //await context.Avatar.AddRangeAsync(fakeAvatars);
-        //await context.SaveChangesAsync();
+        var fakeAvatars = FakeDbData.InitFakeAvatars(10);
+        using var serviceScope = _scopeFactory.CreateScope();
+        using var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+        bool containAvatars = context.Avatar.Any();
+        if (!containAvatars)
+        {
+            await context.Avatar.AddRangeAsync(fakeAvatars);
+            await context.SaveChangesAsync();
+        }
         // var adminUserSeed = _adminUserSeedOptions.Value.AdminUserSeed;
 
         // var name = adminUserSeed.Username;

@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:controls="clr-namespace:Picator.Game.Controls"
+             x:Class="Picator.Game.Controls.BorderedEntry"
+             x:Name="this">
+    <ContentView.Content>
+        <StackLayout>
+            <Grid>
+                <Frame x:Name="EntryBorder" CornerRadius="12" HeightRequest="48" HasShadow="True" Padding="0">
+                    <controls:ExtendedEntry 
+                        x:Name="EntryControl" 
+                           IsPassword="{Binding IsPassword, Source={x:Reference this}}"
+                           MaxLength="{Binding MaxLength, Source={x:Reference this}}"
+                           Keyboard="{Binding Keyboard, Source={x:Reference this}}"
+                           Text="{Binding Text, Source={x:Reference this}}"
+                           TextColor="Black"
+                           FontFamily="{StaticResource NormalFont}"
+                           Focused="EntryControl_Focused" 
+                           Unfocused="EntryControl_Unfocused">
+                    </controls:ExtendedEntry>
+                </Frame>
+                <Label x:Name="PlaceHolderLabel" Text="{Binding Placeholder, Source={x:Reference this}}" FontSize="13" Margin="16,0" VerticalOptions="CenterAndExpand" TextColor="#808080"/>
+            </Grid>
+            <Label x:Name="ErrorLabel" Margin="16,0" IsVisible="False" FontSize="10" TextColor="Red"/>
+            <StackLayout.GestureRecognizers>
+                <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" />
+            </StackLayout.GestureRecognizers>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

@@ -24,7 +24,7 @@ public static class Extensions
 
 		// duplicate the first and last points as control points.
 		currentPointsCopy.Insert(0, currentPointsCopy[0]);
-		currentPointsCopy.Add(currentPointsCopy[currentPointsCopy.Count - 1]);
+		currentPointsCopy.Add(currentPointsCopy[^1]);
 
 		// add the first point
 		smoothedPoints.Add(currentPointsCopy[0]);

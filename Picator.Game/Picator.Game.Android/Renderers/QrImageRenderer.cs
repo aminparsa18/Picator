@@ -2,10 +2,10 @@
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using AndroidX.Core.Content;
-using Com.Github.Alexzhirkevich.Customqrgenerator;
-using Com.Github.Alexzhirkevich.Customqrgenerator.Style;
-using Com.Github.Alexzhirkevich.Customqrgenerator.Vector;
-using Com.Github.Alexzhirkevich.Customqrgenerator.Vector.Style;
+//using Com.Github.Alexzhirkevich.Customqrgenerator;
+//using Com.Github.Alexzhirkevich.Customqrgenerator.Style;
+//using Com.Github.Alexzhirkevich.Customqrgenerator.Vector;
+//using Com.Github.Alexzhirkevich.Customqrgenerator.Vector.Style;
 using Picator.Game.Controls;
 using Picator.Game.Droid.Renderers;
 using System.ComponentModel;
@@ -32,27 +32,30 @@ namespace Picator.Game.Droid.Renderers
         protected override async void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);
-            if (e.PropertyName == VisualElement.WidthProperty.PropertyName)
+            if (e.PropertyName == "Source")
                 await UpdateQrData();
         }
 
         private async Task UpdateQrData()
         {
-            var options = new QrVectorOptions.Builder()
-                .SetOffset(new QrOffset(0, 0))
-                .SetShapes(new QrVectorShapes(darkPixel: new QrVectorPixelShapeCircle(1F), QrVectorPixelShapeDefault.Instance, new QrVectorBallShapeCircle(1F), new QrVectorFrameShapeCircle(), true))
-                .SetCodeShape(QrShapeDefault.Instance)
-                .SetPadding(0)
-                .SetColors(new QrVectorColors(dark: new QrVectorColorSolid(ColorConverters.FromHex("#3162e5").ToPlatformColor()), QrVectorColorUnspecified.Instance, QrVectorColorUnspecified.Instance, QrVectorColorUnspecified.Instance))
-                .SetLogo(new QrVectorLogo(ContextCompat.GetDrawable(Context, Resource.Drawable.logo), size: 0.25F, padding: new QrVectorLogoPaddingNatural(0.2F), shape: QrVectorLogoShapeCircle.Instance, scale: BitmapScaleFitXY.Instance, QrVectorColorUnspecified.Instance))
-                .SetBackground(new QrVectorBackground(drawable: null, BitmapScaleFitXY.Instance, QrVectorColorUnspecified.Instance))
-                .SetErrorCorrectionLevel(QrErrorCorrectionLevel.Auto)
-                .SetFourthEyeEnabled(true).Build();
-            var data = (((QrImage)Element).Source as FileImageSource).File;
-            var drawable = QrCodeDrawableKt.QrCodeDrawable(new QrDataText(data), options, null);
-            var bitmap = drawableToBitmap(drawable);
-            await ExportBitmapAsPNGAsync(bitmap);
-            Control.SetImageDrawable(drawable);
+            var source = ((QrImage)Element).Source;
+            if (source == null)
+                return;
+            //var options = new QrVectorOptions.Builder()
+            //    .SetOffset(new QrOffset(0, 0))
+            //    .SetShapes(new QrVectorShapes(darkPixel: new QrVectorPixelShapeCircle(1F), QrVectorPixelShapeDefault.Instance, new QrVectorBallShapeCircle(1F), new QrVectorFrameShapeCircle(), true))
+            //    .SetCodeShape(QrShapeDefault.Instance)
+            //    .SetPadding(0)
+            //    .SetColors(new QrVectorColors(dark: new QrVectorColorSolid(ColorConverters.FromHex("#3162e5").ToPlatformColor()), QrVectorColorUnspecified.Instance, QrVectorColorUnspecified.Instance, QrVectorColorUnspecified.Instance))
+            //    .SetLogo(new QrVectorLogo(ContextCompat.GetDrawable(Context, Resource.Drawable.logo), size: 0.25F, padding: new QrVectorLogoPaddingNatural(0.2F), shape: QrVectorLogoShapeCircle.Instance, scale: BitmapScaleFitXY.Instance, QrVectorColorUnspecified.Instance))
+            //    .SetBackground(new QrVectorBackground(drawable: null, BitmapScaleFitXY.Instance, QrVectorColorUnspecified.Instance))
+            //    .SetErrorCorrectionLevel(QrErrorCorrectionLevel.Auto)
+            //    .SetFourthEyeEnabled(true).Build();
+            //var data = (source as FileImageSource).File;
+            //var drawable = QrCodeDrawableKt.QrCodeDrawable(new QrDataText(data), options, null);
+            //var bitmap = drawableToBitmap(drawable);
+            //await ExportBitmapAsPNGAsync(bitmap);
+            //Control.SetImageDrawable(drawable);
         }
 
         private static Bitmap drawableToBitmap(Drawable drawable)

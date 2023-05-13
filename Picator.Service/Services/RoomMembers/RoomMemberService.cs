@@ -2,9 +2,6 @@
 using Picator.Common.Data.Dtos.RoomMembers;
 using Picator.Repository;
 using Picator.Service.Contracts.RoomMembers;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Picator.Service.Services.RoomMembers;
 
@@ -23,7 +20,7 @@ public class RoomMemberService : IRoomMemberService
         foreach (var item in data)
         {
             item.Level = (item.TotalGame / 10) + 1;
-            item.Image = string.Join(Data.Constants.BlobStorageEndpoint, item.Image);
+            item.Avatar = string.Join(Data.Constants.BlobStorageEndpoint, item.Avatar);
         }
 
         return new ApiResult<IEnumerable<RoomMemberResult>>
