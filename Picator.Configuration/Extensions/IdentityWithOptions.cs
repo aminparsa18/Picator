@@ -30,7 +30,6 @@ public static class AddIdentityWithOptionsExtensions
                 options.User.RequireUniqueEmail = true;
                 options.SignIn.RequireConfirmedEmail = true;
                 options.SignIn.RequireConfirmedPhoneNumber = false;
-
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(20);
                 options.Lockout.MaxFailedAccessAttempts = 3;
             })
@@ -60,17 +59,6 @@ public static class AddIdentityWithOptionsExtensions
             x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddGoogle(g =>
-        {
-            g.ClientId = "562105913185-p9mp4k328ved7hpmnd8pevruei7chejd.apps.googleusercontent.com";
-            g.ClientSecret = "_Tb1heniOnV_pOKBtFcXyPX5";
-            g.CallbackPath = "/home/AuthRedirect";
-            g.SaveTokens = true;
-        }).AddFacebook(f =>
-        {
-            f.AppId = "2790942157883682";
-            f.AppSecret = "49e5c75d1ab421c43df3fd0e0db8e307";
-            f.SaveTokens = true;
         }).AddJwtBearer(x =>
         {
             x.SaveToken = true;
@@ -99,10 +87,12 @@ public static class AddIdentityWithOptionsExtensions
                 }
             };
         });
+
         var keysFolder = Path.Combine(webHostEnvironment.ContentRootPath, "Keys");
         services.AddDataProtection()
-            .PersistKeysToFileSystem(new DirectoryInfo(keysFolder))
-            .SetApplicationName("Mafiator");
+            .PersistKeysToFileSystem(new DirectoryInfo("/tmp/keys"))
+            .SetApplicationName("Picator");
+
         return services;
     }
 }

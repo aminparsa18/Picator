@@ -1,7 +1,6 @@
 ﻿using Picator.Common.Data.Dtos.Avatars;
 using Picator.Data;
 using Picator.Entities.Models;
-using Picator.Repository.Cache;
 using Picator.Repository.Contracts;
 using System.Data;
 
@@ -25,8 +24,4 @@ public class AvatarRepository : BaseRepository<Avatar>, IAvatarRepository
             Name = s.Name
         }).ToListAsync();
     }
-
-    /// <inheritdoc/>
-    public Task<IEnumerable<AvatarResult>> GetAllDtosFast() =>
-        Connection.ExecuteQueryAsync<AvatarResult>("SELECT Name FROM [Avatar]", cacheKey: "avatars", cache: CacheFactory.GetCache());
 }

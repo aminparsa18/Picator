@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:controls="clr-namespace:Picator.Game.Controls"
+             xmlns:cmp="clr-namespace:Picator.GameV2.Views.Components"
+             xmlns:viewmodels="clr-namespace:Picator.Game.ViewModels"
+             xmlns:converters="clr-namespace:Picator.Game.Converters"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:views="clr-namespace:Picator.GameV2.Views"
+             x:Class="Picator.Game.Views.StartNewGamePage"
+             x:DataType="viewmodels:StartNewGameViewModel"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="#ff5995">
+    <ContentPage.BindingContext>
+        <viewmodels:StartNewGameViewModel/>
+    </ContentPage.BindingContext>
+    <ContentPage.Resources>
+        <converters:GameCodeUrlConverter x:Key="GameCodeUrlConverter"/>
+    </ContentPage.Resources>
+    <Grid 
+        toolkit:StateContainer.CurrentState="{Binding CurrentState}"
+        toolkit:StateContainer.CanStateChange="True"
+        VerticalOptions="Fill">
+        <toolkit:StateContainer.StateViews>
+            <VerticalStackLayout toolkit:StateView.StateKey="Loading" VerticalOptions="Center">
+                <cmp:WaitingView IsBusy="True" />
+                <Label Text="Creating new game..." HorizontalOptions="Center" FontSize="20"/>
+            </VerticalStackLayout>
+            <Grid toolkit:StateView.StateKey="Success" Margin="24,12,24,24">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <!--<WebView x:Name="BarcodeWebView" Source="{Binding GameCode,Converter={StaticResource GameCodeUrlConverter}}" HeightRequest="{Binding Source={x:Reference BarcodeWebView}, Path=WidthRequest}"  />-->
+                <cmp:QrCodeView  Data="{Binding GameCode,Converter={StaticResource GameCodeUrlConverter}}"
+                                 QrType="Url"
+                                 Margin="0,36,0,0"
+                                 PaddingRatio="0.125"
+                                 WidthRequest="256"
+                                 HeightRequest="256"
+                                 HorizontalOptions="Center" />
+                <Label Grid.Row="1" Text="Share the game with a friend and then enter game hall until they join" FontSize="24" HorizontalOptions="Center" HorizontalTextAlignment="Center" Margin="24,12"/>
+                <Grid Grid.Row="2" Margin="24" ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <controls:ShareButton Grid.Column="0" HorizontalOptions="End" Command="{Binding ShareCommand}"/>
+                    <controls:CopyButton Grid.Column="1" HorizontalOptions="Start" Command="{Binding CopyCommand}"/>
+                </Grid>
+                <Button Grid.Row="3" Text="Enter Game Hall" HorizontalOptions="Center" Command="{Binding EnterGameCommand}"  />
+                <Grid Grid.Row="4" ColumnDefinitions="*,Auto,*" Margin="24,12">
+                    <BoxView HorizontalOptions="Fill" VerticalOptions="Center" HeightRequest="1"
+BackgroundColor="#707070" />
+                    <Label Grid.Column="1" Text="Or" TextColor="White" Margin="8,0" />
+                    <BoxView Grid.Column="2" HorizontalOptions="Fill" VerticalOptions="Center"
+HeightRequest="1" BackgroundColor="#707070" />
+                </Grid>
+                <Button Grid.Row="5" Text="Scan to join a game" Margin="0,12" HorizontalOptions="Center" Clicked="Button_Clicked_2"  />
+            </Grid>
+        </toolkit:StateContainer.StateViews>
+    </Grid>
+</ContentPage>

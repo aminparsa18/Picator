@@ -5,8 +5,6 @@ using Picator.Common.Data.Dtos.RoomMembers;
 using Picator.Entities.Models;
 using Picator.Repository;
 using Picator.Service.Contracts.RoomMembers;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Picator.Service.Services.RoomMembers;
 
@@ -35,7 +33,7 @@ public class RoomMemberCreateService : IRoomMemberCreateService
             var user = await _unitOfWork.RoomMember.FindInRoom(request.RoomId, userId);
             if (!user.Any())
             {
-                await _unitOfWork.RoomMember.AddFast(new RoomMember()
+                await _unitOfWork.RoomMember.Add(new RoomMember()
                 {
                     UserId = userId,
                     RoomId = request.RoomId,

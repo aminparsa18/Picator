@@ -1,0 +1,37 @@
+{
+  "projectPath": ".",
+  "outputPath": "aspirate-output",
+  "containerImageTags": [
+    "latest"
+  ],
+  "containerBuilder": "docker",
+  "outputFormat": "kustomize",
+  "skipFinalKustomizeGeneration": false,
+  "privateRegistryEmail": "aspir8@aka.ms",
+  "useCustomNamespace": false,
+  "secrets": {
+    "salt": "Pf/Pt3qMx3YYD\u002BhJ",
+    "hash": "WIQyz9Tv\u002Bn0WHeqfCJv4G5b2N4HkZzZIt9LYr017V/c=",
+    "secrets": {
+      "DbPassword": {
+        "value": "Pf/Pt3qMx3YYD\u002BhJiYRmt7dkhTSPnzdRptpctq8NnsRNE2tGuvM="
+      },
+      "sql": {
+        "MSSQL_SA_PASSWORD": "Pf/Pt3qMx3YYD\u002BhJiYRmt7dkhTSPnzdRptpctq8NnsRNE2tGuvM="
+      },
+      "PicatorDB": {},
+      "picator-api": {
+        "ConnectionStrings__PicatorDB": "Pf/Pt3qMx3YYD\u002BhJcUAthlAK/7GcAy076fgpgslcqNdEFTcB/r5p3xKiZaDtifo1jS9j/rCtzW44rJrpEZcv64mwCpNU8ZnTWD2fQP2q3IuvE8LnaRKoQaXjEsP66cMhFSQTikzfGlszhs0N3I9hTV20rEV1o/lD2Vz0CCinYVI="
+      },
+      "picator-realtime": {
+        "ConnectionStrings__PicatorDB": "Pf/Pt3qMx3YYD\u002BhJcUAthlAK/7GcAy076fgpgslcqNdEFTcB/r5p3xKiZaDtifo1jS9j/rCtzW44rJrpEZcv64mwCpNU8ZnTWD2fQP2q3IuvE8LnaRKoQaXjEsP66cMhFSQTikzfGlszhs0N3I9hTV20rEV1o/lD2Vz0CCinYVI="
+      },
+      "picator-externalauth": {
+        "ConnectionStrings__PicatorDB": "Pf/Pt3qMx3YYD\u002BhJcUAthlAK/7GcAy076fgpgslcqNdEFTcB/r5p3xKiZaDtifo1jS9j/rCtzW44rJrpEZcv64mwCpNU8ZnTWD2fQP2q3IuvE8LnaRKoQaXjEsP66cMhFSQTikzfGlszhs0N3I9hTV20rEV1o/lD2Vz0CCinYVI="
+      },
+      "tempapitest": {},
+      "picator-invitement": {}
+    }
+  },
+  "processAllComponents": true
+}

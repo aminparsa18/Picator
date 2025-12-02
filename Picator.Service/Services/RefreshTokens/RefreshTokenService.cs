@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Picator.Common.Data.Dtos.Api.Auth;
 using Picator.Common.Data.Dtos.Data.Dtos.Api;
 using Picator.Data;
@@ -7,22 +8,17 @@ using Picator.Entities.Models;
 using Picator.Repository;
 using Picator.Service.Contracts.Identity;
 using Picator.Service.Contracts.RefreshTokens;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace Picator.Service.Services.RefreshTokens;
+
 public class RefreshTokenService : IRefreshTokenService
 {
     private readonly ITokenService _tokenService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IValidator<RefreshTokenRequest> _validator;
     private readonly UserManager<User> _userManager;
-
 
     public RefreshTokenService(ITokenService tokenService, IUnitOfWork unitOfWork, IValidator<RefreshTokenRequest> validator, UserManager<User> userManager)
     {
@@ -48,7 +44,7 @@ public class RefreshTokenService : IRefreshTokenService
             return new AuthResult()
             {
                 StatusCode = ApiResultStatusCode.BadRequest,
-                Errors = new[] { "Invalid Token" }
+                Errors = ["Invalid Token"]
             };
         }
 
@@ -58,7 +54,7 @@ public class RefreshTokenService : IRefreshTokenService
             return new AuthResult()
             {
                 StatusCode = ApiResultStatusCode.NotFound,
-                Errors = new[] { "Refresh Token does not exist" }
+                Errors = ["Refresh Token does not exist"]
             };
         }
 
@@ -68,7 +64,7 @@ public class RefreshTokenService : IRefreshTokenService
             return new AuthResult()
             {
                 StatusCode = ApiResultStatusCode.LogicError,
-                Errors = new[] { "Refresh Token has expired" }
+                Errors = ["Refresh Token has expired"]
             };
         }
 
@@ -77,7 +73,7 @@ public class RefreshTokenService : IRefreshTokenService
             return new AuthResult()
             {
                 StatusCode = ApiResultStatusCode.BadRequest,
-                Errors = new[] { "Refresh Token Invalidated" }
+                Errors = ["Refresh Token Invalidated"]
             };
         }
 
@@ -97,7 +93,7 @@ public class RefreshTokenService : IRefreshTokenService
             return new AuthResult()
             {
                 StatusCode = ApiResultStatusCode.BadRequest,
-                Errors = new[] { "This refresh token does not match this JWT" }
+                Errors = ["This refresh token does not match this JWT"]
             };
         }
 
@@ -117,7 +113,7 @@ public class RefreshTokenService : IRefreshTokenService
             ExpirationDate = DateTime.UtcNow.AddMonths(6),
             Token = _tokenService.GenerateRefreshToken()
         };
-        await _unitOfWork.RefreshToken.AddFast(refreshToken);
+        await _unitOfWork.RefreshToken.Add(refreshToken);
         return new AuthResult()
         {
             IsSuccess = true,

@@ -1,0 +1,26 @@
+<mopup:PopupPage  xmlns:mopup="clr-namespace:Mopups.Pages;assembly=Mopups" 
+                  xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                  xmlns:animations="clr-namespace:Mopups.Animations;assembly=Mopups"
+                  x:Class="Picator.Game.Views.Popups.WaitingView">
+    <mopup:PopupPage.Animation>
+        <animations:ScaleAnimation
+            PositionIn="Center"
+            PositionOut="Center"
+            DurationIn="400"
+            DurationOut="400"
+            EasingIn="SpringOut"
+            EasingOut="SpringIn"
+            HasBackgroundAnimation="True" />
+    </mopup:PopupPage.Animation>
+    <mopup:PopupPage.Content>
+        <StackLayout>
+            <Frame Margin="36" VerticalOptions="CenterAndExpand">
+                <StackLayout>
+                    <ActivityIndicator IsRunning="True" HorizontalOptions="CenterAndExpand" />
+                    <Label x:Name="MessageLbl" HorizontalOptions="CenterAndExpand"/>
+                </StackLayout>
+            </Frame>
+        </StackLayout>
+    </mopup:PopupPage.Content>
+</mopup:PopupPage>

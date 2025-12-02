@@ -1,9 +1,5 @@
-﻿using Picator.Data;
-using Picator.Entities.Models;
-using Picator.Repository.Contracts;
-using System.Data;
+﻿namespace Picator.Repository.Repositories;
 
-namespace Picator.Repository.Repositories;
 public class GameWordRepository : BaseRepository<GameWord>, IGameWordRepository
 {
     public GameWordRepository(ApplicationDbContext context, IDbConnection connection) : base(context, connection)

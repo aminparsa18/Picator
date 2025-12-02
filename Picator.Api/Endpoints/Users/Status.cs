@@ -30,6 +30,6 @@ public class Status : EndpointWithoutRequest<ApiResult<UserStatusResult>>
     public override async Task HandleAsync(CancellationToken ct)
     {
         var userId = User.FindFirstValue(ClaimTypes.Name);
-        await SendMemoryPackAsync(await _userService.GetStatus(userId), cancellation: ct);
+        await Send.OkAsync(await _userService.GetStatus(userId), cancellation: ct);
     }
 }

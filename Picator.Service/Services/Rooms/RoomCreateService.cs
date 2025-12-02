@@ -32,15 +32,15 @@ public class RoomCreateService : IRoomCreateService
         Room room = null;// _mapper.Map<RoomCreateRequest, Room>(request);
         room.UserId = Guid.Parse(userId);
         room.Code = RandomHelper.CreateRandomText(8);
-        var roomId = await _unitOfWork.Room.AddFast(room);
-        await _unitOfWork.RoomMember.AddFast(new RoomMember()
+        var roomId = await _unitOfWork.Room.Add(room);
+        await _unitOfWork.RoomMember.Add(new RoomMember()
         {
             RoomId = Guid.Parse(roomId.ToString()),
             UserId = room.UserId,
         });
         foreach (var user in request.Users)
         {
-            await _unitOfWork.RoomMember.AddFast(new RoomMember()
+            await _unitOfWork.RoomMember.Add(new RoomMember()
             {
                 RoomId = Guid.Parse(roomId.ToString()),
                 UserId = user,

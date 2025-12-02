@@ -1,22 +1,21 @@
-﻿using Picator.Common.Data.Dtos.Users;
+﻿using Microsoft.EntityFrameworkCore;
+using Picator.Common.Data.Dtos.Users;
+using Picator.Data;
 using Picator.Service.Contracts.Identity;
-using RepoDb;
-using System.Data;
 
 namespace Picator.Service.Services.Identity;
 
 public class IdentityService : IIdentityService
 {
-    protected readonly IDbConnection dbConnection;
+    protected readonly ApplicationDbContext dbConnection;
 
-    public IdentityService(IDbConnection dbConnection)
+    public IdentityService(ApplicationDbContext dbConnection)
     {
         this.dbConnection = dbConnection;
     }
 
     public async Task<IEnumerable<ValidateUserResult>> GetByUsername(string username)
     {
-        return await dbConnection.ExecuteQueryAsync<ValidateUserResult>(
-            "SELECT TOP 1 [Id],[DisplayName],[Image] FROM [Users] WHERE Username = @username", new { username });
+        return await dbConnection.Database.SqlQuery<ValidateUserResult>($"SELECT TOP 1 [Id],[DisplayName],[Image] FROM [Users] WHERE Username = {username}").ToListAsync();
     }
 }

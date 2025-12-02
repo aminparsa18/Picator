@@ -1,5 +1,4 @@
 ﻿using Picator.Common.Data.Dtos.GameMembers;
-using Picator.Entities.Models;
 
 namespace Picator.Repository.Contracts;
 
@@ -20,7 +19,7 @@ public interface IGameMemberRepository : IBaseRepository<GameMember>
     /// </summary>
     /// <param name="gameId">Game key identifier.</param>
     /// <returns>List of game members.</returns>
-    Task<IEnumerable<GameMemberResult>> GetByGameFast(Guid gameId);
+    Task<List<GameMemberResult>> GetByGameFast(Guid gameId);
 
     /// <summary>
     /// Join a game.

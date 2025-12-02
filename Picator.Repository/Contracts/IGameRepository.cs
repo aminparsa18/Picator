@@ -1,5 +1,4 @@
 ﻿using Picator.Common.Data.Dtos.Games;
-using Picator.Entities.Models;
 
 namespace Picator.Repository.Contracts;
 
@@ -20,14 +19,14 @@ public interface IGameRepository : IBaseRepository<Game>
     /// <param name="userId">User key identifier.</param>
     /// <param name="gameId">Game key identifier.</param>
     /// <returns>Game member key identifier.</returns>
-    Task<string> IsJoinedFast(string userId, string gameId);
+    Task<string?> IsJoinedFast(string userId, string gameId);
 
     /// <summary>
     /// Retrieves game member key identifier if is already playing.
     /// </summary>
     /// <param name="roomId">Room key identifier.</param>
     /// <returns></returns>
-    Task<string> IsAlreadyPlaying(string roomId);
+    Task<string?> IsAlreadyPlaying(string roomId);
 
     /// <summary>
     /// Update flag of game status to started.

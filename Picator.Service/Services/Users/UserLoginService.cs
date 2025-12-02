@@ -1,4 +1,6 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Picator.Common.Data.Dtos.Api.Auth;
 using Picator.Common.Data.Dtos.Data.Dtos.Api;
 using Picator.Common.Data.Dtos.Users;
@@ -8,27 +10,21 @@ using Picator.Entities.Models;
 using Picator.Repository;
 using Picator.Service.Contracts.Identity;
 using Picator.Service.Contracts.Users;
-using Microsoft.AspNetCore.Identity;
-using RepoDb;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace Picator.Service.Services.Users;
 
 public class UserLoginService : IUserLoginService
 {
-    private readonly IDbConnection _dbConnection;
+    private readonly ApplicationDbContext _dbConnection;
     private readonly ITokenService _tokenService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IValidator<UserLoginRequest> _validator;
     private readonly UserManager<User> _userManager;
 
-    public UserLoginService(IDbConnection dbConnection, ITokenService tokenService, IValidator<UserLoginRequest> validator,
+    public UserLoginService(ApplicationDbContext dbConnection, ITokenService tokenService, IValidator<UserLoginRequest> validator,
           UserManager<User> userManager, IUnitOfWork unitOfWork)
     {
         _dbConnection = dbConnection;
@@ -47,36 +43,34 @@ public class UserLoginService : IUserLoginService
                 StatusCode = ApiResultStatusCode.BadRequest,
                 Errors = validationResult.Errors.Select(e => e.ErrorMessage)
             };
-        var users = await _dbConnection.ExecuteQueryAsync<User>(
-            "SELECT TOP 1 * FROM [Users] WHERE Username = @username", new { username = request.Username });
-        if (!users.Any())
+        var user = await _dbConnection.Users.FromSql($"SELECT TOP 1 * FROM [Users] WHERE Username = {request.Username}").FirstOrDefaultAsync();
+        if (user == null)
         {
             return new AuthResult()
             {
                 StatusCode = ApiResultStatusCode.Unauthorized,
-                Errors = new[] { "Login data is not correct." }
+                Errors = ["Login data is not correct."]
             };
         }
 
-        var user = users.FirstOrDefault();
         var userHasValidPassword = await _userManager.CheckPasswordAsync(user, request.Password);
         if (!userHasValidPassword)
         {
             return new AuthResult()
             {
                 StatusCode = ApiResultStatusCode.Unauthorized,
-                Errors = new[] { "Login data is not correct." }
+                Errors = ["Login data is not correct."]
             };
         }
 
-        if (user.EmailConfirmed)
+        if (!user.EmailConfirmed)
         {
-            var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             //smsSender.SendAuthSmsAsync(token, user.PhoneNumber);
             return new AuthResult()
             {
                 StatusCode = ApiResultStatusCode.Forbidden,
-                Errors = new[] { "Email address is not confirmed" },
+                Errors = ["Email address is not confirmed"],
                 Token = user.PhoneNumber
             };
         }
@@ -95,7 +89,7 @@ public class UserLoginService : IUserLoginService
             ExpirationDate = DateTime.UtcNow.AddMonths(6),
             Token = _tokenService.GenerateRefreshToken()
         };
-        await _unitOfWork.RefreshToken.AddFast(refreshToken);
+        await _unitOfWork.RefreshToken.Add(refreshToken);
         return new AuthResult()
         {
             IsSuccess = true,

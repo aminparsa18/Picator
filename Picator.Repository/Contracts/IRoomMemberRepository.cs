@@ -1,5 +1,4 @@
 ﻿using Picator.Common.Data.Dtos.RoomMembers;
-using Picator.Entities.Models;
 
 namespace Picator.Repository.Contracts;
 
@@ -14,7 +13,7 @@ public interface IRoomMemberRepository : IBaseRepository<RoomMember>
     /// <param name="roomId">Room key identifier.</param>
     /// <param name="userId">User key identifier.</param>
     /// <returns>Room member key identifier.</returns>
-    Task<IEnumerable<Guid>> FindInRoom(Guid roomId, Guid userId);
+    Task<List<Guid>> FindInRoom(Guid roomId, Guid userId);
 
     /// <summary>
     /// Retrieves all member of room.
@@ -28,5 +27,5 @@ public interface IRoomMemberRepository : IBaseRepository<RoomMember>
     /// </summary>
     /// <param name="roomId">Room key identifier.</param>
     /// <returns>List of room members.</returns>
-    Task<IEnumerable<RoomMemberResult>> GetByRoomFast(Guid roomId);
+    Task<List<RoomMemberResult>> GetByRoomFast(Guid roomId);
 }

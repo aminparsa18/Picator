@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             x:Class="Picator.Game.Controls.BorderedEntry"
+             x:Name="this">
+    <ContentView.Content>
+        <VerticalStackLayout>
+            <Grid>
+                <Frame x:Name="EntryBorder" BackgroundColor="Transparent" CornerRadius="12" HeightRequest="48" HasShadow="True" Padding="0">
+                    <Entry
+                        x:Name="EntryControl" 
+                           IsPassword="{Binding IsPassword, Source={x:Reference this}}"
+                           MaxLength="{Binding MaxLength, Source={x:Reference this}}"
+                           Keyboard="{Binding Keyboard, Source={x:Reference this}}"
+                           Text="{Binding Text, Source={x:Reference this}}"
+                           TextColor="Black"
+                           BackgroundColor="Transparent"
+                           FontFamily="gumdrop"
+                           Focused="EntryControl_Focused" 
+                           Unfocused="EntryControl_Unfocused">
+                    </Entry>
+                </Frame>
+                <Label x:Name="PlaceHolderLabel" Text="{Binding Placeholder, Source={x:Reference this}}" FontSize="13" Margin="16,0" VerticalOptions="Center" TextColor="#808080"/>
+
+            </Grid>
+            <Label x:Name="ErrorLabel" Margin="16,0" IsVisible="False" FontSize="10" TextColor="Red"/>
+            <VerticalStackLayout.GestureRecognizers>
+                <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" />
+            </VerticalStackLayout.GestureRecognizers>
+        </VerticalStackLayout>
+    </ContentView.Content>
+</ContentView>

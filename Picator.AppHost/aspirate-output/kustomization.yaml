@@ -1,0 +1,13 @@
+resources:
+- sql
+- picator-api
+- picator-realtime
+- picator-externalauth
+- tempapitest
+- picator-invitement
+- dashboard.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+

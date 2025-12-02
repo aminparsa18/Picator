@@ -7,6 +7,12 @@ try
 {
     WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+    // Add service defaults & Aspire components.
+    builder.AddServiceDefaults();
+
+    // Add services to the container.
+    builder.Services.AddProblemDetails();
+
     Log.Logger = new LoggerConfiguration()
                     .ReadFrom.Configuration(builder.Configuration)
                     .Enrich.FromLogContext()
@@ -17,17 +23,11 @@ try
 
     builder.Host.UseSerilog();
 
-    builder.Services.ConfigureDatabaseConnection(builder.Configuration)
+    builder.ConfigureDatabaseConnection(builder.Configuration)
         .ConfigureController()
         .ConfigureSwagger()
         .ConfigureCustomServices(builder.Configuration)
         .ConfigureCustomIdentityServices(builder.Configuration, builder.Environment);
-
-    //builder.Services.AddApplicationInsightsTelemetry(options =>
-    //{
-    //    options.ConnectionString = builder.Configuration["APPINSIGHTS_CONNECTIONSTRING"];
-    //});
-
 
     WebApplication app = builder.Build();
 
@@ -41,9 +41,4 @@ catch (Exception ex)
 finally
 {
     Log.CloseAndFlush();
-}
-
-namespace Picator.Api
-{
-    public partial class Program { }
 }

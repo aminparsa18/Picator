@@ -1,0 +1,131 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:Picator.Game.Models" 
+             xmlns:controls="clr-namespace:Picator.Game.Controls" 
+             xmlns:viewmodels="clr-namespace:Picator.Game.ViewModels"
+             x:Class="Picator.Game.Views.ProfileSettingsPage"
+             x:DataType="viewmodels:ProfileSettingsViewModel">
+    <ContentPage.BindingContext>
+        <viewmodels:ProfileSettingsViewModel />
+    </ContentPage.BindingContext>
+    <ContentPage.Content>
+        <Grid>
+            <Grid x:Name="ProfileGrid" Margin="36,64,36,36" VerticalOptions="StartAndExpand" Padding="0,0,0,136" >
+                <Frame x:Name="AvatarFrame" IsVisible="False"  CornerRadius="20" VerticalOptions="EndAndExpand"
+                       Padding="16">
+                    <StackLayout>
+                        <StackLayout Orientation="Horizontal">
+                            <Path Data="M310.5,640l-5-5,5-5"
+                                 Stroke="#363853"
+                                 StrokeThickness="3"
+                                 Aspect="Uniform"
+                                 WidthRequest="28"
+                                 HeightRequest="28"
+                                 Margin="8,0,0,0"
+                                 StrokeLineCap="Round"
+                                 StrokeLineJoin="Round"
+                                 HorizontalOptions="CenterAndExpand"
+                                 VerticalOptions="CenterAndExpand">
+                                <Path.RenderTransform>
+                                    <TranslateTransform X="-304.75" Y="-628.939" />
+                                </Path.RenderTransform>
+                                <Path.GestureRecognizers>
+                                    <TapGestureRecognizer x:Name="PreviousTap" Tapped="PreviousTap_OnTapped"></TapGestureRecognizer>
+                                </Path.GestureRecognizers>
+                            </Path>
+                            <CarouselView
+                               x:Name="AvatarView"
+                               ItemsSource="{Binding Avatars}"
+                               CurrentItem="{Binding Avatar,Mode=TwoWay}"
+                               HeightRequest="80"
+                               Loop="True"
+                               CurrentItemChanged="CarouselView_OnCurrentItemChanged">
+                                <CarouselView.ItemTemplate>
+                                    <DataTemplate x:DataType="models:Avatar">
+                                        <ContentView>
+                                            <Grid>
+                                                <Image
+                                                   Aspect="AspectFit"
+                                                   Margin="8"
+                                                   Scale="{Binding Scale}"
+                                                   Source="{Binding Name}" >
+                                                    <!--<forms:CachedImage.Transformations>
+                                                        <transformations:CircleTransformation />
+                                                    </forms:CachedImage.Transformations>-->
+                                                </Image>
+                                            </Grid>
+                                        </ContentView>
+                                    </DataTemplate>
+                                </CarouselView.ItemTemplate>
+                            </CarouselView>
+                            <Path Data="M379.5,630l5,5-5,5"
+                                 Stroke="#363853"
+                                 StrokeThickness="3"
+                                 Aspect="Uniform"
+                                 WidthRequest="28"
+                                 HeightRequest="28"
+                                 Margin="0,0,8,0"
+                                 StrokeLineCap="Round"
+                                 StrokeLineJoin="Round"
+                                 HorizontalOptions="CenterAndExpand"
+                                 VerticalOptions="CenterAndExpand">
+                                <Path.RenderTransform>
+                                    <TranslateTransform X="-378.439" Y="-628.939" />
+                                </Path.RenderTransform>
+                                <Path.GestureRecognizers>
+                                    <TapGestureRecognizer x:Name="NextTap" Tapped="NextTap_OnTapped"></TapGestureRecognizer>
+                                </Path.GestureRecognizers>
+                            </Path>
+                        </StackLayout>
+                    </StackLayout>
+                </Frame>
+                <Frame CornerRadius="20" Padding="16,24">
+                    <StackLayout Padding="24" HorizontalOptions="CenterAndExpand">
+                        <controls:BorderedEntry Placeholder="DisplayName"
+                                                    Text="{Binding DisplayName.Value}"
+                                                    Errors="{Binding DisplayName.Errors}" />
+                        <Label Margin="0,0,0,16" HorizontalOptions="CenterAndExpand" Text="UploadPP" />
+                        <Image
+                            x:Name="CachedImage"
+                            WidthRequest="120"
+                            HeightRequest="120"
+                            Margin="8"
+                            Aspect="AspectFit"
+                            Source="{Binding Image}">
+                            <!--<forms:CachedImage.Transformations>
+                                <transformations:CircleTransformation />
+                            </forms:CachedImage.Transformations>-->
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ChoosePhotoCommand}" />
+                            </Image.GestureRecognizers>
+                        </Image>
+
+                        <Button Text="Set" IsVisible="{Binding PhotoSet}" Command="{Binding SetPhotoCommand}" HorizontalOptions="CenterAndExpand"></Button>
+
+                        <StackLayout Margin="0,16,0,0" Orientation="Horizontal">
+                            <BoxView HeightRequest="1" HorizontalOptions="FillAndExpand"
+                                     VerticalOptions="CenterAndExpand"
+                                     BackgroundColor="White" />
+                            <Label Margin="8" Text="Or" />
+                            <BoxView HeightRequest="1" VerticalOptions="CenterAndExpand"
+                                     HorizontalOptions="FillAndExpand"
+                                     BackgroundColor="White" />
+                        </StackLayout>
+                        <StackLayout Orientation="Horizontal">
+                            <Switch Toggled="Switch_OnToggled" Margin="0,0,8,0" />
+                            <Label Text="SelectAvatar" FontSize="Medium" VerticalOptions="CenterAndExpand" />
+                        </StackLayout>
+
+                        <Label Margin="0,16,0,0" FontSize="14" Padding="12" HorizontalOptions="CenterAndExpand" Text="Skip">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SkipCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                        <Button Text="Set" Command="{Binding AvatarSelectedCommand}" HorizontalOptions="CenterAndExpand"></Button>
+
+                    </StackLayout>
+                </Frame>
+            </Grid>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,8 +1,4 @@
 ﻿using Picator.Common.Data.Dtos.RoomMembers;
-using Picator.Data;
-using Picator.Entities.Models;
-using Picator.Repository.Contracts;
-using System.Data;
 
 namespace Picator.Repository.Repositories;
 
@@ -17,10 +13,9 @@ public sealed class RoomMemberRepository : BaseRepository<RoomMember>, IRoomMemb
     }
 
     /// <inheritdoc/>
-    public Task<IEnumerable<Guid>> FindInRoom(Guid roomId, Guid userId)
+    public Task<List<Guid>> FindInRoom(Guid roomId, Guid userId)
     {
-        return Connection.ExecuteQueryAsync<Guid>(@"SELECT TOP 1 [Id] FROM [RoomMember] Where [RoomId]=@RoomId AND [UserId]=@UserId ", new { RoomId = roomId.ToString(), UserId = userId.ToString() });
-
+        return Context.Database.SqlQuery<Guid>($"SELECT TOP 1 [Id] FROM [RoomMember] Where [RoomId]={roomId} AND [UserId]={userId}").ToListAsync();
     }
 
     /// <inheritdoc/>
@@ -38,15 +33,8 @@ public sealed class RoomMemberRepository : BaseRepository<RoomMember>, IRoomMemb
     }
 
     /// <inheritdoc/>
-    public Task<IEnumerable<RoomMemberResult>> GetByRoomFast(Guid roomId)
+    public Task<List<RoomMemberResult>> GetByRoomFast(Guid roomId)
     {
-        return Connection.ExecuteQueryAsync<RoomMemberResult>(@"SELECT [r].[UserId], [u].[DisplayName] AS [Name], [u].[Image], (
-           SELECT COUNT(*)
-           FROM[dbo].[GameMember] AS[g]
-           WHERE[u].[Id] = [g].[UserId]) AS[TotalGame]
-           FROM[dbo].[RoomMember] AS[r]
-           INNER JOIN[dbo].[Users] AS[u] ON[r].[UserId] = [u].[Id]
-           WHERE[r].[RoomId] = @RoomId
-               ORDER BY[r].[CreatedDate] DESC ", new { RoomId = roomId });
+        return Context.Database.SqlQuery<RoomMemberResult>($"SELECT [r].[UserId], [u].[DisplayName] AS [Name], [u].[Image], (SELECT COUNT(*) FROM[dbo].[GameMember] AS[g] WHERE [u].[Id] = [g].[UserId]) AS[TotalGame] FROM[dbo].[RoomMember] AS[r] INNER JOIN[dbo].[Users] AS[u] ON[r].[UserId] = [u].[Id] WHERE[r].[RoomId] = {roomId} ORDER BY[r].[CreatedDate] DESC ").ToListAsync();
     }
 }

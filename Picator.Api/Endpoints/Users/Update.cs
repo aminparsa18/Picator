@@ -30,6 +30,6 @@ public class Update : Endpoint<UpdateProfileRequest, ApiResult>
     public override async Task HandleAsync(UpdateProfileRequest request, CancellationToken ct)
     {
         var userId = User.FindFirstValue(ClaimTypes.Name);
-        await SendMemoryPackAsync(await _userUpdateService.Update(userId, request), cancellation: ct);
+        await Send.OkAsync(await _userUpdateService.Update(userId, request), cancellation: ct);
     }
 }

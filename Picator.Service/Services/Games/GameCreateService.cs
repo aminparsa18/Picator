@@ -55,7 +55,8 @@ public class GameCreateService : IGameCreateService
         var game = new Game
         {
             Capacity = 2,
-            Word = word
+            Word = word,
+            GameCode = gameCode
         };
 
         await _unitOfWork.Game.Add(game);

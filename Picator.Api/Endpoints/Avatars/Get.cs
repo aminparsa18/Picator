@@ -30,7 +30,7 @@ public class Get : EndpointWithoutRequest<ApiResult<IEnumerable<AvatarResult>>>
     public override async Task HandleAsync(CancellationToken ct)
     {
         var avatars = await _avatarService.GetAll();
-        await SendMemoryPackAsync(new ApiResult<IEnumerable<AvatarResult>>
+        await Send.OkAsync(new ApiResult<IEnumerable<AvatarResult>>
         {
             Data = avatars,
             IsSuccess = true

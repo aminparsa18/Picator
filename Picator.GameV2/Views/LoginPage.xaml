@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:viewmodels="clr-namespace:Picator.Game.ViewModels"
+             xmlns:controls="clr-namespace:Picator.Game.Controls"
+             xmlns:cmp="clr-namespace:Picator.GameV2.Views.Components"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Picator.Game.Views.LoginPage"
+             x:DataType="viewmodels:LoginViewModel"
+             NavigationPage.HasNavigationBar="False">
+    <ContentPage.BindingContext>
+        <viewmodels:LoginViewModel />
+    </ContentPage.BindingContext>
+    <ContentPage.Content>
+        <Grid>
+            <toolkit:MediaElement Source="embed://day.mp4"
+                                  Aspect="AspectFill"
+                                  ShouldShowPlaybackControls="False" 
+                                  ShouldAutoPlay="True"
+                                  ShouldLoopPlayback="True"
+                                  VerticalOptions="Fill"/>
+            <ScrollView>
+                <VerticalStackLayout Margin="24" x:Name="Body">
+                    <Image Source="logo.png" x:Name="Logo" Margin="0,0,0,0" TranslationY="200" WidthRequest="72" />
+
+                    <VerticalStackLayout x:Name="TitlePanel">
+                        <Label Text="Picator" FontSize="Large" Margin="0,8,0,0"
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="Center"
+                                   TextColor="HotPink" />
+                        <Label Text="" FontSize="Small"
+                                   HorizontalOptions="Center"
+                                   TextColor="LightGray" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout x:Name="LoginPanel" Spacing="16" Margin="24">
+                        <controls:BorderedEntry x:Name="LoginUsernameEntry" Placeholder="Username"
+                                    Text="{Binding LoginUsername.Value}"
+                                    Errors="{Binding LoginUsername.Errors}" />
+                        <controls:BorderedEntry x:Name="LoginPassEntry"
+                                        Placeholder="Password"
+                                        Text="{Binding LoginPassword.Value}"
+                                        Errors="{Binding LoginPassword.Errors}" 
+                                        IsPassword="True" />
+                        <Button Margin="48,8" Text="Continue" Command="{Binding LoginCommand}" Clicked="Button_Clicked" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout x:Name="RegisterPanel" IsVisible="False" Spacing="16" Opacity="0" Margin="24">
+                        <controls:BorderedEntry x:Name="RegisterUsernameEntry" Placeholder="Your email address"
+                                    Text="{Binding Username.Value}"
+                                    Errors="{Binding Username.Errors}" />
+
+                        <controls:BorderedEntry x:Name="RegisterPassEntry"
+                                                            Text="{Binding Password.Value,Mode=TwoWay}"
+                                                            Placeholder="Password"
+                                                            Errors="{Binding Password.Errors}" IsPassword="True" />
+                        <controls:BorderedEntry x:Name="ConfPassEntry"
+                                                            Text="{Binding ConfirmPassword.Value,Mode=TwoWay}"
+                                                            Placeholder="Confirm Password"
+                                                            IsPassword="True"
+                                                            Errors="{Binding ConfirmPassword.Errors}" />
+                        <Button Margin="48,8" Text="Continue" Command="{Binding RegisterCommand}" Clicked="Button_Clicked_1" />
+                    </VerticalStackLayout>
+
+                    <Grid VerticalOptions="End" ColumnDefinitions="*,*"  Margin="48,16">
+                        <Button x:Name="LoginBtn" Text="Login" Margin="16,0,-16,0"
+                                BackgroundColor="#232228"
+                                Clicked="LoginBtn_OnClicked" />
+                        <Button x:Name="RegisterBtn" Text="Register" Grid.Column="1" Margin="-16,0,16,0" 
+                                BackgroundColor="#707070" Clicked="RegisterBtn_OnClicked" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto,*" Margin="48,24">
+                        <BoxView HorizontalOptions="Fill" VerticalOptions="Center" HeightRequest="1"
+                                 BackgroundColor="#707070" />
+                        <Label Grid.Column="1" Text="Or" TextColor="#707070" Margin="8,0" />
+                        <BoxView Grid.Column="2" HorizontalOptions="Fill" VerticalOptions="Center"
+                                 HeightRequest="1" BackgroundColor="#707070" />
+                    </Grid>
+                    <Button Margin="48,8" Text="Google Login" Command="{Binding GoogleCommand}" />
+                </VerticalStackLayout>
+            </ScrollView>
+            <cmp:WaitingView IsBusy="{Binding IsBusy}" HasShadow="True"/>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

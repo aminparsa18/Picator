@@ -48,11 +48,11 @@ public class UserConfirmService : IUserConfirmService
             return new AuthResult()
             {
                 StatusCode = ApiResultStatusCode.Unauthorized,
-                Errors = new[] { "User does not exist" }
+                Errors = ["User does not exist"]
             };
         }
 
-        var result = await _userManager.ChangeEmailAsync(existingUser, request.Email, request.Token);
+        var result = await _userManager.ConfirmEmailAsync(existingUser, request.Token);
         if (!result.Succeeded)
             return new AuthResult()
             {
@@ -92,8 +92,8 @@ public class UserConfirmService : IUserConfirmService
             ExpirationDate = DateTime.UtcNow.AddMonths(6),
             Token = _tokenService.GenerateRefreshToken()
         };
-        await _unitOfWork.RefreshToken.AddFast(refreshToken);
-        existingUser.PhoneNumberConfirmed = true;
+        await _unitOfWork.RefreshToken.Add(refreshToken);
+        existingUser.EmailConfirmed = true;
         await _userManager.UpdateAsync(existingUser);
         return new AuthResult()
         {

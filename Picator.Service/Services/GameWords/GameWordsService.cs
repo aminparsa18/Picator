@@ -13,12 +13,13 @@ public class GameWordsService : IGameWordsService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<ApiResult<List<string>>> GetRandomWords()
+    public async Task<ApiResult<string>> GetRandomWord()
     {
-        return new ApiResult<List<string>>
+        var randomIndex = new Random().Next(0, 150);
+        return new ApiResult<string>
         {
             IsSuccess = true,
-            Data = await _unitOfWork.GameWord.GetRandomWords()
+            Data = await _unitOfWork.GameWord.GetRandomWord(randomIndex)
         };
     }
 }

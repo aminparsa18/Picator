@@ -1,8 +1,4 @@
-﻿using Picator.Data;
-using Picator.Data.Dtos.User;
-using Picator.Entities.Models;
-using Picator.Repository.Contracts;
-using System.Data;
+﻿using Picator.Data.Dtos.User;
 
 namespace Picator.Repository.Repositories;
 
@@ -17,16 +13,14 @@ public sealed class RefreshTokenRepository : BaseRepository<RefreshToken>, IRefr
     }
 
     /// <inheritdoc/>
-    public Task<IEnumerable<RefreshTokenDetails>> GetByToken(string refreshToken)
+    public Task<List<RefreshTokenDetails>> GetByToken(string refreshToken)
     {
-        return Connection.ExecuteQueryAsync<RefreshTokenDetails>(@"SELECT [r].[Id], [r].[ExpirationDate], [r].[IsInvalidated], [r].[IsUsed], [r].[JwtId]
-            FROM[dbo].[RefreshToken] AS[r]
-            WHERE [r].[Token] = @refreshToken", new { refreshToken });
+        return Context.Database.SqlQuery<RefreshTokenDetails>($"SELECT [r].[Id], [r].[ExpirationDate], [r].[IsInvalidated], [r].[IsUsed], [r].[JwtId] FROM[dbo].[RefreshToken] AS[r] WHERE [r].[Token] = {refreshToken}").ToListAsync();
     }
 
     /// <inheritdoc/>
     public Task<int> SetUsed(string id)
     {
-        return Connection.ExecuteNonQueryAsync("UPDATE [RefreshToken] SET [IsUsed] = 1 WHERE [Id] = @id", new { id });
+        return Context.Database.ExecuteSqlAsync($"UPDATE [RefreshToken] SET [IsUsed] = 1 WHERE [Id] = {id}");
     }
 }

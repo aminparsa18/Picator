@@ -1,18 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="RepoDb.SqlServer" Version="1.13.1" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Picator.Common.Data\Picator.Common.Data.csproj" />
     <ProjectReference Include="..\Picator.Data\Picator.Data.csproj" />
   </ItemGroup>
-
 </Project>

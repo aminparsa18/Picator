@@ -2,6 +2,7 @@
 using FastEndpoints.Swagger;
 using FluentValidation;
 using MemoryPack;
+using MemoryPack.AspNetCoreMvcFormatter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using NSwag;
 using NSwag.Generation.Processors.Security;
 using Picator.Common.Data.Dtos.Api;
@@ -22,26 +24,26 @@ using Picator.Service.Contracts.Avatars;
 using Picator.Service.Models;
 using Picator.Service.Services;
 using Picator.Service.Validations.Users;
-using RepoDb;
 using Serilog;
 using System.Data;
 using System.Net;
+using System.Text.Json;
 
 namespace Picator.Configuration.Extensions;
 
 public static class ServiceCollectionExtentions
 {
-    public static IServiceCollection ConfigureDatabaseConnection(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection ConfigureDatabaseConnection(this WebApplicationBuilder builder, IConfiguration configuration)
     {
         Barrel.ApplicationId = "PicatorAPI";
+        builder.AddSqlServerDbContext<ApplicationDbContext>("PicatorDB");
+        builder.Services.AddTransient<IDbConnection>(sp => new SqlConnection(builder.Configuration.GetConnectionString("PicatorContext")));
 
         //  services.AddHangfire(x => x.UseSqlServerStorage(configuration.GetConnectionString("HangfireContext")));
         // services.AddHangfireServer();
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("PicatorContext")).EnableSensitiveDataLogging());
-        GlobalConfiguration.Setup().UseSqlServer();
-        services.AddTransient<IDbConnection>(sp => new SqlConnection(configuration.GetConnectionString("PicatorContext")));
-        return services;
+        //services.AddDbContext<ApplicationDbContext>(options =>
+        //    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")).EnableSensitiveDataLogging());
+        return builder.Services;
     }
 
     public static IServiceCollection ConfigureController(this IServiceCollection services)
@@ -50,61 +52,54 @@ public static class ServiceCollectionExtentions
 
         services.AddControllers(options =>
         {
-            // options.InputFormatters.Insert(0, new MemoryPackInputFormatter());
+            options.InputFormatters.Insert(0, new MemoryPackInputFormatter());
             // If checkContentType: true then can output multiple format(JSON/MemoryPack, etc...). default is false.
-            // options.OutputFormatters.Insert(0, new MemoryPackOutputFormatter(checkContentType: false));
-        }).AddJsonOptions(opt => opt.JsonSerializerOptions.PropertyNamingPolicy = null);
-        services.AddFastEndpoints();
-        services.AddApiVersioning(options =>
-        {
-            options.ReportApiVersions = true;
-            options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
-            options.AssumeDefaultVersionWhenUnspecified = true;
+            options.OutputFormatters.Insert(0, new MemoryPackOutputFormatter(checkContentType: false));
         });
+        services.AddSingleton(typeof(IRequestBinder<>), typeof(MemoryPackRequestBinder<>)).AddFastEndpoints();
         return services;
     }
 
     public static IServiceCollection ConfigureSwagger(this IServiceCollection services)
     {
-        services.AddSwaggerDoc(document =>
+        services.SwaggerDocument(document =>
         {
-            document.AddSecurity("Bearer", Enumerable.Empty<string>(), new OpenApiSecurityScheme
+            document.DocumentSettings = s =>
             {
-                Type = OpenApiSecuritySchemeType.ApiKey,
-                Name = "Authorization",
-                In = OpenApiSecurityApiKeyLocation.Header,
-                Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
-            });
-
-            document.OperationProcessors.Add(
-                new AspNetCoreOperationSecurityScopeProcessor("JWT"));
-
-            document.IgnoreObsoleteProperties = true;
-
-            document.Version = "v1";
-            document.PostProcess = process =>
-            {
-                process.Info.Version = "v1";
-                process.Info.Title = "Picator API";
-                process.Info.Description = "Legendary online game";
-                process.Info.License = new OpenApiLicense
+                s.AddSecurity("JWT", Enumerable.Empty<string>(), new OpenApiSecurityScheme
                 {
-                    Name = "MIT License",
-                    Url = "https://opensource.org/licenses/MIT"
-                };
-                process.Info.Contact = new OpenApiContact
+                    Type = OpenApiSecuritySchemeType.ApiKey,
+                    Name = "Authorization",
+                    In = OpenApiSecurityApiKeyLocation.Header,
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+                });
+                s.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
+                s.Version = "v1";
+                s.PostProcess = process =>
                 {
-                    Name = "Amin Parsa",
-                    Email = "aminparsa18@gmail.com",
-                    Url = "https://aminparsa.me"
+                    process.Info.Version = "v1";
+                    process.Info.Title = "Picator API";
+                    process.Info.Description = "Legendary online game";
+                    process.Info.License = new OpenApiLicense
+                    {
+                        Name = "MIT License",
+                        Url = "https://opensource.org/licenses/MIT"
+                    };
+                    process.Info.Contact = new OpenApiContact
+                    {
+                        Name = "Amin Parsa",
+                        Email = "aminparsa18@gmail.com",
+                        Url = "https://aminparsa.me"
+                    };
                 };
             };
-        }, excludeNonFastEndpoints: true, tagIndex: 0);
+        });
         return services;
     }
 
     public static IServiceCollection ConfigureCustomServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddHttpContextAccessor();
         services.AddValidatorsFromAssemblyContaining<UserLoginRequestValidator>();
         services.Scan(scan => scan
         .FromAssemblyOf<IUnitOfWork>()
@@ -139,12 +134,12 @@ public static class ServiceCollectionExtentions
         app.UseHsts();
         app.UseStatusCodePages(async context =>
         {
-            context.HttpContext.Response.ContentType = "application/x-msgpack";
+            context.HttpContext.Response.ContentType = "application/x-memorypack";
             if (context.HttpContext.Response.StatusCode == (int)HttpStatusCode.Unauthorized)
             {
                 await context.HttpContext.Response.WriteAsync(new ApiResult()
                 {
-                    Errors = new[] { "Token not validated" },
+                    Errors = ["Token not validated"],
                     StatusCode = ApiResultStatusCode.Unauthorized
                 }.ToString());
             }
@@ -152,7 +147,7 @@ public static class ServiceCollectionExtentions
             {
                 await context.HttpContext.Response.WriteAsync(new ApiResult()
                 {
-                    Errors = new[] { "Internal Error" },
+                    Errors = ["Internal Error"],
                     StatusCode = ApiResultStatusCode.ServerError
                 }.ToString());
             }
@@ -162,7 +157,7 @@ public static class ServiceCollectionExtentions
             appError.Run(async context =>
             {
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                context.Response.ContentType = "application/x-msgpack";
+                context.Response.ContentType = "application/x-memorypack";
                 var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
                 if (contextFeature != null)
                 {
@@ -178,15 +173,42 @@ public static class ServiceCollectionExtentions
         app.UseAuthorization();
         app.UseFastEndpoints(c =>
         {
-            c.Serializer.ResponseSerializer = (rsp, dto, cType, ct) =>
+            c.Serializer.ResponseSerializer = (rsp, dto, cType, jsc, ct) =>
             {
-                rsp.ContentType = "application/x-memorypack";
-                return MemoryPackSerializer.SerializeAsync(dto.GetType(), rsp.Body, dto, cancellationToken: ct).AsTask();
+                var isSwaggerRequest = rsp.HttpContext.Items["IsSwaggerRequest"];
+                if ((isSwaggerRequest is bool ss && !ss) || isSwaggerRequest == null)
+                {
+                    rsp.ContentType = "application/x-memorypack";
+                    return MemoryPackSerializer.SerializeAsync(dto.GetType(), rsp.Body, dto, cancellationToken: ct).AsTask();
+                }
+                rsp.ContentType = "application/json";
+                return JsonSerializer.SerializeAsync(rsp.Body, dto, cancellationToken: ct);
             };
 
-            c.Serializer.RequestDeserializer = async (req, tDto, ct) =>
+            c.Serializer.RequestDeserializer = async (req, tDto, jsc, ct) =>
             {
-                return MemoryPackSerializer.DeserializeAsync(tDto, req.Body);
+                // Hybrid: accept JSON *or* MemoryPack
+                try
+                {
+                    return await MemoryPackSerializer.DeserializeAsync(tDto, req.Body, cancellationToken: ct);
+                }
+                catch (MemoryPackSerializationException)
+                {
+                    // rewind so other components (if any) aren’t broken
+                    req.Body.Position = 0;
+                    return await JsonSerializer.DeserializeAsync(req.Body, tDto);
+                }
+
+                //if (first == '{' || first == '[')
+                //{
+                //    // JSON (Swagger UI, Postman, etc.)
+                //    return await JsonSerializer.DeserializeAsync(ms, tDto, new JsonSerializerOptions
+                //    {
+                //        PropertyNameCaseInsensitive = true
+                //    }, ct);
+
+                // Binary MemoryPack (your own clients)
+
             };
 
             // c.Serializer.Options.PropertyNamingPolicy = null;
@@ -201,13 +223,12 @@ public static class ServiceCollectionExtentions
             c.Versioning.Prefix = "v";
             //c.Versioning.DefaultVersion = 1;
 
-        });
+        }).UseOpenApi().UseSwaggerGen();
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
         });
 
         app.CallDbInitializer();
-        app.UseSwaggerGen();
     }
 }

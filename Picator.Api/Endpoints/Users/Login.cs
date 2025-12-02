@@ -27,6 +27,10 @@ public class Login : Endpoint<UserLoginRequest, AuthResult>
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(UserLoginRequest request, CancellationToken ct) =>
-        await SendMemoryPackAsync(await _userLoginService.Login(request), cancellation: ct);
+    public override async Task HandleAsync(UserLoginRequest request, CancellationToken ct) {
+        
+        var login = await _userLoginService.Login(request);
+        await Send.OkAsync(login, cancellation: ct);
+
+    }
 }

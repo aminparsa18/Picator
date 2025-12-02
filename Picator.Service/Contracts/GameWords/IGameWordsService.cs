@@ -4,5 +4,5 @@ namespace Picator.Service.Contracts.GameWords;
 
 public interface IGameWordsService
 {
-    Task<ApiResult<List<string>>> GetRandomWords();
+    Task<ApiResult<string>> GetRandomWord();
 }

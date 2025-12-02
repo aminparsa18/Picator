@@ -1,8 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Picator.Data;
-using Picator.Entities.Models;
-using Picator.Repository.Contracts;
-using System.Data;
 using System.Linq.Expressions;
 
 namespace Picator.Repository.Repositories;
@@ -32,15 +28,6 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     }
 
     /// <inheritdoc/>
-    public virtual Task<object> AddFast(TEntity entity)
-    {
-        entity.Id = Guid.NewGuid();
-        entity.CreatedDate = DateTime.Now;
-        entity.ModifiedDate = DateTime.Now;
-        return Connection.InsertAsync(ClassMappedNameCache.Get<TEntity>(), entity);
-    }
-
-    /// <inheritdoc/>
     public virtual Task AddRange(IEnumerable<TEntity> entities)
     {
         foreach (var item in entities)
@@ -51,22 +38,9 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         return Entities.AddRangeAsync(entities);
     }
 
-    /// <inheritdoc/>
-    public virtual Task<int> AddRangeFast(IEnumerable<TEntity> entities)
-    {
-        return Connection.InsertAllAsync(entities);
-    }
-
     public virtual void Update(TEntity entity)
     {
         Entities.Update(entity);
-    }
-
-    /// <inheritdoc/>
-    public virtual Task<int> UpdateFast(TEntity entity)
-    {
-        entity.ModifiedDate = DateTime.Now;
-        return Connection.UpdateAsync(entity);
     }
 
     /// <inheritdoc/>
@@ -76,21 +50,9 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     }
 
     /// <inheritdoc/>
-    public virtual Task<int> UpdateRangeFast(IEnumerable<TEntity> entities)
-    {
-        return Connection.UpdateAllAsync(entities);
-    }
-
-    /// <inheritdoc/>
     public virtual void Remove(TEntity entity)
     {
         Entities.Remove(entity);
-    }
-
-    /// <inheritdoc/>
-    public virtual Task<int> RemoveFast(TEntity entity)
-    {
-        return Connection.DeleteAsync(entity);
     }
 
     /// <inheritdoc/>
@@ -100,33 +62,15 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     }
 
     /// <inheritdoc/>
-    public virtual Task<int> RemoveRangeFast(IEnumerable<TEntity> entities)
-    {
-        return Connection.DeleteAllAsync(entities);
-    }
-
-    /// <inheritdoc/>
     public virtual Task<int> Count()
     {
         return Entities.CountAsync();
     }
 
     /// <inheritdoc/>
-    public virtual Task<long> CountFast()
-    {
-        return Connection.CountAllAsync<TEntity>();
-    }
-
-    /// <inheritdoc/>
     public virtual Task<TEntity?> Get(Expression<Func<TEntity, bool>> predicate)
     {
         return Entities.Where(predicate).FirstOrDefaultAsync();
-    }
-
-    /// <inheritdoc/>
-    public virtual Task<IEnumerable<TEntity>> GetFast(Expression<Func<TEntity, bool>> predicate)
-    {
-        return Connection.QueryAsync(predicate);
     }
 
     /// <inheritdoc/>
@@ -154,12 +98,6 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     }
 
     /// <inheritdoc/>
-    public virtual Task<IEnumerable<TEntity>> GetAllFast()
-    {
-        return Connection.QueryAllAsync<TEntity>();
-    }
-
-    /// <inheritdoc/>
     public Task<List<TEntity>> GetPage(PaginationArgs args)
     {
         return Entities.AsNoTracking().Skip(args.StartingRow).Take(args.PageRowCount).OrderByDescending(o => o.Id).ToListAsync();
@@ -173,8 +111,5 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     }
 
     /// <inheritdoc/>
-    public virtual Task<bool> Exists(TEntity entity) => Connection.ExistsAsync<TEntity>(entity);
-
-    /// <inheritdoc/>
-    public virtual Task<bool> Exists(Expression<Func<TEntity, bool>> expression) => Connection.ExistsAsync(expression);
+    public virtual Task<bool> Exists(TEntity entity) => Entities.ContainsAsync(entity);
 }

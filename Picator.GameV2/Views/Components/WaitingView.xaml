@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:skiaLottie="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+             xmlns:converters="clr-namespace:Picator.GameV2.Converters"
+             x:Class="Picator.GameV2.Views.Components.WaitingView"
+             x:Name="this">
+    <ContentView.Resources>
+        <converters:HasShadowConverter x:Key="HasShadowConverter" />
+    </ContentView.Resources>
+    <Grid x:Name="WaitingGrid" IsVisible="{Binding Source={x:Reference this}, Path=IsBusy}" BackgroundColor="{Binding HasShadow, Source={x:Reference this}, Converter={StaticResource HasShadowConverter}}" HorizontalOptions="Fill" VerticalOptions="Fill">
+        <skiaLottie:SKLottieView Source="loading.json"
+                       HeightRequest="198"
+                       WidthRequest="198"
+                       RepeatCount="-1"
+                       VerticalOptions="Fill"
+                       HorizontalOptions="Fill"/>
+    </Grid>
+   
+</ContentView>

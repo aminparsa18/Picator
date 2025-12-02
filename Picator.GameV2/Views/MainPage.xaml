@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:viewModels="clr-namespace:Picator.Game.ViewModels" 
+             xmlns:controls="clr-namespace:Picator.Game.Controls"
+             xmlns:ads="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"
+             x:Class="Picator.Game.Views.MainPage"
+             x:DataType="viewModels:MainViewModel"
+             BackgroundColor="#ff5995"
+             NavigationPage.HasNavigationBar="False">
+    <ContentPage.BindingContext>
+        <viewModels:MainViewModel />
+    </ContentPage.BindingContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="64" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="80" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <!--Profile Button-->
+        <Image Grid.Column="1" Margin="8" HorizontalOptions="End" WidthRequest="36" HeightRequest="36" Source="user.png">
+            <Image.GestureRecognizers >
+                <TapGestureRecognizer Command="{Binding NavigateToLoginCommand}" />
+            </Image.GestureRecognizers>
+        </Image>
+        <!--Text Logo-->
+        <Image Source="logo_text" Grid.Row="1" Grid.ColumnSpan="2" HorizontalOptions="Center"/>
+        <!--Random Play Menu-->
+        <Frame Grid.Row="2" Margin="24,8,8,16" CornerRadius="24"  Padding="0">
+            <Grid>
+                <Image Source="random_game.png" HorizontalOptions="Fill" Aspect="AspectFill"/>
+                <Grid BackgroundColor="#26000000"/>
+                <Label Text="Play with your friend" Margin="12" TextColor="Black" FontSize="36" FontAttributes="Bold"/>
+            </Grid>
+            <Frame.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding NavigateToStartGameCommand}"/>
+            </Frame.GestureRecognizers>
+        </Frame>
+        <Frame Grid.Row="2" Margin="8,8,24,16" Grid.Column="1" CornerRadius="24" Padding="0">
+            <Grid>
+                <Image Source="new_game.png" Aspect="AspectFill"/>
+                <Grid BackgroundColor="#26000000"/>
+                <Label Text="Join a random game" Margin="12" TextColor="Black" FontSize="36" FontAttributes="Bold"/>
+            </Grid>
+        </Frame>
+        <Frame Grid.Row="3" Margin="24,16" Grid.ColumnSpan="2" CornerRadius="24" Padding="0">
+            <Grid>
+                <Image Source="room.png" Aspect="AspectFill"/>
+                <Grid BackgroundColor="#26000000"/>
+                <Label Text="Rooms" VerticalOptions="Center" HorizontalOptions="Center" Margin="12" TextColor="Black" FontSize="36" FontAttributes="Bold"/>
+            </Grid>
+        </Frame>
+        <Frame Grid.Row="4" Margin="24,16" Grid.ColumnSpan="2" CornerRadius="24" Padding="0">
+            <Grid>
+                <Image Source="instructions.png" Aspect="AspectFill"/>
+                <Grid BackgroundColor="#26000000"/>
+                <Label Text="How to play" HorizontalOptions="Center" VerticalOptions="Center" Margin="12" TextColor="Black" FontSize="36" FontAttributes="Bold"/>
+            </Grid>
+        </Frame>
+        <ads:MTAdView Grid.Row="5" Grid.ColumnSpan="2" AdSize="AnchoredAdaptive" VerticalOptions="End" AdsId="ca-app-pub-3940256099942544/6300978111"/>
+    </Grid>
+</ContentPage>

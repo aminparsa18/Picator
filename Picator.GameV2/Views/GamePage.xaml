@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Picator.Game.Controls"
+             xmlns:converters="clr-namespace:Picator.GameV2.Converters"
+             xmlns:cmp="clr-namespace:Picator.GameV2.Views.Components"
+             xmlns:viewmodels="clr-namespace:Picator.Game.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Picator.Game.Views.GamePage"
+             x:DataType="viewmodels:GameViewModel"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="#ff5995"
+             x:Name="this">
+    <ContentPage.Resources>
+        <toolkit:IsListNullOrEmptyConverter x:Key="IsListNullOrEmptyConverter"/>
+        <converters:GameWordSpaceCharColorConverter x:Key="GameWordSpaceCharColorConverter" />
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <Grid toolkit:StateContainer.CurrentState="{Binding CurrentState}" VerticalOptions="Fill">
+            <toolkit:StateContainer.StateViews>
+                <VerticalStackLayout toolkit:StateView.StateKey="WaitingFriend" VerticalOptions="Center">
+                    <cmp:WaitingView IsBusy="True" />
+                    <Label Text="Waiting for second player to join..." HorizontalOptions="Center" HorizontalTextAlignment="Center" FontSize="24" />
+                </VerticalStackLayout>
+                <VerticalStackLayout toolkit:StateView.StateKey="IntroForDrawer" VerticalOptions="Center" Spacing="12" Margin="24">
+                    <Label HorizontalOptions="Center" HorizontalTextAlignment="Center" VerticalOptions="Center" FontSize="20">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="You have 60 seconds to draw " FontFamily="gumdrop"/>
+                                <Span Text="{Binding CorrectWord}" FontFamily="gumdrop" FontSize="36"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Label Text="Game starts soon..." HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+                <VerticalStackLayout toolkit:StateView.StateKey="IntroForPlayer" VerticalOptions="Center" Margin="24" Spacing="12">
+                    <Label Text="You have 60 seconds to guess what your opponent is drawing..." HorizontalOptions="Center" HorizontalTextAlignment="Center" FontSize="20"/>
+                    <Label Text="Game starts soon..." HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+                <Grid toolkit:StateView.StateKey="DrawerGame" VerticalOptions="Fill" HorizontalOptions="Fill">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <HorizontalStackLayout Margin="8" Spacing="24">
+                        <controls:CircularProgressBar Stroke="20"
+                               Progress="{Binding RemainingSeconds}"
+                               MaxProgress="60"
+                               VerticalOptions="Center" 
+                               WidthRequest="72" HeightRequest="72"
+                               Color="{StaticResource Primary}"/>
+                        <Label Text="{Binding CorrectWord}" HorizontalOptions="Center" VerticalOptions="Center" FontSize="28"/>
+                    </HorizontalStackLayout>
+                    <Border Grid.Row="1" StrokeShape="RoundRectangle 8" Margin="8,12">
+                        <Grid>
+                            <toolkit:DrawingView x:Name="DrawerDrawingView" Lines="{Binding Lines}" HorizontalOptions="Fill" VerticalOptions="Fill" HeightRequest="{Binding WidthRequest, Source={RelativeSource Self}}" BackgroundColor="LightPink"
+                                                 IsMultiLineModeEnabled="True" DrawingLineStarted="DrawingView_DrawingLineStarted" PointDrawnCommand="{Binding DrawingPointAddedCommand}" DrawingLineCompletedCommand="{Binding DrawingLineCompletedCommand}" />
+                            <Label x:Name="DrawHereLbl" Text="DRAW HERE!!" FontSize="30" HorizontalOptions="Center" VerticalOptions="Center" TextColor="{StaticResource Gray300}" IsVisible="{Binding Lines, Converter={StaticResource IsListNullOrEmptyConverter}}" />
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Color Picker -->
+                    <Grid ColumnDefinitions="*,Auto" Grid.Row="2">
+                        <CollectionView ItemsSource="{Binding ColorItems}"
+                                        SelectionMode="Single"
+                                        SelectionChanged="CollectionView_SelectionChanged"
+                                        HorizontalOptions="Fill"
+                                        VerticalOptions="Start"
+                                        HeightRequest="64"
+                                        Margin="8,0">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="12" />
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="Color">
+                                    <Border WidthRequest="36" 
+                                            HeightRequest="36" 
+                                            StrokeShape="RoundRectangle 20"
+                                            Padding="0"
+                                            BackgroundColor="{Binding .}">
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                        <ImageButton Grid.Column="1" Source="rubber.png" CornerRadius="100" WidthRequest="36" VerticalOptions="Start" Aspect="AspectFill" Padding="6" Margin="0,8,8,0" HeightRequest="32" Clicked="ImageButton_Clicked" BackgroundColor="{StaticResource Primary}" />
+                    </Grid>
+
+                    <CollectionView ItemsSource="{Binding LineWidths}"
+                                    SelectionMode="Single"
+                                    SelectionChanged="CollectionView_SelectionChanged_1"
+                                    HorizontalOptions="Fill"
+                                    Margin="8,16"
+                                    Grid.Row="3">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x:Int32">
+                                <BoxView HorizontalOptions="Fill" 
+                                         HeightRequest="{Binding .}" 
+                                         Color="Black"
+                                         CornerRadius="8"
+                                         Margin="0,8">
+                                </BoxView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Grid>
+                <Grid toolkit:StateView.StateKey="PlayerGame" VerticalOptions="Fill" HorizontalOptions="Fill">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <HorizontalStackLayout Padding="8" Spacing="24">
+                        <controls:CircularProgressBar Stroke="20"
+                                                      Progress="{Binding RemainingSeconds}"
+                                                      MaxProgress="60"
+                                                      VerticalOptions="Center" 
+                                                      WidthRequest="72" HeightRequest="72"
+                                                      Color="{StaticResource Primary}"/>
+                        <Label Text="Guess the drawing!" HorizontalOptions="Center" VerticalOptions="Center" FontSize="28"/>
+                    </HorizontalStackLayout>
+                    <toolkit:DrawingView Grid.Row="1" x:Name="PlayerDrawingView" LineColor="Black" HorizontalOptions="Fill" HeightRequest="{Binding WidthRequest, Source={RelativeSource Self}}" BackgroundColor="LightPink"
+                                         LineWidth="5" IsMultiLineModeEnabled="True" Margin="0,12"  />
+                    <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding CorrectWordLetters}" Grid.Row="2" Margin="12" HorizontalOptions="Center">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="x:Char">
+                                <Border Margin="3" StrokeShape="RoundRectangle 8" HeightRequest="36" WidthRequest="36" BackgroundColor="{Binding .,Converter={StaticResource GameWordSpaceCharColorConverter}}" Padding="8">
+                                    <Label Text="{Binding .}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding BindingContext.SelectedCorrectLetterChangedCommand, Source={x:Reference this}}" CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+                    <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Letters}" Grid.Row="3" Margin="12" HorizontalOptions="Center">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="x:Char">
+                                <Border Margin="3" StrokeShape="RoundRectangle 8" HeightRequest="36" WidthRequest="36" BackgroundColor="{StaticResource Primary}" Padding="8">
+                                    <Label Text="{Binding .}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding BindingContext.SelectedLetterChangedCommand, Source={x:Reference this}}" CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+                </Grid>
+            </toolkit:StateContainer.StateViews>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

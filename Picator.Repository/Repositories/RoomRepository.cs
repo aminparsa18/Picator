@@ -1,8 +1,4 @@
 ﻿using Picator.Common.Data.Dtos.Rooms;
-using Picator.Data;
-using Picator.Entities.Models;
-using Picator.Repository.Contracts;
-using System.Data;
 
 namespace Picator.Repository.Repositories;
 
@@ -31,16 +27,9 @@ public sealed class RoomRepository : BaseRepository<Room>, IRoomRepository
     }
 
     /// <inheritdoc/>
-    public Task<IEnumerable<RoomDetailsResult>> GetRoomFast(Guid roomId)
+    public Task<List<RoomDetailsResult>> GetRoomFast(Guid roomId)
     {
-        return Connection.ExecuteQueryAsync<RoomDetailsResult>(@"SELECT TOP(1) CAST((
-            SELECT COUNT(*)
-            FROM[dbo].[RoomMember] AS[r]
-            WHERE[r0].[Id] = [r].[RoomId]) AS smallint) AS[MemberCount], (SELECT COUNT(*)
-            FROM[dbo].[Game] AS[g]
-            WHERE([r0].[Id] = [g].[RoomId]) AND([g].[Status] <> CAST(0 AS smallint))) AS[GamePlayedCount], [r0].[Name],[r0].[Code]
-            FROM[dbo].[Room] AS[r0]
-            WHERE[r0].[Id] = @roomId", new { roomId });
+        return Context.Database.SqlQuery<RoomDetailsResult>($"SELECT TOP(1) CAST((SELECT COUNT(*) FROM[dbo].[RoomMember] AS[r] WHERE[r0].[Id] = [r].[RoomId]) AS smallint) AS[MemberCount], (SELECT COUNT(*) FROM[dbo].[Game] AS[g] WHERE([r0].[Id] = [g].[RoomId]) AND([g].[Status] <> CAST(0 AS smallint))) AS[GamePlayedCount], [r0].[Name],[r0].[Code] FROM[dbo].[Room] AS[r0] WHERE[r0].[Id] = {roomId}").ToListAsync();
     }
 
     /// <inheritdoc/>
@@ -57,21 +46,9 @@ public sealed class RoomRepository : BaseRepository<Room>, IRoomRepository
     }
 
     /// <inheritdoc/>
-    public Task<IEnumerable<RoomDetailsResult>> GetMyRoomsFast(Guid userId)
+    public Task<List<RoomDetailsResult>> GetMyRoomsFast(Guid userId)
     {
-        return Connection.ExecuteQueryAsync<RoomDetailsResult>(@"SELECT [r0].[RoomId] AS [Id], CAST((
-            SELECT COUNT(*)
-            FROM [dbo].[RoomMember] AS [r]
-            WHERE [r1].[Id] = [r].[RoomId]) AS smallint) AS [MemberCount], (
-            SELECT COUNT(*)
-            FROM [dbo].[Game] AS [g]
-            WHERE ([r1].[Id] = [g].[RoomId]) AND ([g].[Status] <> CAST(0 AS smallint))) AS [GamePlayedCount],[r1].[Code],[r1].[Name], CASE
-            WHEN [r1].[UserId] = @userId THEN CAST(1 AS bit)
-            ELSE CAST(0 AS bit)
-            END AS [IsAdmin]
-            FROM [dbo].[RoomMember] AS [r0]
-            INNER JOIN [dbo].[Room] AS [r1] ON [r0].[RoomId] = [r1].[Id]
-            WHERE [r0].[UserId] = @userId ", new { userId });
+        return Context.Database.SqlQuery<RoomDetailsResult>($"SELECT [r0].[RoomId] AS [Id], CAST((SELECT COUNT(*) FROM [dbo].[RoomMember] AS [r] WHERE [r1].[Id] = [r].[RoomId]) AS smallint) AS [MemberCount], (SELECT COUNT(*) FROM [dbo].[Game] AS [g] WHERE ([r1].[Id] = [g].[RoomId]) AND ([g].[Status] <> CAST(0 AS smallint))) AS [GamePlayedCount],[r1].[Code],[r1].[Name], CASE WHEN [r1].[UserId] = @userId THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END AS [IsAdmin] FROM [dbo].[RoomMember] AS [r0] INNER JOIN [dbo].[Room] AS [r1] ON [r0].[RoomId] = [r1].[Id] WHERE [r0].[UserId] = {userId}").ToListAsync();
     }
 
     /// <inheritdoc/>
@@ -81,18 +58,12 @@ public sealed class RoomRepository : BaseRepository<Room>, IRoomRepository
     /// <inheritdoc/>
     public Task<Guid?> IsJoinedFast(Guid userId, Guid roomId)
     {
-        return Connection.ExecuteScalarAsync<Guid?>(
-            @"SELECT TOP(1) [r].[Id]
-                  FROM [dbo].[RoomMember] AS [r]
-                  WHERE ([r].[UserId] = @userId) AND ([r].[RoomId] = @roomId)", new { userId, roomId });
+        return Context.Database.SqlQuery<Guid?>($"SELECT TOP(1) [r].[Id] FROM [dbo].[RoomMember] AS [r] WHERE ([r].[UserId] = {userId}) AND ([r].[RoomId] = {roomId})").FirstOrDefaultAsync();
     }
 
     /// <inheritdoc/>
     public Task<Guid?> GetByCode(string code)
     {
-        return Connection.ExecuteScalarAsync<Guid?>(
-            @"SELECT TOP(1) [r].[Id]
-                  FROM [dbo].[Room] AS [r]
-                  WHERE ([r].[Code] = @code)", new { code });
+        return Context.Database.SqlQuery<Guid?>($"SELECT TOP(1) [r].[Id] FROM [dbo].[Room] AS [r] WHERE ([r].[Code] = {code})").FirstOrDefaultAsync();
     }
 }

@@ -13,7 +13,7 @@ public interface IRoomRepository : IBaseRepository<Room>
     /// </summary>
     /// <param name="roomId">Room key identifier.</param>
     /// <returns>Room details.</returns>
-    Task<IEnumerable<RoomDetailsResult>> GetRoomFast(Guid roomId);
+    Task<List<RoomDetailsResult>> GetRoomFast(Guid roomId);
 
     /// <summary>
     /// Retrieves room details.
@@ -34,7 +34,7 @@ public interface IRoomRepository : IBaseRepository<Room>
     /// </summary>
     /// <param name="userId">User key identifier.</param>
     /// <returns>List of user rooms.</returns>
-    Task<IEnumerable<RoomDetailsResult>> GetMyRoomsFast(Guid userId);
+    Task<List<RoomDetailsResult>> GetMyRoomsFast(Guid userId);
 
     /// <summary>
     /// Retrievs room member if is joined in room.

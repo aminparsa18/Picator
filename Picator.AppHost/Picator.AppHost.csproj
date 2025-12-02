@@ -1,0 +1,24 @@
+﻿<Project Sdk="Aspire.AppHost.Sdk/13.0.0">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAspireHost>true</IsAspireHost>
+    <UserSecretsId>e5bf973a-c7ab-4f69-8a3b-9e378e630b94</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Picator.Api\Picator.Api.csproj" />
+    <ProjectReference Include="..\Picator.ExternalAuth\Picator.ExternalAuth.csproj" />
+    <ProjectReference Include="..\Picator.Invitement\Picator.Invitement\Picator.Invitement.csproj" />
+    <ProjectReference Include="..\Picator.Realtime\Picator.Realtime.csproj" />
+    <ProjectReference Include="..\TempAPITest\TempAPITest.csproj" />
+  </ItemGroup>
+
+</Project>

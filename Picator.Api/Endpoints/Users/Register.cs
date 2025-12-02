@@ -1,6 +1,7 @@
 ﻿using FastEndpoints;
 using Picator.Api.Constants;
 using Picator.Common.Data.Dtos.Api;
+using Picator.Common.Data.Dtos.Api.Auth;
 using Picator.Common.Data.Dtos.Users;
 using Picator.Service.Contracts.Users;
 
@@ -22,10 +23,10 @@ public class Register : Endpoint<RegisterUserRequest, ApiResult>
         {
             s.Summary = "Registers a new user";
         });
-        Description(d => d.Produces(200).WithTags(EndpointsTags.Users));
+        Description(d => d.Accepts<UserLoginRequest>("application/x-memorypack").Produces<AuthResult>(200, "application/x-memorypack").WithTags(EndpointsTags.Users));
         AllowAnonymous();
     }
 
     public override async Task HandleAsync(RegisterUserRequest request, CancellationToken ct) =>
-        await SendMemoryPackAsync(await _userRegisterService.Register(request), cancellation: ct);
+        await Send.OkAsync(await _userRegisterService.Register(request), cancellation: ct);
 }

@@ -1,5 +1,4 @@
 ﻿using Picator.Data.Dtos.User;
-using Picator.Entities.Models;
 
 namespace Picator.Repository.Contracts;
 
@@ -13,7 +12,7 @@ public interface IRefreshTokenRepository : IBaseRepository<RefreshToken>
     /// </summary>
     /// <param name="refreshToken">Refresh token.</param>
     /// <returns>List of tokens.</returns>
-    Task<IEnumerable<RefreshTokenDetails>> GetByToken(string refreshToken);
+    Task<List<RefreshTokenDetails>> GetByToken(string refreshToken);
 
     /// <summary>
     /// Update flag for token to be used.

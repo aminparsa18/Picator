@@ -12,5 +12,5 @@ public interface IEmailSender
     /// <param name="subject">Email subject.</param>
     /// <param name="message">Email content.</param>
     /// <returns></returns>
-    Task SendEmailAsync(string email, string subject, string message);
+    Task SendEmailAsync(string email, string subject, string message, bool isHtml = false);
 }

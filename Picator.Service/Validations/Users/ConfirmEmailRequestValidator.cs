@@ -8,6 +8,6 @@ public class ConfirmEmailRequestValidator : AbstractValidator<ConfirmEmailReques
     public ConfirmEmailRequestValidator()
     {
         RuleFor(x => x.Email).NotEmpty();
-        RuleFor(x => x.Token).NotEmpty().Length(6);
+        RuleFor(x => x.Token).NotEmpty();
     }
 }

@@ -15,7 +15,7 @@ public class AvatarService : IAvatarService
 
     public async Task<IEnumerable<AvatarResult>> GetAll()
     {
-        IEnumerable<AvatarResult> avatars = await _unitOfWork.Avatar.GetAllDtosFast();
+        IEnumerable<AvatarResult> avatars = await _unitOfWork.Avatar.GetAllDtos();
 
         // Set full uri path on avatar name.
         foreach (AvatarResult avatar in avatars)

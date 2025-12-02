@@ -1,0 +1,32 @@
+﻿@page "/invitation/{code}"
+
+@inject NavigationManager NavigationManager
+
+<div style="max-width:500px; margin:0 auto; background:#ffffff; padding:24px; border-radius:8px;">
+    <h2 style="margin-top:0;">Invited by kambiz to play this shit</h2>
+    <p>If you're down to play with this chaghal click the button below</p>
+    <p style="text-align:center; margin:32px 0;">
+        <a href="@FormatAppLink(Code)"
+           style="background-color:#2563eb; color:#ffffff; text-decoration:none; padding:12px 24px; border-radius:999px; display:inline-block;">
+            Let's Play!
+        </a>
+    </p>
+    <p>If the button doesn't work, copy and paste this link into your browser:</p>
+    <p style="word-break:break-all; font-size:12px;">
+        <a href="@FormatAppLink(Code)">@FormatAppLink(Code)</a>
+    </p>
+</div>
+
+@code {
+    [Parameter]
+    public string? Code { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? Player { get; set; }
+
+    public string FormatAppLink(string? code)
+    {
+        return $"app://inv.pctor/invitation?code={code}";
+    }
+}

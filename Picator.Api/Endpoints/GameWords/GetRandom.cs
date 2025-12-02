@@ -3,18 +3,16 @@ using Picator.Api.Constants;
 using Picator.Common.Data.Dtos.Api;
 using Picator.Entities.Models;
 using Picator.Service.Contracts.GameWords;
-using Picator.Repository;
 
 namespace Picator.Api.Endpoints.GameWords;
 
-public class GetRandom : EndpointWithoutRequest<ApiResult<List<string>>>
+public class GetRandom : EndpointWithoutRequest<ApiResult<string>>
 {
     private readonly IGameWordsService _gameWordsService;
-    private readonly IUnitOfWork _unitOfWork;
-    public GetRandom(IGameWordsService gameWordsService, IUnitOfWork unitOfWork)
+
+    public GetRandom(IGameWordsService gameWordsService)
     {
         _gameWordsService = gameWordsService;
-        _unitOfWork = unitOfWork;
     }
 
     public override void Configure()
@@ -31,7 +29,7 @@ public class GetRandom : EndpointWithoutRequest<ApiResult<List<string>>>
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var words = await _gameWordsService.GetRandomWords();
-        await SendMemoryPackAsync(words, cancellation: ct);
+        var words = await _gameWordsService.GetRandomWord();
+        await Send.OkAsync(words, cancellation: ct);
     }
 }

@@ -1,9 +1,73 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Picator.Data;
+using Picator.Entities.Identity;
+using Picator.ExternalAuth.Services;
+using Picator.ExternalAuth.Services.Token;
+using Picator.Repository;
+using System.Data;
+using System.Net;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+// Add service defaults & Aspire components.
+builder.AddServiceDefaults();
+
+// Add services to the container.
+builder.Services.AddProblemDetails();
+
+builder.AddSqlServerDbContext<ApplicationDbContext>("PicatorDB");
+builder.Services.AddTransient<IDbConnection>(sp => new SqlConnection(builder.Configuration.GetConnectionString("PicatorContext")));
+
+builder.Services.AddIdentity<User, Role>(
+           options =>
+           {
+               //Configure Password
+               options.Password.RequireDigit = true;
+               options.Password.RequiredLength = 6;
+               options.Password.RequiredUniqueChars = 1;
+               options.Password.RequireLowercase = false;
+               options.Password.RequireNonAlphanumeric = false;
+               options.Password.RequireUppercase = false;
+               options.User.RequireUniqueEmail = true;
+               options.SignIn.RequireConfirmedEmail = true;
+               options.SignIn.RequireConfirmedPhoneNumber = false;
+
+               options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(20);
+               options.Lockout.MaxFailedAccessAttempts = 3;
+           })
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddErrorDescriber<ApplicationIdentityErrorDescriber>()
+        .AddDefaultTokenProviders();
+
+builder.Services.AddTransient<ITokenService, TokenService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IExternalLoginService, ExternalLoginService>();
+
+// configure strongly typed settings objects
+var appSettingsSection = builder.Configuration.GetSection("Jwt");
+builder.Services.Configure<Jwt>(appSettingsSection);
+
+// configure jwt authentication
+var appSettings = appSettingsSection.Get<Jwt?>();
+var key = Encoding.ASCII.GetBytes(appSettings?.Secret);
+var tokenValidationParameters = new TokenValidationParameters
+{
+    ValidateIssuerSigningKey = true,
+    IssuerSigningKey = new SymmetricSecurityKey(key),
+    ValidateIssuer = false,
+    ValidateAudience = false,
+    RequireExpirationTime = false,
+    ValidateLifetime = true
+};
+builder.Services.AddSingleton(tokenValidationParameters);
 
 builder.Services.AddAuthentication(o =>
 {
@@ -18,18 +82,53 @@ builder.Services.AddAuthentication(o =>
     {
         g.ClientId = "890605411237-srmckel8r27meeu680c1b1qgnl3urkr1.apps.googleusercontent.com";
         g.ClientSecret = "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";
-        //g.SaveTokens = true;
+        g.SaveTokens = true;
     });
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 app.UseRouting();
 
+app.UseCookiePolicy(new CookiePolicyOptions()
+{
+    MinimumSameSitePolicy = SameSiteMode.Lax
+});
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
+app.MapGet("/mobileauth/{scheme}", async ([FromRoute] string scheme, [FromServices] IExternalLoginService _userLoginService, HttpContext ctx) =>
 {
-    endpoints.MapControllers();
-});
+    var auth = await ctx.AuthenticateAsync(scheme);
+    if (!auth.Succeeded || auth?.Principal == null || !auth.Principal.Identities.Any(id => id.IsAuthenticated))
+    {
+        // Not authenticated, challenge
+        await ctx.ChallengeAsync(scheme);
+    }
+    else
+    {
+        var claims = auth.Principal.Identities.FirstOrDefault()?.Claims;
+        var email = claims?.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Email)?.Value;
+        var name = claims?.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name)?.Value;
+        var authResult = await _userLoginService.Login(email);
+        // Get parameters to send back to the callback
+        var qs = new Dictionary<string, string>
+                {
+                    { "name", name },
+                    { "email", email },
+                    { "token", authResult.Token},
+                    { "refresh_token", authResult.RefreshToken},
+                    {"has_name", authResult.HasName.ToString() }
+                };
+        // Build the result url
+        var url = "app://auth.pctor?" + string.Join(
+            "&",
+            qs.Where(kvp => !string.IsNullOrEmpty(kvp.Value) && kvp.Value != "-1")
+            .Select(kvp => $"{WebUtility.UrlEncode(kvp.Key)}={WebUtility.UrlEncode(kvp.Value)}"));
 
+        // Redirect to final url
+        ctx.Response.Redirect(url);
+    }
+});
 app.Run();

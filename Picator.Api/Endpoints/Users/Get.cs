@@ -30,6 +30,6 @@ public class Get : EndpointWithoutRequest<ApiResult<UserDetailsResult>>
     public override async Task HandleAsync(CancellationToken ct)
     {
         var userId = User.FindFirstValue(ClaimTypes.Name);
-        await SendMemoryPackAsync(await _userService.GetDetails(userId), cancellation: ct);
+        await Send.OkAsync(await _userService.GetDetails(userId), cancellation: ct);
     }
 }

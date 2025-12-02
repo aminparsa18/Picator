@@ -26,5 +26,5 @@ public class Refresh : Endpoint<RefreshTokenRequest, AuthResult>
     }
 
     public override async Task HandleAsync(RefreshTokenRequest request, CancellationToken ct) =>
-        await SendMemoryPackAsync(await _refreshTokenService.Refresh(request), cancellation: ct);
+        await Send.OkAsync(await _refreshTokenService.Refresh(request), cancellation: ct);
 }

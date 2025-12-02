@@ -3,8 +3,6 @@ using Picator.Common.Data.Dtos.Data.Dtos.Api;
 using Picator.Entities.Models;
 using Picator.Repository;
 using Picator.Service.Contracts.Rooms;
-using System;
-using System.Threading.Tasks;
 
 namespace Picator.Service.Services.Rooms;
 
@@ -25,7 +23,7 @@ public class RoomJoinService : IRoomJoinService
             return new ApiResult<string>
             {
                 IsSuccess = false,
-                Errors = new[] { "No such room exist" },
+                Errors = ["No such room exist"],
                 StatusCode = ApiResultStatusCode.NotFound
             };
         }
@@ -34,11 +32,11 @@ public class RoomJoinService : IRoomJoinService
             return new ApiResult<string>
             {
                 IsSuccess = false,
-                Errors = new[] { "You are already joined" },
+                Errors = ["You are already joined"],
                 StatusCode = ApiResultStatusCode.Conflict,
                 Data = roomId.ToString()
             };
-        await _unitOfWork.RoomMember.AddFast(new RoomMember()
+        await _unitOfWork.RoomMember.Add(new RoomMember()
         {
             RoomId = roomId.Value,
             UserId = userId
@@ -52,7 +50,7 @@ public class RoomJoinService : IRoomJoinService
 
     public async Task<ApiResult> JoinById(Guid userId, Guid id)
     {
-        await _unitOfWork.RoomMember.AddFast(new RoomMember()
+        await _unitOfWork.RoomMember.Add(new RoomMember()
         {
             UserId = userId,
             RoomId = id

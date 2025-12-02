@@ -16,7 +16,7 @@ public class ChatHub : Hub
     public async Task SendMessage(string groupName, string msg, string type, string sender)
     {
         await Clients.OthersInGroup(groupName).SendAsync("MessageReceived", msg, type, sender);
-        await _unitOfWork.GameMessage.AddFast(new GameMessage()
+        await _unitOfWork.GameMessage.Add(new GameMessage()
         {
             Content = msg,
             GameId = Guid.Parse(groupName),

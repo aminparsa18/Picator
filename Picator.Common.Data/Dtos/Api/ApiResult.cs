@@ -17,7 +17,7 @@ public partial class ApiResult
     /// <summary>
     /// Api result status code.
     /// </summary>
-    public ApiResultStatusCode StatusCode { get; set; }
+    public ApiResultStatusCode StatusCode { get; set; } = ApiResultStatusCode.Success;
 
     /// <summary>
     /// Api result errrors.

@@ -1,18 +1,19 @@
-﻿using Picator.Common.Data.Dtos.Api;
+﻿using Microsoft.EntityFrameworkCore;
+using Picator.Common.Data.Dtos.Api;
 using Picator.Common.Data.Dtos.Data.Dtos.Api;
 using Picator.Common.Data.Dtos.Users;
+using Picator.Data;
 using Picator.Repository;
 using Picator.Service.Contracts.Users;
-using RepoDb;
-using System.Data;
 
 namespace Picator.Service.Services.Users;
+
 public class UserService : IUserService
 {
-    private readonly IDbConnection _dbConnection;
+    private readonly ApplicationDbContext _dbConnection;
     private readonly IUnitOfWork _unitOfWork;
 
-    public UserService(IDbConnection dbConnection, IUnitOfWork unitOfWork)
+    public UserService(ApplicationDbContext dbConnection, IUnitOfWork unitOfWork)
     {
         _dbConnection = dbConnection;
         _unitOfWork = unitOfWork;
@@ -20,19 +21,16 @@ public class UserService : IUserService
 
     public async Task<ApiResult<UserDetailsResult>> GetDetails(string userId)
     {
-        var users = await _dbConnection.ExecuteQueryAsync<UserDetailsResult>(
-            "SELECT TOP 1 [Image],[Score],[DisplayName],[CountryCode] FROM [Users] WHERE Id = @id",
-            new { id = userId });
-        if (!users.Any())
+        var user = await _dbConnection.Database.SqlQuery<UserDetailsResult>($"SELECT TOP 1 [Avatar],[Score],[DisplayName],[Email] FROM [Users] WHERE Id = {userId}").FirstOrDefaultAsync();
+        if (user == null)
         {
             return new ApiResult<UserDetailsResult>()
             {
                 StatusCode = ApiResultStatusCode.Unauthorized,
-                Errors = new[] { "User does not exist" }
+                Errors = ["User does not exist"]
             };
         }
-        var user = users.FirstOrDefault();
-        user.Avatar = string.Join(Data.Constants.BlobStorageEndpoint, user.Avatar);
+        user.Avatar = string.Join(Constants.BlobStorageEndpoint, user.Avatar);
         return new ApiResult<UserDetailsResult>()
         {
             IsSuccess = true,

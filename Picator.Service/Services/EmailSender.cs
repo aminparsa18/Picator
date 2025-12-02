@@ -1,28 +1,31 @@
 ﻿using Picator.Service.Contracts;
 using MailKit.Net.Smtp;
 using MimeKit;
-using System.Threading.Tasks;
 
 namespace Picator.Service.Services;
 
 public class EmailSender : IEmailSender
 {
-    public async Task SendEmailAsync(string email, string subject, string msg)
+    public async Task SendEmailAsync(string email, string subject, string msg, bool isHtml = false)
     {
         var message = new MimeMessage();
-        //    message.From.Add (new MailboxAddress (_writableLocations.Value.EmailSetting.Sender, _writableLocations.Value.EmailSetting.Email));
+        message.From.Add(new MailboxAddress(subject, "picator.technical@gmail.com"));
         message.To.Add(new MailboxAddress("receiver", email));
         message.Subject = subject;
 
-        message.Body = new TextPart("plain")
+        if (isHtml)
         {
-            Text = msg
-        };
+            message.Body = new TextPart("html") { Text = msg };
+        }
+        else
+        {
+            message.Body = new TextPart("plain") { Text = msg };
+        }
 
         using var client = new SmtpClient();
-        //    await client.ConnectAsync (_writableLocations.Value.EmailSetting.Host, _writableLocations.Value.EmailSetting.Port, true);
+        await client.ConnectAsync("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
         // Note: only needed if the SMTP server requires authentication
-        //   await client.AuthenticateAsync(_writableLocations.Value.EmailSetting.Username, _writableLocations.Value.EmailSetting.Password);
+        await client.AuthenticateAsync("picator.technical@gmail.com", "zsgvknuufsqtwqjv");
         await client.SendAsync(message);
         await client.DisconnectAsync(true);
     }
