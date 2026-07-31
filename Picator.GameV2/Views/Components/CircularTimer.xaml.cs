@@ -173,17 +173,19 @@ public partial class CircularTimer : ContentView
         {
             Style = SKPaintStyle.Fill,
             Color = TextColor.ToSKColor(),
-            TextSize = FontSize,
             IsAntialias = true,
-            TextAlign = SKTextAlign.Center,
-            Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright)
         };
+
+        textFont = new SKFont(
+            SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright),
+            (float)FontSize);
     }
 
     private SKRect rect;
     private SKPaint paint;
     private SKPaint paintBackground;
     private SKPaint textPaint;
+    private SKFont textFont;
     private const int padding = 2;
     private readonly Stopwatch stopwatch = new();
     private TimeSpan remainingTime;
@@ -265,11 +267,10 @@ public partial class CircularTimer : ContentView
         // Adjust for text baseline
         var textBounds = new SKRect();
 
-        var font = new SKFont();
-        font.MeasureText(timeText, out textBounds, textPaint);
+        textFont.MeasureText(timeText, out textBounds, textPaint);
         var textY = centerY - textBounds.MidY;
 
-        canvas.DrawText(timeText, centerX, textY, SKTextAlign.Center, font, textPaint);
+        canvas.DrawText(timeText, centerX, textY, SKTextAlign.Center, textFont, textPaint);
 
         //// Continue animation if running
         //if (IsRunning && remainingTime.TotalSeconds > 0)

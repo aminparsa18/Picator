@@ -27,7 +27,7 @@ public static class MauiProgram
             .AddAudio()
             .UseSkiaSharp()
             .UseMauiCommunityToolkit()
-            .UseMauiCommunityToolkitMediaElement()
+            .UseMauiCommunityToolkitMediaElement(isAndroidForegroundServiceEnabled: false)
             .UseMauiMTAdmob()
             .ConfigureFonts(fonts =>
             {

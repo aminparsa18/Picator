@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Contains NuGet feed credentials - do not commit
+Picator.Api/nuget.config
