@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Microsoft.IdentityModel.Tokens;
 using Picator.Data;
 using Picator.Entities.Identity;
@@ -23,8 +23,8 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddProblemDetails();
 
-builder.AddSqlServerDbContext<ApplicationDbContext>("PicatorDB");
-builder.Services.AddTransient<IDbConnection>(sp => new SqlConnection(builder.Configuration.GetConnectionString("PicatorContext")));
+builder.AddNpgsqlDbContext<ApplicationDbContext>("PicatorDB");
+builder.Services.AddTransient<IDbConnection>(sp => new NpgsqlConnection(builder.Configuration.GetConnectionString("PicatorContext")));
 
 builder.Services.AddIdentity<User, Role>(
            options =>

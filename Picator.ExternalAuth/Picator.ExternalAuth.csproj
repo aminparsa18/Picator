@@ -8,9 +8,10 @@
     <EnableSdkContainerSupport>true</EnableSdkContainerSupport>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="13.4.6" />
+    <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.4.6" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Picator.Repository\Picator.Repository.csproj" />

@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -36,8 +36,8 @@ public static class ServiceCollectionExtentions
     public static IServiceCollection ConfigureDatabaseConnection(this WebApplicationBuilder builder, IConfiguration configuration)
     {
         Barrel.ApplicationId = "PicatorAPI";
-        builder.AddSqlServerDbContext<ApplicationDbContext>("PicatorDB");
-        builder.Services.AddTransient<IDbConnection>(sp => new SqlConnection(builder.Configuration.GetConnectionString("PicatorContext")));
+        builder.AddNpgsqlDbContext<ApplicationDbContext>("PicatorDB");
+        builder.Services.AddTransient<IDbConnection>(sp => new NpgsqlConnection(builder.Configuration.GetConnectionString("PicatorContext")));
 
         //  services.AddHangfire(x => x.UseSqlServerStorage(configuration.GetConnectionString("HangfireContext")));
         // services.AddHangfireServer();

@@ -12,7 +12,7 @@ public class BaseEntityTypeConfiguration<TBase> : IEntityTypeConfiguration<TBase
 {
     public virtual void Configure(EntityTypeBuilder<TBase> builder)
     {
-        builder.Property(p => p.CreatedDate).HasColumnType("datetime2").HasDefaultValueSql("(getDate())");
-        builder.Property(p => p.ModifiedDate).HasColumnType("datetime2").HasDefaultValueSql("(getDate())");
+        builder.Property(p => p.CreatedDate).HasColumnType("timestamp with time zone").HasDefaultValueSql("now()");
+        builder.Property(p => p.ModifiedDate).HasColumnType("timestamp with time zone").HasDefaultValueSql("now()");
     }
 }

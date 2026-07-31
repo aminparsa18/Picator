@@ -1,5 +1,5 @@
 using FluentValidation;
-using Microsoft.Data.SqlClient;
+using Npgsql;
 using Picator.Data;
 using Picator.Repository;
 using Picator.Service.Contracts.Games;
@@ -21,8 +21,8 @@ Log.Logger = new LoggerConfiguration()
                     .CreateLogger();
 
 builder.Host.UseSerilog();
-builder.AddSqlServerDbContext<ApplicationDbContext>("PicatorDB");
-builder.Services.AddTransient<IDbConnection>(sp => new SqlConnection(builder.Configuration.GetConnectionString("PicatorContext")));
+builder.AddNpgsqlDbContext<ApplicationDbContext>("PicatorDB");
+builder.Services.AddTransient<IDbConnection>(sp => new NpgsqlConnection(builder.Configuration.GetConnectionString("PicatorContext")));
 builder.Services.AddScoped<IGameCreateService, GameCreateService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddValidatorsFromAssemblyContaining<UserLoginRequestValidator>();

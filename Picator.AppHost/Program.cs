@@ -1,17 +1,17 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var sqlServerPassword = builder.AddParameter("DbPassword", true);
+var dbPassword = builder.AddParameter("DbPassword", true);
 
-var sqlServer = builder.AddSqlServer("sql", sqlServerPassword)
+var postgres = builder.AddPostgres("sql", password: dbPassword)
     .WithDataVolume()
     .WithLifetime(ContainerLifetime.Persistent)
     .AddDatabase("PicatorDB");
 
-var apiService =builder.AddProject<Projects.Picator_Api>("picator-api").WithReference(sqlServer).WaitFor(sqlServer);
+var apiService =builder.AddProject<Projects.Picator_Api>("picator-api").WithReference(postgres).WaitFor(postgres);
 
-builder.AddProject<Projects.Picator_Realtime>("picator-realtime").WithReference(sqlServer).WaitFor(sqlServer);
+builder.AddProject<Projects.Picator_Realtime>("picator-realtime").WithReference(postgres).WaitFor(postgres);
 
-builder.AddProject<Projects.Picator_ExternalAuth>("picator-externalauth").WithReference(sqlServer).WaitFor(sqlServer);
+builder.AddProject<Projects.Picator_ExternalAuth>("picator-externalauth").WithReference(postgres).WaitFor(postgres);
 
 builder.AddProject<Projects.TempAPITest>("tempapitest").WithReference(apiService).WaitFor(apiService);
 
