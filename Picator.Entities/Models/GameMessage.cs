@@ -25,9 +25,29 @@ public sealed class GameMessage : BaseEntity
     public string Content { get; set; } = default!;
 
     /// <summary>
+    /// Round key identifier, set when this message is a guess submitted during a round.
+    /// </summary>
+    public Guid? RoundId { get; set; }
+
+    /// <summary>
+    /// Indicates whether this message is a correct guess.
+    /// </summary>
+    public bool IsCorrectGuess { get; set; }
+
+    /// <summary>
+    /// Points awarded for this guess.
+    /// </summary>
+    public int PointsAwarded { get; set; }
+
+    /// <summary>
     /// Game.
     /// </summary>
     public Game? Game { get; set; }
+
+    /// <summary>
+    /// Round this message belongs to, if it is a guess.
+    /// </summary>
+    public Round? Round { get; set; }
 
     /// <summary>
     /// User.

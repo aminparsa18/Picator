@@ -22,6 +22,7 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, Guid, UserClai
     public virtual DbSet<RefreshToken> RefreshToken { get; set; }
     public virtual DbSet<Room> Room { get; set; }
     public virtual DbSet<RoomMember> RoomMember { get; set; }
+    public virtual DbSet<Round> Round { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

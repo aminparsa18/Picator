@@ -23,6 +23,14 @@ public class GameMessageMapping : BaseEntityTypeConfiguration<GameMessage>
             .HasForeignKey(d => d.UserId)
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_GameMessage_User");
+
+        builder.HasOne(d => d.Round)
+            .WithMany()
+            .HasForeignKey(d => d.RoundId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_GameMessage_Round");
+
         builder.HasIndex(i => i.GameId);
 
         base.Configure(builder);

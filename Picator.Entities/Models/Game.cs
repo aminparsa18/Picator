@@ -1,4 +1,6 @@
-﻿namespace Picator.Entities.Models;
+﻿using Picator.Common.Data.Enums;
+
+namespace Picator.Entities.Models;
 
 /// <summary>
 /// Game.
@@ -11,19 +13,24 @@ public sealed class Game : BaseEntity
     public Guid? RoomId { get; set; }
 
     /// <summary>
-    /// Game capacity.
-    /// </summary>
-    public short? Capacity { get; set; }
-
-    /// <summary>
     /// Word.
     /// </summary>
     public string GameCode { get; set; } = default!;
 
     /// <summary>
-    /// Word.
+    /// Game status.
     /// </summary>
-    public string? Word { get; set; }
+    public GameStatus Status { get; set; }
+
+    /// <summary>
+    /// Number of times each player draws.
+    /// </summary>
+    public int RoundsPerPlayer { get; set; }
+
+    /// <summary>
+    /// Duration of each round, in seconds.
+    /// </summary>
+    public int RoundDurationSeconds { get; set; }
 
     /// <summary>
     /// Room.
@@ -39,4 +46,9 @@ public sealed class Game : BaseEntity
     /// Collection of game messages.
     /// </summary>
     public ICollection<GameMessage>? GameMessage { get; set; }
+
+    /// <summary>
+    /// Collection of rounds.
+    /// </summary>
+    public ICollection<Round>? Round { get; set; }
 }

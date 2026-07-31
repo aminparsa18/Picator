@@ -2,6 +2,7 @@
 using Picator.Common.Data.Dtos.Api;
 using Picator.Common.Data.Dtos.Data.Dtos.Api;
 using Picator.Common.Data.Dtos.Games;
+using Picator.Common.Data.Enums;
 using Picator.Entities.Models;
 using Picator.Repository;
 using Picator.Service.Contracts.Games;
@@ -54,9 +55,19 @@ public class GameCreateService : IGameCreateService
         var word = await _unitOfWork.GameWord.GetRandomWord(randomIndex);
         var game = new Game
         {
-            Capacity = 2,
-            Word = word,
-            GameCode = gameCode
+            GameCode = gameCode,
+            Status = GameStatus.InProgress,
+            RoundsPerPlayer = 1,
+            Round = new List<Round>
+            {
+                new()
+                {
+                    RoundNumber = 1,
+                    Word = word!,
+                    Status = RoundStatus.Active,
+                    StartedAt = DateTime.UtcNow,
+                }
+            }
         };
 
         await _unitOfWork.Game.Add(game);

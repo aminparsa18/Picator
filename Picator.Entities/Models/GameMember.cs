@@ -24,6 +24,11 @@ public sealed class GameMember : BaseEntity
     public PlayerStatus Status { get; set; }
 
     /// <summary>
+    /// Points accumulated within this game.
+    /// </summary>
+    public int Score { get; set; }
+
+    /// <summary>
     /// Game.
     /// </summary>
     public Game? Game { get; set; }
