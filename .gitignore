@@ -363,3 +363,9 @@ MigrationBackup/
 FodyWeavers.xsd
 # Contains NuGet feed credentials - do not commit
 Picator.Api/nuget.config
+
+# graphify skill generated output/cache - not source
+graphify-out/
+
+# macOS
+.DS_Store
