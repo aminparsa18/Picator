@@ -16,7 +16,6 @@
                            Text="{Binding Text, Source={x:Reference this}}"
                            TextColor="{StaticResource InkStrong}"
                            BackgroundColor="Transparent"
-                           FontFamily="gumdrop"
                            Focused="EntryControl_Focused"
                            Unfocused="EntryControl_Unfocused">
                     </Entry>

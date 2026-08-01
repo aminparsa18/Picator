@@ -49,7 +49,6 @@
 		<None Remove="pc.mp3" />
 		<None Remove="picator.mp3" />
 		<None Remove="Platforms\Android\Resources\xml\file_paths.xml" />
-		<None Remove="Resources\Fonts\gumdrop.ttf" />
 		<None Remove="Resources\Images\instructions.png" />
 		<None Remove="Resources\Images\logo.png" />
 		<None Remove="Resources\Images\logo_text.png" />

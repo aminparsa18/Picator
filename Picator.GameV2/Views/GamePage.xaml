@@ -26,8 +26,8 @@
                     <Label HorizontalOptions="Center" HorizontalTextAlignment="Center" VerticalOptions="Center" FontSize="20">
                         <Label.FormattedText>
                             <FormattedString>
-                                <Span Text="You have 60 seconds to draw " FontFamily="gumdrop"/>
-                                <Span Text="{Binding CorrectWord}" FontFamily="gumdrop" FontSize="36"/>
+                                <Span Text="You have 60 seconds to draw " />
+                                <Span Text="{Binding CorrectWord}" FontSize="36"/>
                             </FormattedString>
                         </Label.FormattedText>
                     </Label>

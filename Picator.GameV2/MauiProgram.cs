@@ -31,7 +31,12 @@ public static class MauiProgram
             .UseMauiMTAdmob()
             .ConfigureFonts(fonts =>
             {
-                fonts.AddFont("gumdrop.ttf", "gumdrop");
+                fonts.AddFont("Kalam-Bold.ttf", "KalamBold");
+                fonts.AddFont("Kalam-Regular.ttf", "KalamRegular");
+                fonts.AddFont("Kalam-Light.ttf", "KalamLight");
+                fonts.AddFont("PatrickHand-Regular.ttf", "PatrickHandRegular");
+                fonts.AddFont("SpaceMono-Regular.ttf", "SpaceMonoRegular");
+                fonts.AddFont("SpaceMono-Bold.ttf", "SpaceMonoBold");
             }).ConfigureMauiHandlers(handlers =>
             {
 #if ANDROID
