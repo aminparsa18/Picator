@@ -28,11 +28,7 @@ Early-stage. The domain model (this doc's focus) is in reasonable shape; the ser
 
 ## Game strategy
 
-**Joining:** a `Room` is a persistent lobby — either a private, friend-invited group (shared via `Room.Code`) or a public matchmaking pool. Players join via `RoomMember` rows, so more than two friends joining is just multiple `RoomMember` records against the same `Room`. Quick/random matchmaking reuses the same mechanism: the server keeps a small pool of public, system-owned rooms that auto-fill and auto-start rather than building a separate queue. Rooms support rematches — a `Room` stays alive after a `Game` ends so the same group can start another one.
-
-**Playing:** a `Game` is one match instance, made up of a sequence of `Round`s. Each `Round` is one player's turn: a word is picked randomly (from the `GameWord` bank, no persisted relationship back to `Game` — it's a flat pool, snapshotted as text onto the `Round`), that player draws, and everyone else guesses. A round ends on a timer, or early once everyone still playing has guessed correctly.
-
-**Scoring:** guesses ride the existing chat channel (`GameMessage`, now with `RoundId` / `IsCorrectGuess` / `PointsAwarded`) rather than a separate table. Points accumulate per player *within a game* on `GameMember.Score`; at game end, rank is computed from that, `PlayerStatus` (Winner/Loser) is set, and the total is rolled into the player's lifetime `User.Score`.
+See [`GAME_RULES.md`](GAME_RULES.md) for the full gameplay manifest — matchmaking flow, room formats, round/turn structure, the team guessing/relay mechanic, and scoring.
 
 **Out of the relational model by design:** live drawing strokes are not persisted as rows — that's real-time transport (`GameHub`/SignalR/MagicOnion), broadcast to the group keyed by game/room id. The database only needs outcomes (who drew, what word, who guessed, what score), not the pixel/vector stream.
 
