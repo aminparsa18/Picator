@@ -23,6 +23,11 @@ public sealed class Game : BaseEntity
     public GameStatus Status { get; set; }
 
     /// <summary>
+    /// Match format (Solo or Teams). Snapshotted from Room.Format at creation; always Solo for quick-match games (no Room).
+    /// </summary>
+    public GameFormat Format { get; set; }
+
+    /// <summary>
     /// Number of times each player draws.
     /// </summary>
     public int RoundsPerPlayer { get; set; }

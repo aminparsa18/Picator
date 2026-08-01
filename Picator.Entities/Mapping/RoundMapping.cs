@@ -24,6 +24,13 @@ public class RoundMapping : BaseEntityTypeConfiguration<Round>
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Round_GameMember");
 
+        builder.HasOne(d => d.ActiveGuesserGameMember)
+            .WithMany()
+            .HasForeignKey(d => d.ActiveGuesserGameMemberId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Round_ActiveGuesserGameMember");
+
         builder.HasIndex(i => i.GameId);
 
         base.Configure(builder);

@@ -1,4 +1,5 @@
 ﻿using MemoryPack;
+using Picator.Common.Data.Enums;
 
 namespace Picator.Common.Data.Dtos.Rooms;
 
@@ -14,9 +15,9 @@ public sealed partial class RoomCreateRequest
     public string? Name { get; set; }
 
     /// <summary>
-    /// Indicating room is private.
+    /// Match format (Solo or Teams).
     /// </summary>
-    public bool IsPrivate { get; set; }
+    public GameFormat Format { get; set; }
 
     /// <summary>
     /// List of users.

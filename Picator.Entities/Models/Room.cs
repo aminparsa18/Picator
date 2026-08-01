@@ -1,4 +1,5 @@
-﻿using Picator.Entities.Identity;
+﻿using Picator.Common.Data.Enums;
+using Picator.Entities.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace Picator.Entities.Models;
@@ -26,9 +27,9 @@ public sealed class Room : BaseEntity
     public string Code { get; set; } = default!;
 
     /// <summary>
-    /// Indicates room is private (joinable only with invitation).
+    /// Match format (Solo or Teams), fixed for the room's lifetime and snapshotted onto each Game it creates.
     /// </summary>
-    public bool IsPrivate { get; set; }
+    public GameFormat Format { get; set; }
 
     /// <summary>
     /// User.

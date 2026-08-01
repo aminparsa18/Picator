@@ -29,6 +29,11 @@ public sealed class GameMember : BaseEntity
     public int Score { get; set; }
 
     /// <summary>
+    /// Team (1 or 2) this member belongs to. Null for Solo-format games.
+    /// </summary>
+    public int? TeamNumber { get; set; }
+
+    /// <summary>
     /// Game.
     /// </summary>
     public Game? Game { get; set; }

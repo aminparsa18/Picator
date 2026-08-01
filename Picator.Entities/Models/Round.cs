@@ -45,6 +45,13 @@ public sealed class Round : BaseEntity
     public DateTime? EndedAt { get; set; }
 
     /// <summary>
+    /// Game member currently on the clock to guess. In Teams format this starts as the first opposing-team
+    /// guesser and moves to their teammate on relay; null once the round ends. Always the drawer's sole
+    /// opponent in Solo format.
+    /// </summary>
+    public Guid? ActiveGuesserGameMemberId { get; set; }
+
+    /// <summary>
     /// Game.
     /// </summary>
     public Game? Game { get; set; }
@@ -53,4 +60,9 @@ public sealed class Round : BaseEntity
     /// Game member drawing this round.
     /// </summary>
     public GameMember? DrawerGameMember { get; set; }
+
+    /// <summary>
+    /// Game member currently on the clock to guess.
+    /// </summary>
+    public GameMember? ActiveGuesserGameMember { get; set; }
 }
