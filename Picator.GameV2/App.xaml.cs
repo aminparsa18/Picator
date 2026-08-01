@@ -37,9 +37,6 @@ public partial class App : Application
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
-        if (Barrel.Current.Exists("Token"))
-            return new(new NavigationPage(new MainPage()));
-        else
-            return new(new NavigationPage(new LoginPage()));
+        return new(new AppShell());
     }
 }

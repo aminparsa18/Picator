@@ -125,7 +125,7 @@ public partial class LoginViewModel : ViewModelBase
                     BaseHttpClient.Instance.DefaultRequestHeaders.Authorization =
                         new AuthenticationHeaderValue("Bearer", result.Token);
                     await GetUserDetails();
-                    await Application.Current.MainPage.Navigation.PushAsync(new MainPage());
+                    await Shell.Current.GoToAsync("//main");
                 }
                 else if (result.StatusCode == ApiResultStatusCode.Forbidden)
                 {

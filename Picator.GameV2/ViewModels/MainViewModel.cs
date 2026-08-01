@@ -21,7 +21,10 @@ public sealed partial class MainViewModel : ViewModelBase
                 {
                     var queryDictionary = HttpUtility.ParseQueryString(appUri?.Query);
                     string? gameCode = HttpUtility.HtmlDecode(queryDictionary["game_code"]);
-                    await Application.Current.MainPage.Navigation.PushAsync(Barrel.Current.Exists("Token") ? new GamePage(false, gameCode) : new LoginPage());
+                    if (Barrel.Current.Exists("Token"))
+                        await Application.Current.MainPage.Navigation.PushAsync(new GamePage(false, gameCode));
+                    else
+                        await Shell.Current.GoToAsync("//login");
                 }
             }
         });
@@ -43,6 +46,11 @@ public sealed partial class MainViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private async Task NavigateToLogin() =>
-        await Application.Current.MainPage.Navigation.PushAsync(Barrel.Current.Exists("Token") ? new ProfileSettingsPage() : new LoginPage());
+    private async Task NavigateToLogin()
+    {
+        if (Barrel.Current.Exists("Token"))
+            await Application.Current.MainPage.Navigation.PushAsync(new ProfileSettingsPage());
+        else
+            await Shell.Current.GoToAsync("//login");
+    }
 }
