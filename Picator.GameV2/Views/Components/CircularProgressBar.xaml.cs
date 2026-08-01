@@ -1,5 +1,4 @@
-﻿using Javax.Annotation.Meta;
-using Microsoft.Maui.Controls;
+﻿using Microsoft.Maui.Controls;
 using SkiaSharp;
 using SkiaSharp.Views.Maui;
 using System.Diagnostics;
