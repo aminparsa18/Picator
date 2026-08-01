@@ -74,9 +74,15 @@ public class BaseHttpClient
 
     private static HttpClient CreateInstance()
     {
+        var innerHandler = new HttpClientHandler();
+#if DEBUG
+        // Local Aspire/Kestrel serves a self-signed dev cert that simulators/emulators
+        // don't trust (each has its own keychain, separate from the host's). Debug-only.
+        innerHandler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
+#endif
         var authHandler = new AuthenticationHandler
         {
-            InnerHandler = new HttpClientHandler()
+            InnerHandler = innerHandler
         };
 
         var client = new HttpClient(authHandler)

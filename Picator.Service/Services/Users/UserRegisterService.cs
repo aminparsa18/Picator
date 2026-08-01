@@ -34,7 +34,6 @@ public class UserRegisterService : IUserRegisterService
 
     public async Task<ApiResult> Register(RegisterUserRequest request)
     {
-        await _emailSender.SendEmailAsync("aminparsa18@gmail.com", "subj", "msggggg");
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid)
             return new ApiResult
@@ -42,8 +41,8 @@ public class UserRegisterService : IUserRegisterService
                 StatusCode = ApiResultStatusCode.BadRequest,
                 Errors = validationResult.Errors.Select(e => e.ErrorMessage)
             };
-        var users = await _dbConnection.Users.FromSql($"SELECT TOP 1 * FROM [Users] WHERE Username = {request.UserName}").ToListAsync();
-        if (users.Count != 0)
+        var userExists = await _dbConnection.Users.AnyAsync(u => u.UserName == request.UserName);
+        if (userExists)
         {
             return new ApiResult()
             {

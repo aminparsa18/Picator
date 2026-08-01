@@ -1,69 +1,475 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-             xmlns:viewModels="clr-namespace:Picator.Game.ViewModels" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:Picator.Game.ViewModels"
              xmlns:controls="clr-namespace:Picator.Game.Controls"
              xmlns:ads="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"
              x:Class="Picator.Game.Views.MainPage"
              x:DataType="viewModels:MainViewModel"
-             BackgroundColor="#ff5995"
+             BackgroundColor="{StaticResource PaperBackground}"
              NavigationPage.HasNavigationBar="False">
     <ContentPage.BindingContext>
         <viewModels:MainViewModel />
     </ContentPage.BindingContext>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="64" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="80" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <!--Profile Button-->
-        <Image Grid.Column="1" Margin="8" HorizontalOptions="End" WidthRequest="36" HeightRequest="36" Source="user.png">
-            <Image.GestureRecognizers >
-                <TapGestureRecognizer Command="{Binding NavigateToLoginCommand}" />
-            </Image.GestureRecognizers>
-        </Image>
-        <!--Text Logo-->
-        <Image Source="logo_text" Grid.Row="1" Grid.ColumnSpan="2" HorizontalOptions="Center"/>
-        <!--Random Play Menu-->
-        <Frame Grid.Row="2" Margin="24,8,8,16" CornerRadius="24"  Padding="0">
-            <Grid>
-                <Image Source="random_game.png" HorizontalOptions="Fill" Aspect="AspectFill"/>
-                <Grid BackgroundColor="#26000000"/>
-                <Label Text="Play with your friend" Margin="12" TextColor="Black" FontSize="36" FontAttributes="Bold"/>
+
+        <!-- Home -->
+        <Grid RowDefinitions="*,80">
+            <Grid Grid.Row="0" Margin="22,26,22,12" RowDefinitions="Auto,Auto,Auto,Auto,*,Auto" RowSpacing="22">
+
+                <!--Header-->
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                    <Label Text="Picator" FontFamily="KalamBold" FontSize="26"
+                           TextColor="{StaticResource InkStrong}" Rotation="-1.5" VerticalOptions="Center" />
+                    <HorizontalStackLayout Grid.Column="1" Spacing="10">
+                        <Border WidthRequest="40" HeightRequest="40" Padding="0"
+                                StrokeShape="RoundRectangle 20" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                BackgroundColor="{StaticResource Surface}">
+                            <Image Source="icon_settings.svg" WidthRequest="20" HeightRequest="20"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenSettingsCommand}" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                        <Border WidthRequest="40" HeightRequest="40" Padding="0"
+                                StrokeShape="RoundRectangle 20" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                BackgroundColor="{StaticResource Surface}">
+                            <Label Text="P" FontFamily="PatrickHandRegular" FontSize="18" TextColor="{StaticResource InkStrong}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding NavigateToLoginCommand}" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                    </HorizontalStackLayout>
+                </Grid>
+
+                <!--Greeting-->
+                <VerticalStackLayout Grid.Row="1" Spacing="2">
+                    <Label Text="Ready to play?" FontFamily="KalamBold" FontSize="28" TextColor="{StaticResource InkStrong}" />
+                    <Label Text="Pick a mode to get started." FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkMuted}" />
+                </VerticalStackLayout>
+
+                <!--Mode cards-->
+                <VerticalStackLayout Grid.Row="2" Spacing="18">
+                    <Border BackgroundColor="{StaticResource AccentStrong}" Stroke="{StaticResource InkStrong}"
+                            StrokeThickness="3" StrokeShape="RoundRectangle 20" Padding="20,18" Rotation="-0.6">
+                        <Border.Shadow>
+                            <Shadow Brush="{StaticResource InkStrongBrush}" Opacity="0.9" Radius="0" Offset="3,3" />
+                        </Border.Shadow>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding StartQuickMatchCommand}" />
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Quick Match" FontFamily="KalamBold" FontSize="22" TextColor="{StaticResource OnAccentStrong}" />
+                                <Label Text="1v1 · jump into the next open game" FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource AccentTint}" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="1" Text="→" FontFamily="KalamBold" FontSize="28" TextColor="{StaticResource OnAccentStrong}" VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+
+                    <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}"
+                            StrokeThickness="3" StrokeShape="RoundRectangle 20" Padding="20,18" Rotation="0.5">
+                        <Border.Shadow>
+                            <Shadow Brush="{StaticResource InkStrongBrush}" Opacity="0.9" Radius="0" Offset="3,3" />
+                        </Border.Shadow>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenFriendsPickerCommand}" />
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Play with Friends" FontFamily="KalamBold" FontSize="22" TextColor="{StaticResource InkStrong}" />
+                                <Label Text="Create or join a private room" FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="1" Text="→" FontFamily="KalamBold" FontSize="28" TextColor="{StaticResource InkStrong}" VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!--Secondary actions-->
+                <Grid Grid.Row="3" ColumnDefinitions="*,*" ColumnSpacing="14">
+                    <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}"
+                            StrokeThickness="2" StrokeShape="RoundRectangle 14" HeightRequest="48" Padding="0">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenJoinByCodeCommand}" />
+                        </Border.GestureRecognizers>
+                        <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="8">
+                            <Image Source="icon_join_code.svg" WidthRequest="18" HeightRequest="18" VerticalOptions="Center" />
+                            <Label Text="Join by Code" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}" />
+                        </HorizontalStackLayout>
+                    </Border>
+                    <Border Grid.Column="1" BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}"
+                            StrokeThickness="2" StrokeShape="RoundRectangle 14" HeightRequest="48" Padding="0">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenStatsCommand}" />
+                        </Border.GestureRecognizers>
+                        <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="8">
+                            <Image Source="icon_stats.svg" WidthRequest="18" HeightRequest="18" VerticalOptions="Center" />
+                            <Label Text="Stats" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}" />
+                        </HorizontalStackLayout>
+                    </Border>
+                </Grid>
+
+                <!--Spacer-->
+                <BoxView Grid.Row="4" Color="Transparent" InputTransparent="True" />
+
+                <!--Footer link-->
+                <Label Grid.Row="5" Text="How to play" FontFamily="PatrickHandRegular" FontSize="15"
+                       TextColor="{StaticResource InkMuted}" TextDecorations="Underline" HorizontalOptions="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding HowToPlayCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
             </Grid>
-            <Frame.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding NavigateToStartGameCommand}"/>
-            </Frame.GestureRecognizers>
-        </Frame>
-        <Frame Grid.Row="2" Margin="8,8,24,16" Grid.Column="1" CornerRadius="24" Padding="0">
-            <Grid>
-                <Image Source="new_game.png" Aspect="AspectFill"/>
-                <Grid BackgroundColor="#26000000"/>
-                <Label Text="Join a random game" Margin="12" TextColor="Black" FontSize="36" FontAttributes="Bold"/>
-            </Grid>
-        </Frame>
-        <Frame Grid.Row="3" Margin="24,16" Grid.ColumnSpan="2" CornerRadius="24" Padding="0">
-            <Grid>
-                <Image Source="room.png" Aspect="AspectFill"/>
-                <Grid BackgroundColor="#26000000"/>
-                <Label Text="Rooms" VerticalOptions="Center" HorizontalOptions="Center" Margin="12" TextColor="Black" FontSize="36" FontAttributes="Bold"/>
-            </Grid>
-        </Frame>
-        <Frame Grid.Row="4" Margin="24,16" Grid.ColumnSpan="2" CornerRadius="24" Padding="0">
-            <Grid>
-                <Image Source="instructions.png" Aspect="AspectFill"/>
-                <Grid BackgroundColor="#26000000"/>
-                <Label Text="How to play" HorizontalOptions="Center" VerticalOptions="Center" Margin="12" TextColor="Black" FontSize="36" FontAttributes="Bold"/>
-            </Grid>
-        </Frame>
-        <ads:MTAdView Grid.Row="5" Grid.ColumnSpan="2" AdSize="AnchoredAdaptive" VerticalOptions="End" AdsId="ca-app-pub-3940256099942544/6300978111"/>
+
+            <ads:MTAdView Grid.Row="1" AdSize="AnchoredAdaptive" VerticalOptions="End" AdsId="ca-app-pub-3940256099942544/6300978111"/>
+        </Grid>
+
+        <!-- Overlay bottom sheets -->
+        <Grid IsVisible="{Binding IsOverlayVisible}" BackgroundColor="{StaticResource OverlayScrim}">
+            <Border x:Name="OverlaySheet" VerticalOptions="End" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}"
+                    StrokeThickness="3" Padding="24,28,24,32">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20,20,0,0" />
+                </Border.StrokeShape>
+
+                <Grid RowDefinitions="Auto">
+
+                    <!--Searching-->
+                    <VerticalStackLayout IsVisible="{Binding IsSearching}" Spacing="16" HorizontalOptions="Center">
+                        <ActivityIndicator IsRunning="{Binding IsSearching}" Color="{StaticResource Accent}" WidthRequest="56" HeightRequest="56" />
+                        <Label Text="Finding an opponent…" FontFamily="KalamBold" FontSize="20" TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" />
+                        <Label Text="{Binding SearchTimeDisplay}" FontFamily="SpaceMonoRegular" FontSize="22" TextColor="{StaticResource Accent}" HorizontalOptions="Center" />
+                        <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                StrokeShape="RoundRectangle 12" HeightRequest="44" Padding="22,0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding CancelSearchCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Cancel" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!--Match found-->
+                    <VerticalStackLayout IsVisible="{Binding IsMatchFound}" Spacing="12" HorizontalOptions="Center">
+                        <Border WidthRequest="56" HeightRequest="56" StrokeShape="RoundRectangle 28" Stroke="{StaticResource Success}"
+                                StrokeThickness="3" BackgroundColor="Transparent" Padding="0">
+                            <Label Text="✓" FontSize="26" TextColor="{StaticResource Success}" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <Label Text="Match found!" FontFamily="KalamBold" FontSize="20" TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" />
+                        <Label Text="Next up: the Room Lobby, waiting for both players before the drawing round starts."
+                               FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkMuted}"
+                               HorizontalTextAlignment="Center" MaximumWidthRequest="280" HorizontalOptions="Center" />
+                        <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                StrokeShape="RoundRectangle 12" HeightRequest="44" Padding="22,0" Margin="0,6,0,0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding CloseOverlayCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Back to Home" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!--Friends format picker-->
+                    <VerticalStackLayout IsVisible="{Binding IsFriendsPicker}" Spacing="14">
+                        <Label Text="Choose a format" FontFamily="KalamBold" FontSize="20" TextColor="{StaticResource InkStrong}" />
+                        <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                StrokeShape="RoundRectangle 14" Padding="14,16">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ChooseSoloCommand}" />
+                            </Border.GestureRecognizers>
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Solo Room" FontFamily="KalamBold" FontSize="18" TextColor="{StaticResource InkStrong}" />
+                                <Label Text="1v1, just you and a friend" FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                StrokeShape="RoundRectangle 14" Padding="14,16">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ChooseTeamsCommand}" />
+                            </Border.GestureRecognizers>
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Teams Room" FontFamily="KalamBold" FontSize="18" TextColor="{StaticResource InkStrong}" />
+                                <Label Text="2v2, relay guessing" FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <Label Text="{Binding ChosenFormatNote}" FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkFaint}"
+                               HorizontalTextAlignment="Center" HorizontalOptions="Center" Margin="0,4,0,0" />
+                    </VerticalStackLayout>
+
+                    <!--Join by code-->
+                    <VerticalStackLayout IsVisible="{Binding IsJoinByCode}" Spacing="16">
+                        <Label Text="Join by Code" FontFamily="KalamBold" FontSize="20" TextColor="{StaticResource InkStrong}" />
+                        <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                StrokeShape="RoundRectangle 10" HeightRequest="52" Padding="0">
+                            <Entry Text="{Binding CodeInput}" Placeholder="Enter room code" PlaceholderColor="{StaticResource InkFaint}"
+                                   FontFamily="SpaceMonoRegular" FontSize="20" TextColor="{StaticResource InkStrong}"
+                                   HorizontalTextAlignment="Center" BackgroundColor="Transparent" VerticalOptions="Center" />
+                        </Border>
+                        <Border BackgroundColor="{StaticResource AccentStrong}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                StrokeShape="RoundRectangle 14" HeightRequest="50" Padding="0">
+                            <Border.Shadow>
+                                <Shadow Brush="{StaticResource InkStrongBrush}" Opacity="0.9" Radius="0" Offset="3,3" />
+                            </Border.Shadow>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SubmitCodeCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Join Room" FontFamily="PatrickHandRegular" FontSize="17" TextColor="{StaticResource OnAccentStrong}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                StrokeShape="RoundRectangle 12" HeightRequest="44" Padding="0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding CloseOverlayCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Cancel" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!--Stats-->
+                    <VerticalStackLayout IsVisible="{Binding IsStats}" Spacing="18">
+                        <Label Text="Your Stats" FontFamily="KalamBold" FontSize="20" TextColor="{StaticResource InkStrong}" />
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                            <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                    StrokeShape="RoundRectangle 14" Padding="14,8">
+                                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                    <Label Text="14" FontFamily="SpaceMonoRegular" FontSize="26" TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" />
+                                    <Label Text="Games" FontFamily="PatrickHandRegular" FontSize="13" TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="1" BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                    StrokeShape="RoundRectangle 14" Padding="14,8">
+                                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                    <Label Text="64%" FontFamily="SpaceMonoRegular" FontSize="26" TextColor="{StaticResource Accent}" HorizontalOptions="Center" />
+                                    <Label Text="Win rate" FontFamily="PatrickHandRegular" FontSize="13" TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="2" BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                    StrokeShape="RoundRectangle 14" Padding="14,8">
+                                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                    <Label Text="5" FontFamily="SpaceMonoRegular" FontSize="26" TextColor="{StaticResource Success}" HorizontalOptions="Center" />
+                                    <Label Text="Best streak" FontFamily="PatrickHandRegular" FontSize="13" TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                        <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                StrokeShape="RoundRectangle 12" HeightRequest="44" Padding="0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding CloseOverlayCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Close" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!--Settings-->
+                    <VerticalStackLayout IsVisible="{Binding IsSettings}" Spacing="14">
+                        <Label Text="Settings" FontFamily="KalamBold" FontSize="20" TextColor="{StaticResource InkStrong}" />
+                        <Grid ColumnDefinitions="*,Auto" Padding="2,10">
+                            <Label Text="Sound effects" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}" />
+                            <Label Grid.Column="1" Text="On" FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" />
+                        </Grid>
+                        <BoxView HeightRequest="2" Color="{StaticResource BorderDashed}" />
+                        <Grid ColumnDefinitions="*,Auto" Padding="2,10">
+                            <Label Text="Notifications" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}" />
+                            <Label Grid.Column="1" Text="On" FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" />
+                        </Grid>
+                        <BoxView HeightRequest="2" Color="{StaticResource BorderDashed}" />
+                        <Grid ColumnDefinitions="*,Auto" Padding="2,10">
+                            <Label Text="Account" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}" />
+                            <Label Grid.Column="1" Text="Guest" FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" />
+                        </Grid>
+                        <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                StrokeShape="RoundRectangle 12" HeightRequest="44" Padding="0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding CloseOverlayCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Close" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!--How to Play-->
+                    <VerticalStackLayout IsVisible="{Binding IsHowToPlay}" Spacing="16">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="How to Play" FontFamily="KalamBold" FontSize="22" TextColor="{StaticResource InkStrong}" VerticalOptions="Center" />
+                            <Border Grid.Column="1" WidthRequest="32" HeightRequest="32" Padding="0"
+                                    StrokeShape="RoundRectangle 16" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                    BackgroundColor="{StaticResource SurfaceAlt}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding CloseOverlayCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="✕" FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkStrong}"
+                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                        </Grid>
+
+                        <Border BackgroundColor="{StaticResource PaperBackground}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                StrokeShape="RoundRectangle 12" Padding="4">
+                            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="4">
+                                <Border StrokeThickness="0" HeightRequest="36" Padding="0" BackgroundColor="Transparent"
+                                        StrokeShape="RoundRectangle 10">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsModesTabActive}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="{StaticResource InkStrong}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding HowToTabModesCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="Modes" FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkMuted}"
+                                           HorizontalOptions="Center" VerticalOptions="Center">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding IsModesTabActive}" Value="True">
+                                                <Setter Property="TextColor" Value="{StaticResource OnInk}" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Border>
+                                <Border Grid.Column="1" StrokeThickness="0" HeightRequest="36" Padding="0" BackgroundColor="Transparent"
+                                        StrokeShape="RoundRectangle 10">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsRoundsTabActive}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="{StaticResource InkStrong}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding HowToTabRoundsCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="Rounds" FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkMuted}"
+                                           HorizontalOptions="Center" VerticalOptions="Center">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding IsRoundsTabActive}" Value="True">
+                                                <Setter Property="TextColor" Value="{StaticResource OnInk}" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Border>
+                                <Border Grid.Column="2" StrokeThickness="0" HeightRequest="36" Padding="0" BackgroundColor="Transparent"
+                                        StrokeShape="RoundRectangle 10">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsScoringTabActive}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="{StaticResource InkStrong}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding HowToTabScoringCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="Scoring" FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkMuted}"
+                                           HorizontalOptions="Center" VerticalOptions="Center">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding IsScoringTabActive}" Value="True">
+                                                <Setter Property="TextColor" Value="{StaticResource OnInk}" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Border>
+                            </Grid>
+                        </Border>
+
+                        <ScrollView MaximumHeightRequest="340">
+                            <VerticalStackLayout Spacing="14" Margin="0,0,2,0">
+
+                                <!--Modes-->
+                                <VerticalStackLayout IsVisible="{Binding HowToShowModes}" Spacing="14">
+                                    <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                            StrokeShape="RoundRectangle 14" Padding="16,14">
+                                        <VerticalStackLayout Spacing="6">
+                                            <Label Text="Quick Match" FontFamily="KalamBold" FontSize="17" TextColor="{StaticResource InkStrong}" />
+                                            <Label FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkMuted}" LineHeight="1.45"
+                                                   Text="Random 1-on-1. As soon as a second player is waiting, you're paired instantly — locked in, no one else can join." />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                    <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                            StrokeShape="RoundRectangle 14" Padding="16,14">
+                                        <VerticalStackLayout Spacing="6">
+                                            <Label Text="Play with Friends" FontFamily="KalamBold" FontSize="17" TextColor="{StaticResource InkStrong}" />
+                                            <Label FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkMuted}" LineHeight="1.45">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="Create a private Room and pick a format up front: " FontFamily="PatrickHandRegular" />
+                                                        <Span Text="Solo" FontFamily="PatrickHandRegular" FontAttributes="Bold" />
+                                                        <Span Text=" (2 players) or " FontFamily="PatrickHandRegular" />
+                                                        <Span Text="Teams" FontFamily="PatrickHandRegular" FontAttributes="Bold" />
+                                                        <Span Text=" (4 players, 2v2). Friends join anytime via the room code. Format is locked once chosen. The game starts once the room fills — 2 for Solo, 4 for Teams." FontFamily="PatrickHandRegular" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                        </VerticalStackLayout>
+                                    </Border>
+                                    <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                            StrokeShape="RoundRectangle 14" Padding="16,14">
+                                        <VerticalStackLayout Spacing="6">
+                                            <Label Text="Rematches" FontFamily="KalamBold" FontSize="17" TextColor="{StaticResource InkStrong}" />
+                                            <Label FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkMuted}" LineHeight="1.45"
+                                                   Text="A Room stays open after the game ends — start another round with the same group, no re-inviting." />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </VerticalStackLayout>
+
+                                <!--Rounds-->
+                                <VerticalStackLayout IsVisible="{Binding HowToShowRounds}" Spacing="14">
+                                    <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                            StrokeShape="RoundRectangle 14" Padding="16,14">
+                                        <VerticalStackLayout Spacing="6">
+                                            <Label Text="Drawer rotation" FontFamily="KalamBold" FontSize="17" TextColor="{StaticResource InkStrong}" />
+                                            <Label FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkMuted}" LineHeight="1.45"
+                                                   Text="Every round has one drawer. It rotates round-robin through all players. In Teams, draw order alternates team-to-team (A1, B1, A2, B2…) so no team draws twice in a row." />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                    <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                            StrokeShape="RoundRectangle 14" Padding="16,14">
+                                        <VerticalStackLayout Spacing="6">
+                                            <Label Text="Who guesses — Solo" FontFamily="KalamBold" FontSize="17" TextColor="{StaticResource InkStrong}" />
+                                            <Label FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkMuted}" LineHeight="1.45"
+                                                   Text="Simple: the one other player is the guesser." />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                    <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                            StrokeShape="RoundRectangle 14" Padding="16,14">
+                                        <VerticalStackLayout Spacing="6">
+                                            <Label Text="Who guesses — Teams (relay)" FontFamily="KalamBold" FontSize="17" TextColor="{StaticResource InkStrong}" />
+                                            <Label FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkMuted}" LineHeight="1.45">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="The drawer's own teammate sits out — they can cheer, but guesses don't count. The opposing team guesses in relay: one player gets the full timer; if they miss, their teammate gets a " FontFamily="PatrickHandRegular" />
+                                                        <Span Text="fresh" FontFamily="PatrickHandRegular" FontAttributes="Italic" />
+                                                        <Span Text=" full timer. If both miss, the round ends scoreless and the word is revealed." FontFamily="PatrickHandRegular" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </VerticalStackLayout>
+
+                                <!--Scoring-->
+                                <VerticalStackLayout IsVisible="{Binding HowToShowScoring}" Spacing="14">
+                                    <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                            StrokeShape="RoundRectangle 14" Padding="16,14">
+                                        <VerticalStackLayout Spacing="6">
+                                            <Label Text="Points" FontFamily="KalamBold" FontSize="17" TextColor="{StaticResource InkStrong}" />
+                                            <Label FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkMuted}" LineHeight="1.45"
+                                                   Text="The guessing side scores the most points — more for a first-try guess, less if it took the relay. The drawer's side also earns a small bonus when their word is guessed. Nobody scores if time runs out." />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                    <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                            StrokeShape="RoundRectangle 14" Padding="16,14">
+                                        <VerticalStackLayout Spacing="6">
+                                            <Label Text="Game end" FontFamily="KalamBold" FontSize="17" TextColor="{StaticResource InkStrong}" />
+                                            <Label FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkMuted}" LineHeight="1.45"
+                                                   Text="Totals decide the winner (summed per team in Teams mode) and roll into your lifetime score." />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </VerticalStackLayout>
+
+                            </VerticalStackLayout>
+                        </ScrollView>
+                    </VerticalStackLayout>
+
+                </Grid>
+            </Border>
+        </Grid>
+
     </Grid>
 </ContentPage>

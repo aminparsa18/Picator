@@ -21,7 +21,10 @@ public class UserService : IUserService
 
     public async Task<ApiResult<UserDetailsResult>> GetDetails(string userId)
     {
-        var user = await _dbConnection.Database.SqlQuery<UserDetailsResult>($"SELECT TOP 1 [Avatar],[Score],[DisplayName],[Email] FROM [Users] WHERE Id = {userId}").FirstOrDefaultAsync();
+        var user = await _dbConnection.Users
+            .Where(u => u.Id == Guid.Parse(userId))
+            .Select(u => new UserDetailsResult { Avatar = u.Avatar, Score = u.Score, DisplayName = u.DisplayName, Email = u.Email })
+            .FirstOrDefaultAsync();
         if (user == null)
         {
             return new ApiResult<UserDetailsResult>()

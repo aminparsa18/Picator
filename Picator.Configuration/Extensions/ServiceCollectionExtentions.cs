@@ -56,6 +56,9 @@ public static class ServiceCollectionExtentions
             // If checkContentType: true then can output multiple format(JSON/MemoryPack, etc...). default is false.
             options.OutputFormatters.Insert(0, new MemoryPackOutputFormatter(checkContentType: false));
         });
+        // EmptyRequest (used by EndpointWithoutRequest<T>) fails MemoryPackRequestBinder<T>'s
+        // `new()` constraint, so it needs the plain default binder instead of the MemoryPack one.
+        services.AddSingleton<IRequestBinder<EmptyRequest>, RequestBinder<EmptyRequest>>();
         services.AddSingleton(typeof(IRequestBinder<>), typeof(MemoryPackRequestBinder<>)).AddFastEndpoints();
         return services;
     }

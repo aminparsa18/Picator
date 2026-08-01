@@ -43,7 +43,7 @@ public class UserLoginService : IUserLoginService
                 StatusCode = ApiResultStatusCode.BadRequest,
                 Errors = validationResult.Errors.Select(e => e.ErrorMessage)
             };
-        var user = await _dbConnection.Users.FromSql($"SELECT TOP 1 * FROM [Users] WHERE Username = {request.Username}").FirstOrDefaultAsync();
+        var user = await _dbConnection.Users.FirstOrDefaultAsync(u => u.UserName == request.Username);
         if (user == null)
         {
             return new AuthResult()
