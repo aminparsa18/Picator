@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f0eee9;font-family:'Patrick Hand',cursive}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08)}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:600 10px 'Space Mono',monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:20px 'Patrick Hand';color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px}
+.dv-oid{font:600 10.5px 'Space Mono',monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:16px 'Patrick Hand';color:rgba(0,0,0,.6)}
+.dv-card{background:#fdfcf8;border:2.5px solid #1a1a1a;border-radius:22px;box-shadow:3px 4px 0 rgba(0,0,0,.12);overflow:hidden;width:270px;padding:10px}
+.dv-next{margin:22px 0 0;font:15px/1.5 'Patrick Hand';color:rgba(0,0,0,.55)}
+.pbar{height:6px;border-bottom:2px dashed rgba(0,0,0,.2);margin-bottom:8px;display:flex;justify-content:space-between}
+.lbl{font:12px 'Space Mono',monospace;color:rgba(0,0,0,.4);text-transform:uppercase;letter-spacing:.03em}
+.btn{background:#1a1a1a;color:#fdfcf8;text-align:center;border-radius:10px;padding:10px;font:18px 'Patrick Hand'}
+.btn-o{border:2px solid #1a1a1a;text-align:center;border-radius:10px;padding:9px;font:18px 'Patrick Hand'}
+.btn-a{background:#e8532e;color:#fff;text-align:center;border-radius:10px;padding:10px;font:18px 'Patrick Hand'}
+.slot{width:40px;height:40px;border-radius:50%;background:#1a1a1a;color:#fdfcf8;display:flex;align-items:center;justify-content:center;font:12px 'Space Mono'}
+.slotE{width:40px;height:40px;border-radius:50%;border:2px dashed rgba(0,0,0,.35)}
+.stripe{background:repeating-linear-gradient(135deg,#e4e1d8,#e4e1d8 6px,#f0eee9 6px,#f0eee9 12px);display:flex;align-items:center;justify-content:center;color:rgba(0,0,0,.35);font:11px 'Space Mono'}
+.wordb{border:2px solid #1a1a1a;border-radius:8px;text-align:center;padding:6px;font:20px 'Patrick Hand';letter-spacing:2px}
+.chip{font:11px 'Space Mono';padding:4px 8px;border-radius:20px;border:1.5px solid #1a1a1a}
+.chip-a{font:11px 'Space Mono';padding:4px 8px;border-radius:20px;background:#e8532e;color:#fff}
+.timer{width:36px;height:36px;border-radius:50%;border:3px solid #1a1a1a;border-top-color:#e8532e;display:flex;align-items:center;justify-content:center;font:10px 'Space Mono'}
+.row{display:flex;align-items:center;gap:8px}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Home / game menu — Quick Match vs Play with Friends</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a"><div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Stacked big buttons</div>
+<div class="dv-card">
+<div class="pbar"></div>
+<div style="text-align:center;padding:20px 0"><div style="font:34px 'Patrick Hand'">Picator</div><div class="row" style="justify-content:center;gap:6px;margin-top:6px"><div class="slot">YOU</div><div class="lbl">Score 1,240</div></div></div>
+<div style="display:flex;flex-direction:column;gap:14px;padding:16px 4px">
+<div class="btn" style="padding:22px"><div>⚡ Quick Match</div><div class="lbl" style="color:#fdfcf8;opacity:.7;margin-top:4px">random 1-on-1</div></div>
+<div class="btn-o" style="padding:22px"><div>👥 Play with Friends</div><div class="lbl" style="margin-top:4px">create or join a room</div></div>
+</div>
+</div>
+</div>
+
+<div class="dv-opt" id="1b"><div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Split cards, code entry visible</div>
+<div class="dv-card">
+<div class="pbar"></div>
+<div style="text-align:center;padding:10px 0 6px"><div style="font:28px 'Patrick Hand'">Picator</div></div>
+<div style="display:flex;flex-direction:column;gap:12px;padding:6px 4px">
+<div class="btn-o" style="padding:16px;text-align:left"><div class="lbl">quick match</div><div style="font:20px 'Patrick Hand'">Find opponent →</div></div>
+<div class="btn-o" style="padding:16px;text-align:left"><div class="lbl">play with friends</div><div class="row" style="margin-top:6px"><div class="stripe" style="flex:1;height:34px;border-radius:8px">enter code</div><div class="chip">Join</div></div><div class="lbl" style="margin-top:8px">or</div><div class="btn" style="margin-top:6px;padding:8px">+ Create Room</div></div>
+</div>
+</div>
+</div>
+
+<div class="dv-opt" id="1c"><div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Toggle tabs</div>
+<div class="dv-card">
+<div class="pbar"></div>
+<div style="text-align:center;padding:10px 0"><div style="font:28px 'Patrick Hand'">Picator</div></div>
+<div class="row" style="border:2px solid #1a1a1a;border-radius:20px;padding:3px;margin:0 4px 14px">
+<div class="btn" style="flex:1;padding:6px;border-radius:16px">Quick</div><div style="flex:1;text-align:center;font:15px 'Patrick Hand'">Friends</div>
+</div>
+<div style="padding:20px 8px;text-align:center" class="stripe">match preview / avatars vs. searching…</div>
+<div class="btn" style="margin:14px 4px 4px;padding:14px">Start Matching</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "more like <a class="dv-oid" href="#1a">1a</a> but show live match count" · "combine <a class="dv-oid" href="#1b">1b</a>'s code entry into <a class="dv-oid" href="#1c">1c</a>"</p>
+</section>
+
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Room creation — pick Solo vs Teams format</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="2a"><div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Two big format cards</div>
+<div class="dv-card">
+<div class="pbar"></div>
+<div class="lbl" style="text-align:center;margin:8px 0">create a room</div>
+<div style="display:flex;flex-direction:column;gap:12px;padding:4px">
+<div class="btn-o" style="padding:16px"><div style="font:20px 'Patrick Hand'">Solo</div><div class="lbl">2 players · 1v1</div><div class="row" style="justify-content:center;margin-top:8px"><div class="slot" style="width:28px;height:28px">1</div><div class="slot" style="width:28px;height:28px">2</div></div></div>
+<div class="btn-o" style="padding:16px;border-color:#e8532e"><div style="font:20px 'Patrick Hand'">Teams</div><div class="lbl">4 players · 2 vs 2</div><div class="row" style="justify-content:center;margin-top:8px;gap:4px"><div class="slot" style="width:24px;height:24px">A1</div><div class="slot" style="width:24px;height:24px">A2</div><div class="lbl">vs</div><div class="slot" style="width:24px;height:24px">B1</div><div class="slot" style="width:24px;height:24px">B2</div></div></div>
+</div>
+<div class="btn" style="margin:14px 4px 4px;padding:12px">Create Room</div>
+</div>
+</div>
+
+<div class="dv-opt" id="2b"><div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Segmented control + live preview</div>
+<div class="dv-card">
+<div class="pbar"></div>
+<div class="lbl" style="text-align:center;margin:8px 0">create a room</div>
+<div class="row" style="border:2px solid #1a1a1a;border-radius:20px;padding:3px;margin:0 4px 14px">
+<div class="btn" style="flex:1;padding:6px;border-radius:16px">Solo</div><div style="flex:1;text-align:center;font:15px 'Patrick Hand'">Teams</div>
+</div>
+<div class="lbl" style="text-align:center">lobby preview</div>
+<div class="row" style="justify-content:center;gap:8px;padding:16px 0"><div class="slot">YOU</div><div class="slotE"></div></div>
+<div class="lbl" style="text-align:center">fixed at creation — can't switch later</div>
+<div class="btn" style="margin:14px 4px 4px;padding:12px">Create Room</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "apply <a class="dv-oid" href="#2a">2a</a>'s icon slots to <a class="dv-oid" href="#2b">2b</a>'s preview"</p>
+</section>
+
+<section class="dv-turn" id="t3">
+<div class="dv-thd"><a class="dv-tid" href="#t3">3</a><span class="dv-tname">Room lobby — waiting for players, share code</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="3a"><div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a>Solo lobby, minimal</div>
+<div class="dv-card">
+<div class="pbar"></div>
+<div style="text-align:center;padding:12px 0"><div class="lbl">room code</div><div style="font:30px 'Space Mono';letter-spacing:4px">7F K2</div><div class="chip" style="margin-top:6px;display:inline-block">Copy link</div></div>
+<div class="row" style="justify-content:center;gap:20px;padding:20px 0">
+<div style="text-align:center"><div class="slot">YOU</div><div class="lbl">ready</div></div>
+<div style="text-align:center"><div class="slotE"></div><div class="lbl">waiting…</div></div>
+</div>
+<div class="btn-o" style="margin:8px 4px;padding:12px;opacity:.4">Start Game</div>
+</div>
+</div>
+
+<div class="dv-opt" id="3b"><div class="dv-olabel"><a class="dv-oid" href="#3b">3b</a>Teams lobby, two columns</div>
+<div class="dv-card">
+<div class="pbar"></div>
+<div style="text-align:center;padding:8px 0"><div class="lbl">room code · 7FK2</div></div>
+<div class="row" style="gap:10px;padding:8px 4px">
+<div style="flex:1;border:2px dashed rgba(0,0,0,.3);border-radius:10px;padding:8px;text-align:center"><div class="lbl">team a</div><div class="slot" style="margin:6px auto">A1</div><div class="slotE" style="margin:6px auto"></div></div>
+<div style="flex:1;border:2px dashed #e8532e;border-radius:10px;padding:8px;text-align:center"><div class="lbl">team b</div><div class="slot" style="margin:6px auto">B1</div><div class="slotE" style="margin:6px auto"></div></div>
+</div>
+<div class="lbl" style="text-align:center;margin:10px 0">2 of 4 joined</div>
+<div class="btn-o" style="margin:4px;padding:12px;opacity:.4">Start Game</div>
+</div>
+</div>
+
+<div class="dv-opt" id="3c"><div class="dv-olabel"><a class="dv-oid" href="#3c">3c</a>Vertical list, host controls</div>
+<div class="dv-card">
+<div class="pbar"></div>
+<div class="row" style="justify-content:space-between;padding:8px 4px"><div class="lbl">code: 7FK2</div><div class="chip">Share</div></div>
+<div style="display:flex;flex-direction:column;gap:6px;padding:6px 4px">
+<div class="row" style="border:1.5px solid #1a1a1a;border-radius:8px;padding:8px"><div class="slot" style="width:28px;height:28px">A1</div><div style="font:16px 'Patrick Hand'">You (host)</div><div class="chip-a" style="margin-left:auto">Team A</div></div>
+<div class="row" style="border:1.5px solid #1a1a1a;border-radius:8px;padding:8px"><div class="slot" style="width:28px;height:28px">B1</div><div style="font:16px 'Patrick Hand'">Mika</div><div class="chip" style="margin-left:auto">Team B</div></div>
+<div class="row" style="border:1.5px dashed rgba(0,0,0,.3);border-radius:8px;padding:8px"><div class="slotE" style="width:28px;height:28px"></div><div class="lbl">waiting for player…</div></div>
+<div class="row" style="border:1.5px dashed rgba(0,0,0,.3);border-radius:8px;padding:8px"><div class="slotE" style="width:28px;height:28px"></div><div class="lbl">waiting for player…</div></div>
+</div>
+<div class="btn-o" style="margin:10px 4px 4px;padding:12px;opacity:.4">Waiting for 2 more…</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "give <a class="dv-oid" href="#3c">3c</a> the team columns from <a class="dv-oid" href="#3b">3b</a>" · "add a leave-room action"</p>
+</section>
+
+<section class="dv-turn" id="t4">
+<div class="dv-thd"><a class="dv-tid" href="#t4">4</a><span class="dv-tname">Drawing screen — drawer's view</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="4a"><div class="dv-olabel"><a class="dv-oid" href="#4a">4a</a>Full-bleed canvas, tools drawer below</div>
+<div class="dv-card">
+<div class="row" style="justify-content:space-between;padding:6px 2px"><div class="timer">45s</div><div class="wordb" style="flex:1;margin:0 8px">GIRAFFE</div></div>
+<div class="stripe" style="height:220px;border-radius:8px;margin:6px 2px">drawing canvas</div>
+<div class="row" style="justify-content:space-around;padding:10px 4px">
+<div class="slot" style="width:26px;height:26px;background:#1a1a1a"></div><div class="slot" style="width:26px;height:26px;background:#e8532e"></div><div class="chip">Undo</div><div class="chip">Clear</div>
+</div>
+</div>
+</div>
+
+<div class="dv-opt" id="4b"><div class="dv-olabel"><a class="dv-oid" href="#4b">4b</a>Vertical tool rail + team status</div>
+<div class="dv-card">
+<div class="row" style="padding:6px 2px;gap:8px"><div class="wordb" style="flex:1">GIRAFFE</div><div class="timer">45s</div></div>
+<div class="row" style="gap:6px;padding:4px 2px">
+<div style="display:flex;flex-direction:column;gap:6px"><div class="chip">✎</div><div class="chip">▨</div><div class="chip">↺</div><div class="chip-a">✕</div></div>
+<div class="stripe" style="flex:1;height:200px;border-radius:8px">drawing canvas</div>
+</div>
+<div class="row" style="justify-content:center;padding:8px;gap:6px"><div class="chip">Teammate sits out this round</div></div>
+</div>
+</div>
+
+<div class="dv-opt" id="4c"><div class="dv-olabel"><a class="dv-oid" href="#4c">4c</a>Canvas + collapsed feed, floating timer</div>
+<div class="dv-card">
+<div style="position:relative">
+<div class="stripe" style="height:230px;border-radius:8px 8px 0 0">drawing canvas</div>
+<div class="timer" style="position:absolute;top:8px;right:8px;background:#fdfcf8">45s</div>
+<div class="wordb" style="position:absolute;top:8px;left:8px;right:56px;background:#fdfcf8">GIRAFFE</div>
+</div>
+<div style="border-top:2px dashed rgba(0,0,0,.2);padding:8px 4px"><div class="lbl">round feed (drawer can't chat)</div><div class="lbl" style="margin-top:4px">Team B guessing: Sam's turn…</div></div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "put <a class="dv-oid" href="#4b">4b</a>'s status pill on <a class="dv-oid" href="#4a">4a</a>" · "show word-picker step before drawing starts"</p>
+</section>
+
+<section class="dv-turn" id="t5">
+<div class="dv-thd"><a class="dv-tid" href="#t5">5</a><span class="dv-tname">Guessing screen — solo & Teams relay</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="5a"><div class="dv-olabel"><a class="dv-oid" href="#5a">5a</a>Solo guesser</div>
+<div class="dv-card">
+<div class="row" style="justify-content:space-between;padding:6px 2px"><div class="timer">32s</div><div class="lbl">Alex is drawing…</div></div>
+<div class="stripe" style="height:210px;border-radius:8px;margin:6px 2px">live canvas (read-only)</div>
+<div class="row" style="padding:10px 4px;gap:6px"><div class="stripe" style="flex:1;height:38px;border-radius:10px">type your guess…</div><div class="btn" style="padding:8px 14px">Send</div></div>
+</div>
+</div>
+
+<div class="dv-opt" id="5b"><div class="dv-olabel"><a class="dv-oid" href="#5b">5b</a>Teams relay — your turn vs watching</div>
+<div class="dv-card">
+<div class="row" style="justify-content:space-between;padding:6px 2px"><div class="timer">28s</div><div class="chip-a">Your turn to guess</div></div>
+<div class="stripe" style="height:200px;border-radius:8px;margin:6px 2px">live canvas</div>
+<div class="row" style="padding:8px 4px;gap:6px"><div class="stripe" style="flex:1;height:38px;border-radius:10px">type your guess…</div><div class="btn" style="padding:8px 14px">Send</div></div>
+<div class="lbl" style="text-align:center;margin-top:6px">if you miss, Priya gets a fresh timer</div>
+</div>
+</div>
+
+<div class="dv-opt" id="5c"><div class="dv-olabel"><a class="dv-oid" href="#5c">5c</a>Relay hand-off visualization</div>
+<div class="dv-card">
+<div class="stripe" style="height:180px;border-radius:8px;margin:6px 2px 10px">live canvas</div>
+<div class="row" style="justify-content:center;gap:10px;padding:4px"><div style="text-align:center"><div class="slot" style="background:#e8532e">YOU</div><div class="lbl">guessing</div></div><div class="lbl">→</div><div style="text-align:center"><div class="slot" style="opacity:.4">P</div><div class="lbl">on deck</div></div></div>
+<div class="timer" style="margin:8px auto">22s</div>
+<div style="border-top:2px dashed rgba(0,0,0,.2);padding:8px 4px"><div class="lbl">guess log</div><div class="lbl">Priya: "horse" ✕ · your turn now</div></div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "merge <a class="dv-oid" href="#5c">5c</a>'s hand-off arrow into <a class="dv-oid" href="#5b">5b</a>" · "show sitting-out teammate's cheer/chat view"</p>
+</section>
+
+<section class="dv-turn" id="t6">
+<div class="dv-thd"><a class="dv-tid" href="#t6">6</a><span class="dv-tname">Round-end reveal / scoring</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="6a"><div class="dv-olabel"><a class="dv-oid" href="#6a">6a</a>Word reveal modal</div>
+<div class="dv-card">
+<div class="stripe" style="height:150px;border-radius:8px;margin:6px 2px;opacity:.5">final drawing</div>
+<div style="text-align:center;padding:8px 0"><div class="lbl">the word was</div><div style="font:30px 'Patrick Hand'">GIRAFFE</div></div>
+<div style="border:1.5px solid #1a1a1a;border-radius:8px;margin:6px 4px;padding:8px">
+<div class="row" style="justify-content:space-between"><div class="lbl">Sam (guesser)</div><div style="font:18px 'Patrick Hand'">+100</div></div>
+<div class="row" style="justify-content:space-between"><div class="lbl">Alex's team (drawer)</div><div style="font:18px 'Patrick Hand'">+20</div></div>
+</div>
+<div class="lbl" style="text-align:center;margin-top:8px">next round in 3…</div>
+</div>
+</div>
+
+<div class="dv-opt" id="6b"><div class="dv-olabel"><a class="dv-oid" href="#6b">6b</a>Score ticker + next drawer preview</div>
+<div class="dv-card">
+<div style="text-align:center;padding:6px 0"><div class="lbl">round 4 of 8</div><div style="font:22px 'Patrick Hand'">Word: GIRAFFE</div></div>
+<div style="padding:6px 4px">
+<div class="lbl">Team A</div><div style="height:14px;border:1.5px solid #1a1a1a;border-radius:8px;margin:4px 0"><div style="width:70%;height:100%;background:#1a1a1a;border-radius:8px"></div></div>
+<div class="lbl">Team B</div><div style="height:14px;border:1.5px solid #1a1a1a;border-radius:8px;margin:4px 0"><div style="width:45%;height:100%;background:#e8532e;border-radius:8px"></div></div>
+</div>
+<div class="row" style="justify-content:center;gap:8px;padding:8px"><div class="lbl">next up:</div><div class="chip-a">B2 drawing</div></div>
+<div class="btn" style="margin:6px 4px 4px;padding:10px">Continue</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "add a mini scoreboard to <a class="dv-oid" href="#6a">6a</a>"</p>
+</section>
+
+<section class="dv-turn" id="t7">
+<div class="dv-thd"><a class="dv-tid" href="#t7">7</a><span class="dv-tname">Game-end results & rematch</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="7a"><div class="dv-olabel"><a class="dv-oid" href="#7a">7a</a>Podium ranking (Solo/free-for-all)</div>
+<div class="dv-card">
+<div style="text-align:center;padding:8px 0"><div style="font:26px 'Patrick Hand'">🏆 Sam wins!</div></div>
+<div style="display:flex;flex-direction:column;gap:6px;padding:4px">
+<div class="row" style="border:2px solid #e8532e;border-radius:8px;padding:8px"><div class="slot" style="background:#e8532e">1</div><div style="font:18px 'Patrick Hand'">Sam</div><div style="margin-left:auto;font:18px 'Patrick Hand'">340</div></div>
+<div class="row" style="border:1.5px solid #1a1a1a;border-radius:8px;padding:8px"><div class="slot">2</div><div style="font:18px 'Patrick Hand'">Alex</div><div style="margin-left:auto;font:18px 'Patrick Hand'">210</div></div>
+</div>
+<div class="row" style="gap:8px;padding:12px 4px 4px"><div class="btn" style="flex:1;padding:10px">Rematch</div><div class="btn-o" style="flex:1;padding:10px">Home</div></div>
+</div>
+</div>
+
+<div class="dv-opt" id="7b"><div class="dv-olabel"><a class="dv-oid" href="#7b">7b</a>Team vs team score comparison + MVP</div>
+<div class="dv-card">
+<div style="text-align:center;padding:8px 0"><div style="font:26px 'Patrick Hand'">Team A wins!</div></div>
+<div class="row" style="justify-content:center;gap:16px;padding:10px 0">
+<div style="text-align:center"><div class="lbl">team a</div><div style="font:34px 'Patrick Hand'">480</div></div>
+<div class="lbl">–</div>
+<div style="text-align:center"><div class="lbl">team b</div><div style="font:34px 'Patrick Hand';opacity:.5">310</div></div>
+</div>
+<div class="chip-a" style="display:block;text-align:center;margin:4px 20px">MVP: Alex — 3 correct draws</div>
+<div class="row" style="gap:8px;padding:12px 4px 4px"><div class="btn" style="flex:1;padding:10px">Rematch (same room)</div><div class="btn-o" style="flex:1;padding:10px">Home</div></div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "show lifetime User.Score delta on <a class="dv-oid" href="#7a">7a</a>"</p>
+</section>
+</x-dc>
+</body>
+</html>
