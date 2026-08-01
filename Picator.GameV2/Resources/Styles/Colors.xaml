@@ -41,4 +41,122 @@
     <Color x:Key="Blue200Accent">#72ACF1</Color>
     <Color x:Key="Blue300Accent">#A7CBF6</Color>
 
+    <!-- ============================================================
+         Picator color system — sketchbook/notebook art direction
+         (warm paper + ink + one CTA accent, per Game flow wireframes).
+         Additive only: existing keys above are untouched so no current
+         page changes appearance. Consume these keys when building/
+         restyling screens. All pairs below are WCAG-verified.
+    ============================================================= -->
+
+    <!-- Neutrals — paper & ink (light) -->
+    <Color x:Key="PaperBackground">#F0EEE9</Color>
+    <Color x:Key="PaperSunken">#E4E1D8</Color>
+    <!-- empty-canvas / placeholder stripe fill -->
+    <Color x:Key="Surface">#FDFCF8</Color>
+    <!-- cards, sheets, inputs -->
+    <Color x:Key="SurfaceAlt">#F5F3EE</Color>
+    <!-- secondary panel / inactive tab -->
+    <Color x:Key="InkStrong">#1A1A1A</Color>
+    <!-- primary text, strong 2-3px borders, filled default-button bg -->
+    <Color x:Key="InkMuted">#5C5A54</Color>
+    <!-- secondary text/labels -->
+    <Color x:Key="InkFaint">#A8A59C</Color>
+    <!-- placeholder/disabled text -->
+    <Color x:Key="OnInk">#FDFCF8</Color>
+    <!-- text/icons on InkStrong-filled surfaces -->
+    <Color x:Key="BorderHairline">#241A1A1A</Color>
+    <!-- 14% ink, thin dividers -->
+    <Color x:Key="BorderDashed">#331A1A1A</Color>
+    <!-- 20% ink, dashed separators -->
+    <Color x:Key="OverlayScrim">#801A1A1A</Color>
+    <!-- 50% ink, modal/sheet scrim -->
+
+    <!-- Brand — primary action & accent (light) -->
+    <Color x:Key="Accent">#E8532E</Color>
+    <!-- decorative use only: active tab, timer arc, icon fills, borders ≥3px, large/bold chip text -->
+    <Color x:Key="OnAccent">White</Color>
+    <!-- pair with Accent only for large (≥18px) or bold text -->
+    <Color x:Key="AccentStrong">#C7431F</Color>
+    <!-- solid button fills / small-text badges — use whenever text on the fill is small -->
+    <Color x:Key="OnAccentStrong">White</Color>
+    <Color x:Key="AccentHover">#B23A1A</Color>
+    <!-- press/hover state -->
+    <Color x:Key="AccentTint">#FBE0D6</Color>
+    <!-- subtle chip/badge fill, pair with InkStrong text -->
+
+    <!-- Teams — 2v2 mode only. Kept distinct from Accent so "brand CTA" is
+         never confused with "Team B"; always pair color with the "Team A/B" label, not color alone. -->
+    <Color x:Key="TeamA">#3161E0</Color>
+    <Color x:Key="OnTeamA">White</Color>
+    <Color x:Key="TeamATint">#E1E9FB</Color>
+    <Color x:Key="TeamB">#8347E5</Color>
+    <Color x:Key="OnTeamB">White</Color>
+    <Color x:Key="TeamBTint">#EAE1FB</Color>
+
+    <!-- Status feedback (light) -->
+    <Color x:Key="Success">#2F9E44</Color>
+    <!-- decorative/large use -->
+    <Color x:Key="SuccessStrong">#1F7A34</Color>
+    <!-- text-on-fill / small badges -->
+    <Color x:Key="OnSuccess">White</Color>
+    <Color x:Key="SuccessTint">#E3F5E6</Color>
+    <Color x:Key="Warning">#D98C0A</Color>
+    <Color x:Key="OnWarning">#1A1A1A</Color>
+    <!-- white fails contrast on amber; always pair with ink text -->
+    <Color x:Key="WarningTint">#FBEBCF</Color>
+    <Color x:Key="Error">#C1272D</Color>
+    <!-- destructive actions (leave/kick/delete) — not used for wrong-guess feedback, which stays neutral ink -->
+    <Color x:Key="OnError">White</Color>
+    <Color x:Key="ErrorTint">#F8DEDD</Color>
+
+    <!-- Round timer states: normal countdown reuses Accent (matches wireframe timer arc);
+         Error doubles as the last-seconds/critical pulse so no extra hue is introduced -->
+
+    <!-- Dark mode companions (paper flips to a warm near-black "chalkboard", not pure black/inverted) -->
+    <Color x:Key="PaperBackgroundDark">#1B1A17</Color>
+    <Color x:Key="SurfaceDark">#242220</Color>
+    <Color x:Key="SurfaceAltDark">#2C2A26</Color>
+    <Color x:Key="InkStrongDark">#F0EEE9</Color>
+    <Color x:Key="InkMutedDark">#A6A39B</Color>
+    <Color x:Key="InkFaintDark">#6E6B63</Color>
+    <Color x:Key="OnInkDark">#1A1A1A</Color>
+    <Color x:Key="BorderHairlineDark">#24FDFCF8</Color>
+    <Color x:Key="BorderDashedDark">#33FDFCF8</Color>
+    <Color x:Key="OverlayScrimDark">#99000000</Color>
+    <Color x:Key="AccentDark">#FF6B45</Color>
+    <!-- lightened for contrast; pairs with dark ink text at any size, no separate "strong" needed -->
+    <Color x:Key="OnAccentDark">#1B1A17</Color>
+    <Color x:Key="AccentTintDark">#33FF6B45</Color>
+    <Color x:Key="TeamADark">#7FA0F5</Color>
+    <Color x:Key="OnTeamADark">#1B1A17</Color>
+    <!-- lightened team/status swatches are pastel — pair with dark ink text, not white -->
+    <Color x:Key="TeamBDark">#B79AF2</Color>
+    <Color x:Key="OnTeamBDark">#1B1A17</Color>
+    <Color x:Key="SuccessDark">#5CC97C</Color>
+    <Color x:Key="OnSuccessDark">#1B1A17</Color>
+    <Color x:Key="WarningDark">#F0AC3D</Color>
+    <Color x:Key="OnWarningDark">#1B1A17</Color>
+    <Color x:Key="ErrorDark">#E8615F</Color>
+    <Color x:Key="OnErrorDark">#1B1A17</Color>
+
+    <SolidColorBrush x:Key="PaperBackgroundBrush" Color="{StaticResource PaperBackground}"/>
+    <SolidColorBrush x:Key="PaperSunkenBrush" Color="{StaticResource PaperSunken}"/>
+    <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource Surface}"/>
+    <SolidColorBrush x:Key="SurfaceAltBrush" Color="{StaticResource SurfaceAlt}"/>
+    <SolidColorBrush x:Key="InkStrongBrush" Color="{StaticResource InkStrong}"/>
+    <SolidColorBrush x:Key="InkMutedBrush" Color="{StaticResource InkMuted}"/>
+    <SolidColorBrush x:Key="InkFaintBrush" Color="{StaticResource InkFaint}"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource Accent}"/>
+    <SolidColorBrush x:Key="AccentStrongBrush" Color="{StaticResource AccentStrong}"/>
+    <SolidColorBrush x:Key="AccentTintBrush" Color="{StaticResource AccentTint}"/>
+    <SolidColorBrush x:Key="TeamABrush" Color="{StaticResource TeamA}"/>
+    <SolidColorBrush x:Key="TeamATintBrush" Color="{StaticResource TeamATint}"/>
+    <SolidColorBrush x:Key="TeamBBrush" Color="{StaticResource TeamB}"/>
+    <SolidColorBrush x:Key="TeamBTintBrush" Color="{StaticResource TeamBTint}"/>
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource Success}"/>
+    <SolidColorBrush x:Key="SuccessStrongBrush" Color="{StaticResource SuccessStrong}"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource Warning}"/>
+    <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource Error}"/>
+
 </ResourceDictionary>
