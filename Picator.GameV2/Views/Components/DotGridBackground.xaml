@@ -1,0 +1,10 @@
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Picator.Game.Controls.DotGridBackground"
+             InputTransparent="True">
+
+    <GraphicsView x:Name="canvas"
+                  HorizontalOptions="Fill"
+                  VerticalOptions="Fill"
+                  InputTransparent="True" />
+</ContentView>

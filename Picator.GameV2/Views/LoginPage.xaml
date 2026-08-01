@@ -12,6 +12,7 @@
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <Grid BackgroundColor="{StaticResource PaperBackground}">
+            <controls:DotGridBackground DotColor="{StaticResource BorderHairline}" Spacing="18" DotRadius="1" />
             <ScrollView>
                 <VerticalStackLayout Margin="24" x:Name="Body">
                     <Image Source="logo.png" x:Name="Logo" Margin="0,0,0,0" TranslationY="200" WidthRequest="56" HeightRequest="56" HorizontalOptions="Center" />

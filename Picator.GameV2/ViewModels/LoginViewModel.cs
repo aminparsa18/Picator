@@ -135,8 +135,7 @@ public partial class LoginViewModel : ViewModelBase
                 }
                 else if (result.StatusCode == ApiResultStatusCode.Forbidden)
                 {
-                    await Application.Current.MainPage.Navigation.PushAsync(new ConfirmEmailPage());
-                    await Snackbar.Make(string.Join(",", result.Errors)).Show();
+                    await Shell.Current.GoToAsync($"verifyemail?email={Uri.EscapeDataString(LoginUsername.Value)}");
                 }
                 else
                 {
@@ -195,7 +194,7 @@ public partial class LoginViewModel : ViewModelBase
                 if (response.IsSuccessStatusCode)
                 {
                     if (result.IsSuccess)
-                        await Snackbar.Make("You are registered successfully! Check your email inbox for activation").Show();
+                        await Shell.Current.GoToAsync($"verifyemail?email={Uri.EscapeDataString(Username.Value)}");
                     else
                     {
                         await Snackbar.Make(string.Join(',', result.Errors)).Show();

@@ -9,6 +9,7 @@ public partial class AppShell : Shell
     public AppShell()
     {
         InitializeComponent();
+        Routing.RegisterRoute("verifyemail", typeof(VerifyEmailPage));
     }
 
     protected override async void OnAppearing()

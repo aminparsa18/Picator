@@ -115,9 +115,6 @@
 		<Compile Update="Views\Components\ShareButton.xaml.cs">
 			<DependentUpon>%(Filename)</DependentUpon>
 		</Compile>
-		<Compile Update="Views\ConfirmEmailPage.xaml.cs">
-			<DependentUpon>%(Filename)</DependentUpon>
-		</Compile>
 		<Compile Update="Views\GamePage.xaml.cs">
 			<DependentUpon>%(Filename)</DependentUpon>
 		</Compile>
@@ -162,10 +159,6 @@
 		</MauiXaml>
 		<MauiXaml Update="Views\Components\WaitingView.xaml">
 			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\ConfirmEmailPage.xaml">
-			<SubType>Designer</SubType>
-			<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
 		</MauiXaml>
 		<MauiXaml Update="Views\GameCodeScanner.xaml">
 		  <Generator>MSBuild:Compile</Generator>

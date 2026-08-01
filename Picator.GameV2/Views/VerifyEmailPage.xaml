@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:Picator.Game.ViewModels"
+             xmlns:controls="clr-namespace:Picator.Game.Controls"
+             x:Class="Picator.Game.Views.VerifyEmailPage"
+             x:DataType="viewmodels:VerifyEmailViewModel"
+             BackgroundColor="{StaticResource PaperBackground}"
+             NavigationPage.HasNavigationBar="False">
+    <Grid>
+
+        <controls:DotGridBackground DotColor="{StaticResource BorderHairline}" Spacing="18" DotRadius="1" />
+
+        <Grid Margin="24,56,24,32" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto,Auto" RowSpacing="24">
+
+            <!--Badge-->
+            <Border Grid.Row="0" WidthRequest="88" HeightRequest="88" Padding="0"
+                    StrokeShape="RoundRectangle 44" Stroke="{StaticResource InkStrong}" StrokeThickness="3"
+                    BackgroundColor="{StaticResource Surface}" Rotation="-2" HorizontalOptions="Center">
+                <Border.Shadow>
+                    <Shadow Brush="{StaticResource InkStrongBrush}" Opacity="0.9" Radius="0" Offset="3,3" />
+                </Border.Shadow>
+                <Image Source="icon_mail.svg" WidthRequest="42" HeightRequest="42"
+                       HorizontalOptions="Center" VerticalOptions="Center" />
+            </Border>
+
+            <!--Greeting-->
+            <VerticalStackLayout Grid.Row="1" Spacing="8" HorizontalOptions="Center">
+                <Label Text="Check your inbox" FontFamily="KalamBold" FontSize="26"
+                       TextColor="{StaticResource InkStrong}" HorizontalTextAlignment="Center" />
+                <Label FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkMuted}"
+                       HorizontalTextAlignment="Center" MaximumWidthRequest="280">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="We sent a verification link to" FontFamily="PatrickHandRegular" />
+                            <Span Text="&#10;" />
+                            <Span Text="{Binding Email}" FontFamily="PatrickHandRegular" TextColor="{StaticResource InkStrong}" />
+                            <Span Text=". Open it to activate your account." FontFamily="PatrickHandRegular" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </VerticalStackLayout>
+
+            <!--Open email app-->
+            <Border Grid.Row="2" BackgroundColor="{StaticResource AccentStrong}" Stroke="{StaticResource InkStrong}"
+                    StrokeThickness="2" StrokeShape="RoundRectangle 14" HeightRequest="52" Padding="0">
+                <Border.Shadow>
+                    <Shadow Brush="{StaticResource InkStrongBrush}" Opacity="0.9" Radius="0" Offset="3,3" />
+                </Border.Shadow>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding OpenEmailAppCommand}" />
+                </Border.GestureRecognizers>
+                <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10">
+                    <Image Source="icon_mail_white.svg" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" />
+                    <Label Text="Open Email App" FontFamily="PatrickHandRegular" FontSize="18"
+                           TextColor="{StaticResource OnAccentStrong}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </Border>
+
+            <!--Resend-->
+            <HorizontalStackLayout Grid.Row="3" HorizontalOptions="Center" Spacing="8">
+                <Label Text="Didn't get it?" FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkMuted}" />
+                <Label Text="Resend email" FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource Accent}"
+                       TextDecorations="Underline">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ResendCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </HorizontalStackLayout>
+
+            <!--Resent confirmation-->
+            <Label Grid.Row="4" Text="Sent again — check your inbox." FontFamily="PatrickHandRegular" FontSize="14"
+                   TextColor="{StaticResource Success}" HorizontalOptions="Center" IsVisible="{Binding Resent}" />
+
+            <!--Spacer-->
+            <BoxView Grid.Row="5" Color="Transparent" InputTransparent="True" />
+
+            <!--Expiry note-->
+            <Border Grid.Row="6" BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource BorderDashed}"
+                    StrokeThickness="2" StrokeShape="RoundRectangle 14" Padding="16">
+                <Label Text="The link expires in 24 hours." FontFamily="PatrickHandRegular" FontSize="14"
+                       TextColor="{StaticResource InkMuted}" LineHeight="1.5" />
+            </Border>
+
+            <!--Footer link-->
+            <Label Grid.Row="7" Text="Take me back" FontFamily="PatrickHandRegular" FontSize="14"
+                   TextColor="{StaticResource InkFaint}" TextDecorations="Underline" HorizontalOptions="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding PopCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+
+        </Grid>
+    </Grid>
+</ContentPage>

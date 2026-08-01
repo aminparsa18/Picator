@@ -6,12 +6,15 @@
              xmlns:ads="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"
              x:Class="Picator.Game.Views.MainPage"
              x:DataType="viewModels:MainViewModel"
+            
              BackgroundColor="{StaticResource PaperBackground}"
              NavigationPage.HasNavigationBar="False">
     <ContentPage.BindingContext>
         <viewModels:MainViewModel />
     </ContentPage.BindingContext>
     <Grid>
+
+        <controls:DotGridBackground DotColor="{StaticResource BorderHairline}" Spacing="18" DotRadius="1" />
 
         <!-- Home -->
         <Grid RowDefinitions="*,80">
