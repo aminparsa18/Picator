@@ -4,11 +4,12 @@
              xmlns:skiaLottie="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
              xmlns:converters="clr-namespace:Picator.GameV2.Converters"
              x:Class="Picator.GameV2.Views.Components.WaitingView"
-             x:Name="this">
+             x:Name="this"
+             IsVisible="{Binding Source={x:Reference this}, Path=IsBusy}">
     <ContentView.Resources>
         <converters:HasShadowConverter x:Key="HasShadowConverter" />
     </ContentView.Resources>
-    <Grid x:Name="WaitingGrid" IsVisible="{Binding Source={x:Reference this}, Path=IsBusy}" BackgroundColor="{Binding HasShadow, Source={x:Reference this}, Converter={StaticResource HasShadowConverter}}" HorizontalOptions="Fill" VerticalOptions="Fill">
+    <Grid x:Name="WaitingGrid" BackgroundColor="{Binding HasShadow, Source={x:Reference this}, Converter={StaticResource HasShadowConverter}}" HorizontalOptions="Fill" VerticalOptions="Fill">
         <skiaLottie:SKLottieView Source="loading.json"
                        HeightRequest="198"
                        WidthRequest="198"

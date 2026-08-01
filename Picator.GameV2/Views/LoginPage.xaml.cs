@@ -24,8 +24,10 @@ public partial class LoginPage : ContentPage
 
     private void RegisterBtn_OnClicked(object sender, EventArgs e)
     {
-        RegisterBtn.BackgroundColor = Colors.Black;
-        LoginBtn.BackgroundColor = Color.FromArgb("#232228");
+        RegisterBtn.BackgroundColor = (Color)Application.Current.Resources["InkStrong"];
+        RegisterBtn.TextColor = (Color)Application.Current.Resources["OnInk"];
+        LoginBtn.BackgroundColor = Colors.Transparent;
+        LoginBtn.TextColor = (Color)Application.Current.Resources["InkMuted"];
         RegisterPanel.ScaleY = 0;
         RegisterPanel.IsVisible = true;
         RegisterPanel.ScaleYToAsync(1, 400, Easing.SpringOut);
@@ -44,8 +46,10 @@ public partial class LoginPage : ContentPage
 
     private void LoginBtn_OnClicked(object sender, EventArgs e)
     {
-        LoginBtn.BackgroundColor = Colors.Black;
-        RegisterBtn.BackgroundColor = Color.FromArgb("#707070");
+        LoginBtn.BackgroundColor = (Color)Application.Current.Resources["InkStrong"];
+        LoginBtn.TextColor = (Color)Application.Current.Resources["OnInk"];
+        RegisterBtn.BackgroundColor = Colors.Transparent;
+        RegisterBtn.TextColor = (Color)Application.Current.Resources["InkMuted"];
 
         LoginPanel.ScaleY = 0;
         LoginPanel.IsVisible = true;

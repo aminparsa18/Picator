@@ -36,6 +36,9 @@ public partial class LoginViewModel : ViewModelBase
     [ObservableProperty]
     private ValidatableObject<string> _confirmPassword;
 
+    [ObservableProperty]
+    private ValidatableObject<string> _guestName;
+
     public LoginViewModel()
     {
         _avatarsApiService = new AvatarsApiService();
@@ -45,6 +48,7 @@ public partial class LoginViewModel : ViewModelBase
         Username = new ValidatableObject<string>();
         Password = new ValidatableObject<string>();
         ConfirmPassword = new ValidatableObject<string>();
+        GuestName = new ValidatableObject<string>();
         AddValidations();
     }
 
@@ -98,6 +102,8 @@ public partial class LoginViewModel : ViewModelBase
         ConfirmPassword.Validations.Add(new IsNotNullOrEmptyRule<string>()
         { ValidationMessage = "EmptyConfirmPassword" });
         ConfirmPassword.Validations.Add(new PasswordRule<string>());
+        GuestName.Validations.Add(new IsNotNullOrEmptyRule<string>()
+        { ValidationMessage = "EmptyGuestName" });
     }
 
     [RelayCommand]

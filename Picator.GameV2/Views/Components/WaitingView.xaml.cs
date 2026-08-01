@@ -21,7 +21,7 @@ public partial class WaitingView : ContentView
 
     public bool HasShadow
     {
-        get => (bool)GetValue(IsBusyProperty);
-        set => SetValue(IsBusyProperty, value);
+        get => (bool)GetValue(HasShadowProperty);
+        set => SetValue(HasShadowProperty, value);
     }
 }
