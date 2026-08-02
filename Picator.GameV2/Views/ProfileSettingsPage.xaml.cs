@@ -63,13 +63,25 @@ public partial class ProfileSettingsPage : ContentPage
 
     private void PreviousTap_OnTapped(object sender, EventArgs e)
     {
-        if (AvatarView.Position != 0)
-            AvatarView.Position--;
+        MoveAvatarSelection(-1);
     }
 
     private void NextTap_OnTapped(object sender, EventArgs e)
     {
-        if (AvatarView.Position != 7)
-            AvatarView.Position++;
+        MoveAvatarSelection(1);
+    }
+
+    private void MoveAvatarSelection(int delta)
+    {
+        var avatars = _viewModel?.Avatars;
+        if (avatars == null || avatars.Count == 0)
+            return;
+
+        var currentIndex = avatars.IndexOf(_viewModel.Avatar);
+        if (currentIndex < 0)
+            currentIndex = 0;
+
+        var nextIndex = (currentIndex + delta + avatars.Count) % avatars.Count;
+        _viewModel.Avatar = avatars[nextIndex];
     }
 }

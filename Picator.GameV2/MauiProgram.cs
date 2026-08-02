@@ -4,6 +4,7 @@ using Picator.GameV2.Views.Components;
 using Plugin.Maui.Audio;
 using Plugin.MauiMtAdmob;
 using SkiaSharp.Views.Maui.Controls.Hosting;
+using Vapolia.Svgs;
 using ZXing.Net.Maui.Controls;
 
 #if ANDROID
@@ -23,6 +24,7 @@ public static class MauiProgram
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
+            .UseEasySvg()
             .UseBarcodeReader()
             .AddAudio()
             .UseSkiaSharp()

@@ -369,3 +369,6 @@ graphify-out/
 
 # macOS
 .DS_Store
+
+# Maestro screenshots saved to repo root during local test runs
+/*.png

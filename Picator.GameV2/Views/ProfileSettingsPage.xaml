@@ -3,6 +3,7 @@
              xmlns:models="clr-namespace:Picator.Game.Models"
              xmlns:controls="clr-namespace:Picator.Game.Controls"
              xmlns:viewmodels="clr-namespace:Picator.Game.ViewModels"
+             xmlns:svg="https://vapolia.eu/svg"
              x:Class="Picator.Game.Views.ProfileSettingsPage"
              x:DataType="viewmodels:ProfileSettingsViewModel"
              BackgroundColor="{StaticResource PaperBackground}"
@@ -114,67 +115,64 @@
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="18">
 
-                        <Label Text="Choose an Avatar" FontFamily="KalamBold" FontSize="20" TextColor="{StaticResource InkStrong}" />
+                        <Label Text="Choose Your Avatar" FontFamily="KalamBold" FontSize="20" TextColor="{StaticResource InkStrong}" />
 
-                        <StackLayout Orientation="Horizontal">
-                            <Path Data="M310.5,640l-5-5,5-5"
-                                 Stroke="{StaticResource InkStrong}"
-                                 StrokeThickness="3"
-                                 Aspect="Uniform"
-                                 WidthRequest="28"
-                                 HeightRequest="28"
-                                 Margin="8,0,0,0"
-                                 StrokeLineCap="Round"
-                                 StrokeLineJoin="Round"
-                                 HorizontalOptions="CenterAndExpand"
-                                 VerticalOptions="CenterAndExpand">
-                                <Path.RenderTransform>
-                                    <TranslateTransform X="-304.75" Y="-628.939" />
-                                </Path.RenderTransform>
-                                <Path.GestureRecognizers>
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" HeightRequest="110">
+                            <Border Grid.Column="0" WidthRequest="44" HeightRequest="44" Padding="0"
+                                    StrokeShape="RoundRectangle 22" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                    BackgroundColor="{StaticResource SurfaceAlt}" VerticalOptions="Center">
+                                <Path Data="M15 18l-6-6 6-6"
+                                     Stroke="{StaticResource InkStrong}"
+                                     StrokeThickness="2"
+                                     Aspect="Uniform"
+                                     WidthRequest="18"
+                                     HeightRequest="18"
+                                     StrokeLineCap="Round"
+                                     StrokeLineJoin="Round"
+                                     HorizontalOptions="Center"
+                                     VerticalOptions="Center" />
+                                <Border.GestureRecognizers>
                                     <TapGestureRecognizer x:Name="PreviousTap" Tapped="PreviousTap_OnTapped"></TapGestureRecognizer>
-                                </Path.GestureRecognizers>
-                            </Path>
-                            <CarouselView
+                                </Border.GestureRecognizers>
+                            </Border>
+                            <CarouselView Grid.Column="1"
                                x:Name="AvatarView"
                                ItemsSource="{Binding Avatars}"
                                CurrentItem="{Binding Avatar,Mode=TwoWay}"
-                               HeightRequest="80"
+                               HeightRequest="110"
                                Loop="True"
                                CurrentItemChanged="CarouselView_OnCurrentItemChanged">
                                 <CarouselView.ItemTemplate>
                                     <DataTemplate x:DataType="models:Avatar">
                                         <ContentView>
-                                            <Grid>
-                                                <Image
-                                                   Aspect="AspectFit"
-                                                   Margin="8"
-                                                   Scale="{Binding Scale}"
-                                                   Source="{Binding Name}" />
-                                            </Grid>
+                                            <svg:SvgImage
+                                               Aspect="Fit"
+                                               Margin="8"
+                                               HeightRequest="80"
+                                               Scale="{Binding Scale}"
+                                               Source="{Binding Name}" />
                                         </ContentView>
                                     </DataTemplate>
                                 </CarouselView.ItemTemplate>
                             </CarouselView>
-                            <Path Data="M379.5,630l5,5-5,5"
-                                 Stroke="{StaticResource InkStrong}"
-                                 StrokeThickness="3"
-                                 Aspect="Uniform"
-                                 WidthRequest="28"
-                                 HeightRequest="28"
-                                 Margin="0,0,8,0"
-                                 StrokeLineCap="Round"
-                                 StrokeLineJoin="Round"
-                                 HorizontalOptions="CenterAndExpand"
-                                 VerticalOptions="CenterAndExpand">
-                                <Path.RenderTransform>
-                                    <TranslateTransform X="-378.439" Y="-628.939" />
-                                </Path.RenderTransform>
-                                <Path.GestureRecognizers>
+                            <Border Grid.Column="2" WidthRequest="44" HeightRequest="44" Padding="0"
+                                    StrokeShape="RoundRectangle 22" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                    BackgroundColor="{StaticResource SurfaceAlt}" VerticalOptions="Center">
+                                <Path Data="M9 18l6-6-6-6"
+                                     Stroke="{StaticResource InkStrong}"
+                                     StrokeThickness="2"
+                                     Aspect="Uniform"
+                                     WidthRequest="18"
+                                     HeightRequest="18"
+                                     StrokeLineCap="Round"
+                                     StrokeLineJoin="Round"
+                                     HorizontalOptions="Center"
+                                     VerticalOptions="Center" />
+                                <Border.GestureRecognizers>
                                     <TapGestureRecognizer x:Name="NextTap" Tapped="NextTap_OnTapped"></TapGestureRecognizer>
-                                </Path.GestureRecognizers>
-                            </Path>
-                        </StackLayout>
+                                </Border.GestureRecognizers>
+                            </Border>
+                        </Grid>
 
                         <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
                                 StrokeShape="RoundRectangle 12" HeightRequest="44" Padding="0">
