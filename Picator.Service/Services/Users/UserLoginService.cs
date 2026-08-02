@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Picator.Common.Data.Dtos.Api.Auth;
 using Picator.Common.Data.Dtos.Data.Dtos.Api;
 using Picator.Common.Data.Dtos.Users;
+using Picator.Data;
 using Picator.Entities.Identity;
 using Picator.Entities.Models;
 using Picator.Repository;

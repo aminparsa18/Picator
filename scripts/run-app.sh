@@ -10,6 +10,7 @@ cd "$(dirname "$0")/.."
 SERIAL="${1:-R5CW50YDGAB}"  # Galaxy S23 Ultra
 PACKAGE="com.parsoft.picator"
 API_PORT="7106"
+RUSTFS_PORT="9100"
 
 if ! adb devices | grep -q "^${SERIAL}[[:space:]]*device$"; then
     echo "Error: device $SERIAL not connected (check 'adb devices')." >&2
@@ -20,3 +21,4 @@ dotnet build Picator.GameV2/Picator.Game.csproj -f net10.0-android -t:Run -c Deb
     -p:AdbTarget="-s $SERIAL"
 
 adb -s "$SERIAL" reverse "tcp:$API_PORT" "tcp:$API_PORT"
+adb -s "$SERIAL" reverse "tcp:$RUSTFS_PORT" "tcp:$RUSTFS_PORT"

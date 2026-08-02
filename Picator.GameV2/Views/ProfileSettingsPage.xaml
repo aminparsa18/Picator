@@ -107,7 +107,10 @@
             </ScrollView>
 
             <!--Avatar picker bottom sheet-->
-            <Grid IsVisible="{Binding IsAvatarPickerVisible}" BackgroundColor="{StaticResource OverlayScrim}">
+            <Grid x:Name="AvatarPickerRoot" IsVisible="False" BackgroundColor="{StaticResource OverlayScrim}">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding CloseAvatarPickerCommand}" />
+                </Grid.GestureRecognizers>
                 <Border x:Name="AvatarSheet" VerticalOptions="End" BackgroundColor="{StaticResource Surface}"
                         Stroke="{StaticResource InkStrong}" StrokeThickness="3" Padding="22,24,22,30">
                     <Border.StrokeShape>
@@ -115,7 +118,18 @@
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="18">
 
-                        <Label Text="Choose Your Avatar" FontFamily="KalamBold" FontSize="20" TextColor="{StaticResource InkStrong}" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Choose Your Avatar" FontFamily="KalamBold" FontSize="20" TextColor="{StaticResource InkStrong}" VerticalOptions="Center" />
+                            <Border Grid.Column="1" WidthRequest="32" HeightRequest="32" Padding="0"
+                                    StrokeShape="RoundRectangle 16" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                    BackgroundColor="{StaticResource SurfaceAlt}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding CloseAvatarPickerCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="✕" FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkStrong}"
+                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                        </Grid>
 
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" HeightRequest="110">
                             <Border Grid.Column="0" WidthRequest="44" HeightRequest="44" Padding="0"
@@ -145,12 +159,16 @@
                                 <CarouselView.ItemTemplate>
                                     <DataTemplate x:DataType="models:Avatar">
                                         <ContentView>
-                                            <svg:SvgImage
-                                               Aspect="Fit"
-                                               Margin="8"
-                                               HeightRequest="80"
-                                               Scale="{Binding Scale}"
-                                               Source="{Binding Name}" />
+                                            <Border WidthRequest="100" HeightRequest="100" Padding="0"
+                                                    StrokeShape="RoundRectangle 50" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                                    BackgroundColor="{StaticResource SurfaceAlt}"
+                                                    HorizontalOptions="Center" VerticalOptions="Center">
+                                                <svg:SvgImage
+                                                   Aspect="Fill"
+                                                   Margin="0,6,0,-6"
+                                                   Scale="1.3"
+                                                   Source="{Binding Name}" />
+                                            </Border>
                                         </ContentView>
                                     </DataTemplate>
                                 </CarouselView.ItemTemplate>

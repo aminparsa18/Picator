@@ -83,32 +83,43 @@ public partial class ProfileSettingsViewModel : ViewModelBase
     private async Task AvatarSelectedAsync()
     {
         await MopupService.Instance.PushAsync(new WaitingView("Changing profile picture"));
-        var response = await _usersApiService.UpdateAvatar(new UpdateAvatarRequest()
+        try
         {
-            Image = System.IO.Path.GetFileName(new Uri(Avatar.Name).LocalPath),
-        });
-        await MopupService.Instance.PopAsync();
-        if (response.IsSuccessStatusCode)
-        {
-            var result = await response.Content.ReadAsMemoryPackAsync<ApiResult>();
-            if (result.IsSuccess)
+            var response = await _usersApiService.UpdateAvatar(new UpdateAvatarRequest()
             {
-                Barrel.Current.Add("UserImage", Avatar.Name, TimeSpan.FromDays(180));
-                Barrel.Current.Empty("User");
-                if (isEdit)
+                Image = Path.GetFileName(new Uri(Avatar.Name).LocalPath),
+            });
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsMemoryPackAsync<ApiResult>();
+                if (result.IsSuccess)
                 {
-                    //_publisher.Publish(new UpdateProfileEvent());
+                    Barrel.Current.Add("UserImage", Avatar.Name, TimeSpan.FromDays(180));
+                    Barrel.Current.Empty("User");
+                    if (isEdit)
+                    {
+                        //_publisher.Publish(new UpdateProfileEvent());
+                    }
+                    Image = Avatar.Name;
+                    IsAvatarPickerVisible = false;
                 }
-                Image = Avatar.Name;
-                IsAvatarPickerVisible = false;
+                else
+                    Alert.Show(result.Errors.ToString(), MessageType.Error);
             }
             else
+            {
+                var result = await response.Content.ReadAsMemoryPackAsync<ApiResult>();
                 Alert.Show(result.Errors.ToString(), MessageType.Error);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            var result = await response.Content.ReadAsMemoryPackAsync<ApiResult>();
-            Alert.Show(result.Errors.ToString(), MessageType.Error);
+            //Crashes.TrackError(ex);
+            Alert.Show(ex.Message, MessageType.Error);
+        }
+        finally
+        {
+            await MopupService.Instance.PopAsync();
         }
     }
 

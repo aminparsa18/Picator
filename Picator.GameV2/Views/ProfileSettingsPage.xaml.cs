@@ -49,13 +49,26 @@ public partial class ProfileSettingsPage : ContentPage
         _sheetVisible = isVisible;
         if (isVisible)
             await AnimateSheetInAsync();
+        else
+            await AnimateSheetOutAsync();
     }
 
     private async Task AnimateSheetInAsync()
     {
         AvatarSheet.CancelAnimations();
+        AvatarPickerRoot.IsVisible = true;
         AvatarSheet.TranslationY = SheetOffscreenOffset;
         await AvatarSheet.TranslateTo(0, 0, SheetAnimationDuration, Easing.CubicOut);
+    }
+
+    private async Task AnimateSheetOutAsync()
+    {
+        AvatarSheet.CancelAnimations();
+        await AvatarSheet.TranslateTo(0, SheetOffscreenOffset, SheetAnimationDuration, Easing.CubicIn);
+
+        // Only hide if nothing re-opened the sheet while it was animating out.
+        if (!_sheetVisible)
+            AvatarPickerRoot.IsVisible = false;
     }
 
     private void CarouselView_OnCurrentItemChanged(object sender, CurrentItemChangedEventArgs e)

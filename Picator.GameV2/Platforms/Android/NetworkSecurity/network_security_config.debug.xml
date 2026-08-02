@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-	<domain-config cleartextTrafficPermitted="false">
+	<!-- cleartextTrafficPermitted=true because RustFS (localhost:9100) serves plain HTTP; the API's HTTPS cert is still trusted via the user anchor below. -->
+	<domain-config cleartextTrafficPermitted="true">
 		<domain includeSubdomains="true">localhost</domain>
 		<trust-anchors>
 			<certificates src="system" />
