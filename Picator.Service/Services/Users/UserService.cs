@@ -33,7 +33,7 @@ public class UserService : IUserService
                 Errors = ["User does not exist"]
             };
         }
-        user.Avatar = string.Join(Constants.BlobStorageEndpoint, user.Avatar);
+        user.Avatar = Constants.BlobStorageEndpoint + user.Avatar;
         return new ApiResult<UserDetailsResult>()
         {
             IsSuccess = true,

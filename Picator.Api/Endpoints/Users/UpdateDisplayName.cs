@@ -24,7 +24,7 @@ public class UpdateDisplayName : Endpoint<UpdateDisplayNameRequest, ApiResult>
             s.Summary = "Update display name";
             s.Description = "Updates the current user's display name.";
         });
-        Description(d => d.Produces(200).WithTags(EndpointsTags.Users));
+        Description(d => d.Accepts<UpdateDisplayNameRequest>("application/x-memorypack").Produces(200).WithTags(EndpointsTags.Users));
     }
 
     public override async Task HandleAsync(UpdateDisplayNameRequest request, CancellationToken ct)

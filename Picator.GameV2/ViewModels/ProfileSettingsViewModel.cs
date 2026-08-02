@@ -25,7 +25,7 @@ public partial class ProfileSettingsViewModel : ViewModelBase
     private Avatar _avatar;
 
     [ObservableProperty]
-    private ImageSource _image = "choose_photo.png";
+    private string _image = "choose_photo.png";
 
     [ObservableProperty]
     private bool nameSaved;
@@ -71,6 +71,7 @@ public partial class ProfileSettingsViewModel : ViewModelBase
         DisplayName = new ValidatableObject<string>();
         Avatars = new ObservableCollection<Avatar>();
         _ = LoadAvatarsCommand.ExecuteAsync(null);
+        LoadUserFromCache();
         AddValidations();
     }
 
@@ -79,9 +80,35 @@ public partial class ProfileSettingsViewModel : ViewModelBase
         DisplayName.Validations.Add(new IsNotNullOrEmptyRule<string>());
     }
 
+    private void LoadUserFromCache()
+    {
+        if (!Barrel.Current.Exists("User"))
+            return;
+
+        var user = MemoryPack.MemoryPackSerializer.Deserialize<UserDetailsResult>(Barrel.Current.Get<byte[]>("User"));
+        DisplayName.Value = user?.DisplayName;
+        if (!string.IsNullOrEmpty(user?.Avatar))
+            Image = user.Avatar;
+    }
+
+    private static void UpdateCachedUser(Action<UserDetailsResult> mutate)
+    {
+        var user = Barrel.Current.Exists("User")
+            ? MemoryPack.MemoryPackSerializer.Deserialize<UserDetailsResult>(Barrel.Current.Get<byte[]>("User"))
+            : new UserDetailsResult();
+        mutate(user);
+        Barrel.Current.Add("User", MemoryPack.MemoryPackSerializer.Serialize(user), TimeSpan.FromDays(30));
+    }
+
     [RelayCommand]
     private async Task AvatarSelectedAsync()
     {
+        if (Avatar == null)
+        {
+            Console.WriteLine("AvatarSelectedAsync: Avatar is null, aborting.");
+            return;
+        }
+
         await MopupService.Instance.PushAsync(new WaitingView("Changing profile picture"));
         try
         {
@@ -95,27 +122,28 @@ public partial class ProfileSettingsViewModel : ViewModelBase
                 if (result.IsSuccess)
                 {
                     Barrel.Current.Add("UserImage", Avatar.Name, TimeSpan.FromDays(180));
-                    Barrel.Current.Empty("User");
+                    UpdateCachedUser(u => u.Avatar = Avatar.Name);
                     if (isEdit)
                     {
                         //_publisher.Publish(new UpdateProfileEvent());
                     }
+                    Image = null;
                     Image = Avatar.Name;
+                    OnPropertyChanged(nameof(Image));
                     IsAvatarPickerVisible = false;
                 }
                 else
-                    Alert.Show(result.Errors.ToString(), MessageType.Error);
+                    Console.WriteLine($"AvatarSelectedAsync: update failed - {result.Errors}");
             }
             else
             {
                 var result = await response.Content.ReadAsMemoryPackAsync<ApiResult>();
-                Alert.Show(result.Errors.ToString(), MessageType.Error);
+                Console.WriteLine($"AvatarSelectedAsync: update failed - {result.Errors}");
             }
         }
         catch (Exception ex)
         {
-            //Crashes.TrackError(ex);
-            Alert.Show(ex.Message, MessageType.Error);
+            Console.WriteLine($"AvatarSelectedAsync: exception - {ex}");
         }
         finally
         {
@@ -137,7 +165,7 @@ public partial class ProfileSettingsViewModel : ViewModelBase
             var result = await response.Content.ReadAsMemoryPackAsync<ApiResult>();
             if (result.IsSuccess)
             {
-                Barrel.Current.Empty("User");
+                UpdateCachedUser(u => u.DisplayName = DisplayName.Value);
                 NameSaved = true;
                 ResetNameSavedAfterDelay();
             }

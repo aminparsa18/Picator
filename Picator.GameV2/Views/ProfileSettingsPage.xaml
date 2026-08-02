@@ -42,7 +42,11 @@
                                 <Border.Shadow>
                                     <Shadow Brush="{StaticResource InkStrongBrush}" Opacity="0.9" Radius="0" Offset="3,3" />
                                 </Border.Shadow>
-                                <Image x:Name="CachedImage" Aspect="AspectFit" Source="{Binding Image}" />
+                                <svg:SvgImage
+                                                   Aspect="Fill"
+                                                   Margin="0,6,0,-6"
+                                                   Scale="1.3"
+                                                   Source="{Binding Image}" />
                             </Border>
                             <Border WidthRequest="34" HeightRequest="34" Padding="0" StrokeShape="RoundRectangle 17"
                                     Stroke="{StaticResource InkStrong}" StrokeThickness="2" BackgroundColor="{StaticResource Surface}"

@@ -62,6 +62,16 @@ public sealed partial class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
+        if (Barrel.Current.Exists("User"))
+        {
+            var user = MemoryPack.MemoryPackSerializer.Deserialize<Picator.Common.Data.Dtos.Users.UserDetailsResult>(Barrel.Current.Get<byte[]>("User"));
+            Console.WriteLine($"MainViewModel: cached user - Email={user?.Email}, DisplayName={user?.DisplayName}, Avatar={user?.Avatar}, Score={user?.Score}");
+        }
+        else
+        {
+            Console.WriteLine("MainViewModel: no cached user found in Barrel.");
+        }
+
         Application.Current.Dispatcher.Dispatch(async () =>
         {
             Uri? appUri = (Application.Current as App)?.AppUri;

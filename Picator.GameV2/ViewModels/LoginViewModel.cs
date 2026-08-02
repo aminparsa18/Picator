@@ -177,7 +177,7 @@ public partial class LoginViewModel : ViewModelBase
         var result = await _usersApiService.GetUser();
         if (result.IsSuccess && result.Data is not null)
         {
-            Barrel.Current.Add("User", MemoryPack.MemoryPackSerializer.Serialize(result.Data.Avatar), TimeSpan.FromDays(30));
+            Barrel.Current.Add("User", MemoryPack.MemoryPackSerializer.Serialize(result.Data), TimeSpan.FromDays(30));
         }
         else
         {

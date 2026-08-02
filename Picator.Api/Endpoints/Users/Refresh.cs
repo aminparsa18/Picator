@@ -22,7 +22,7 @@ public class Refresh : Endpoint<RefreshTokenRequest, AuthResult>
             s.Summary = "sadasdas";
             s.Description = "desxvxcvxv";
         });
-        Description(d => d.Produces(200).WithTags(EndpointsTags.Users));
+        Description(d => d.Accepts<RefreshTokenRequest>("application/x-memorypack").Produces(200).WithTags(EndpointsTags.Users));
     }
 
     public override async Task HandleAsync(RefreshTokenRequest request, CancellationToken ct) =>

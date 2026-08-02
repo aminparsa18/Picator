@@ -24,7 +24,7 @@ public class ChangePassword : Endpoint<ChangePasswordRequest, ApiResult>
             s.Summary = "Change password";
             s.Description = "Changes the current user's password.";
         });
-        Description(d => d.Produces(200).WithTags(EndpointsTags.Users));
+        Description(d => d.Accepts<ChangePasswordRequest>("application/x-memorypack").Produces(200).WithTags(EndpointsTags.Users));
     }
 
     public override async Task HandleAsync(ChangePasswordRequest request, CancellationToken ct)

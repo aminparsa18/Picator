@@ -1,3 +1,4 @@
+using Picator.Game.Models;
 using Picator.Game.ViewModels;
 using System.ComponentModel;
 
@@ -73,6 +74,8 @@ public partial class ProfileSettingsPage : ContentPage
 
     private void CarouselView_OnCurrentItemChanged(object sender, CurrentItemChangedEventArgs e)
     {
+        if (_viewModel != null && e.CurrentItem is Avatar avatar)
+            _viewModel.Avatar = avatar;
     }
 
     private void PreviousTap_OnTapped(object sender, EventArgs e)

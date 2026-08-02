@@ -56,6 +56,7 @@ public class UserRegisterService : IUserRegisterService
         user.Id = Guid.NewGuid(); ;
         user.Code = RandomHelper.CreateRandomText(10);
         user.Score = 100;
+        user.Avatar = $"peep-{Random.Shared.Next(1, 21)}.svg";
         var createdUser = await _userManager.CreateAsync(user, request.Password ?? "");
         if (!createdUser.Succeeded)
         {
