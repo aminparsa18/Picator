@@ -1,10 +1,8 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Picator.Common.Data.Dtos.Api.Auth;
 using Picator.Common.Data.Dtos.Data.Dtos.Api;
 using Picator.Common.Data.Dtos.Users;
-using Picator.Data;
 using Picator.Entities.Identity;
 using Picator.Entities.Models;
 using Picator.Repository;
@@ -18,16 +16,14 @@ namespace Picator.Service.Services.Users;
 
 public class UserLoginService : IUserLoginService
 {
-    private readonly ApplicationDbContext _dbConnection;
     private readonly ITokenService _tokenService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IValidator<UserLoginRequest> _validator;
     private readonly UserManager<User> _userManager;
 
-    public UserLoginService(ApplicationDbContext dbConnection, ITokenService tokenService, IValidator<UserLoginRequest> validator,
+    public UserLoginService(ITokenService tokenService, IValidator<UserLoginRequest> validator,
           UserManager<User> userManager, IUnitOfWork unitOfWork)
     {
-        _dbConnection = dbConnection;
         _validator = validator;
         _tokenService = tokenService;
         _userManager = userManager;
@@ -43,7 +39,7 @@ public class UserLoginService : IUserLoginService
                 StatusCode = ApiResultStatusCode.BadRequest,
                 Errors = validationResult.Errors.Select(e => e.ErrorMessage)
             };
-        var user = await _dbConnection.Users.FirstOrDefaultAsync(u => u.UserName == request.Username);
+        var user = await _userManager.FindByNameAsync(request.Username);
         if (user == null)
         {
             return new AuthResult()

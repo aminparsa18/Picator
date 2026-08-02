@@ -43,6 +43,11 @@ public static class MauiProgram
             {
 #if ANDROID
                 handlers.AddHandler<QrCodeView, QrCodeViewHandler>();
+
+                Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("RemoveNativeUnderline", (handler, view) =>
+                {
+                    handler.PlatformView.Background = null;
+                });
 #endif
             });
         builder.Services.AddSingleton(AudioManager.Current);

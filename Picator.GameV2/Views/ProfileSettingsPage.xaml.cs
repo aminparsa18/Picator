@@ -17,6 +17,7 @@ public partial class ProfileSettingsPage : ContentPage
         InitializeComponent();
         NavigationPage.SetHasNavigationBar(this, false);
         BindingContextChanged += OnBindingContextChanged;
+        OnBindingContextChanged(this, EventArgs.Empty);
     }
 
     protected override void OnAppearing()

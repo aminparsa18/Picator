@@ -129,7 +129,10 @@
         </Grid>
 
         <!-- Overlay bottom sheets -->
-        <Grid IsVisible="{Binding IsOverlayVisible}" BackgroundColor="{StaticResource OverlayScrim}">
+        <Grid x:Name="OverlayRoot" IsVisible="False" BackgroundColor="{StaticResource OverlayScrim}">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding CloseOverlayCommand}" />
+            </Grid.GestureRecognizers>
             <Border x:Name="OverlaySheet" VerticalOptions="End" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}"
                     StrokeThickness="3" Padding="24,28,24,32">
                 <Border.StrokeShape>
@@ -198,6 +201,14 @@
                         </Border>
                         <Label Text="{Binding ChosenFormatNote}" FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkFaint}"
                                HorizontalTextAlignment="Center" HorizontalOptions="Center" Margin="0,4,0,0" />
+                        <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                StrokeShape="RoundRectangle 12" HeightRequest="44" Padding="0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding CloseOverlayCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Cancel" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
                     </VerticalStackLayout>
 
                     <!--Join by code-->

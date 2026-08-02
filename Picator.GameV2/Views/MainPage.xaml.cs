@@ -16,6 +16,7 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
         BindingContextChanged += OnBindingContextChanged;
+        OnBindingContextChanged(this, EventArgs.Empty);
     }
 
     private void OnBindingContextChanged(object? sender, EventArgs e)
@@ -41,13 +42,26 @@ public partial class MainPage : ContentPage
         _sheetVisible = isVisible;
         if (isVisible)
             await AnimateSheetInAsync();
+        else
+            await AnimateSheetOutAsync();
     }
 
     private async Task AnimateSheetInAsync()
     {
         OverlaySheet.CancelAnimations();
+        OverlayRoot.IsVisible = true;
         OverlaySheet.TranslationY = SheetOffscreenOffset;
         await OverlaySheet.TranslateTo(0, 0, SheetAnimationDuration, Easing.CubicOut);
+    }
+
+    private async Task AnimateSheetOutAsync()
+    {
+        OverlaySheet.CancelAnimations();
+        await OverlaySheet.TranslateTo(0, SheetOffscreenOffset, SheetAnimationDuration, Easing.CubicIn);
+
+        // Only hide if nothing re-opened the sheet while it was animating out.
+        if (!_sheetVisible)
+            OverlayRoot.IsVisible = false;
     }
 
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)

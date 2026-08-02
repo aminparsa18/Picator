@@ -55,7 +55,7 @@
                             </Border>
 
                             <VerticalStackLayout x:Name="LoginPanel" Spacing="16">
-                                <controls:BorderedEntry x:Name="LoginUsernameEntry" Placeholder="Username"
+                                <controls:BorderedEntry x:Name="LoginUsernameEntry" Placeholder="Email"
                                             Text="{Binding LoginUsername.Value}"
                                             Errors="{Binding LoginUsername.Errors}" />
                                 <controls:BorderedEntry x:Name="LoginPassEntry"
@@ -73,6 +73,10 @@
                             </VerticalStackLayout>
 
                             <VerticalStackLayout x:Name="RegisterPanel" IsVisible="False" Spacing="16" Opacity="0">
+                                <controls:BorderedEntry x:Name="RegisterDisplayNameEntry" Placeholder="Display name"
+                                            Text="{Binding DisplayName.Value}"
+                                            Errors="{Binding DisplayName.Errors}" />
+
                                 <controls:BorderedEntry x:Name="RegisterUsernameEntry" Placeholder="Your email address"
                                             Text="{Binding Username.Value}"
                                             Errors="{Binding Username.Errors}" />
@@ -81,11 +85,6 @@
                                                                     Text="{Binding Password.Value,Mode=TwoWay}"
                                                                     Placeholder="Password"
                                                                     Errors="{Binding Password.Errors}" IsPassword="True" />
-                                <controls:BorderedEntry x:Name="ConfPassEntry"
-                                                                    Text="{Binding ConfirmPassword.Value,Mode=TwoWay}"
-                                                                    Placeholder="Confirm Password"
-                                                                    IsPassword="True"
-                                                                    Errors="{Binding ConfirmPassword.Errors}" />
                                 <Button Text="Create Account" Command="{Binding RegisterCommand}" Clicked="Button_Clicked_1"
                                         BackgroundColor="{StaticResource AccentStrong}" TextColor="{StaticResource OnAccentStrong}"
                                         BorderColor="{StaticResource InkStrong}" BorderWidth="2" CornerRadius="14" HeightRequest="50">
@@ -103,13 +102,17 @@
                                          HeightRequest="2" Color="{StaticResource BorderDashed}" />
                             </Grid>
 
-                            <Button Text="Google Login" Command="{Binding GoogleCommand}"
-                                    BackgroundColor="{StaticResource Surface}" TextColor="{StaticResource InkStrong}"
-                                    BorderColor="{StaticResource InkStrong}" BorderWidth="2" CornerRadius="14" HeightRequest="50" />
-
                             <controls:BorderedEntry x:Name="GuestNameEntry" Placeholder="Play as guest — enter a name"
                                         Text="{Binding GuestName.Value}"
                                         Errors="{Binding GuestName.Errors}" />
+
+                            <Button Text="Continue as Guest" Command="{Binding GuestCommand}"
+                                    BackgroundColor="{StaticResource Surface}" TextColor="{StaticResource InkStrong}"
+                                    BorderColor="{StaticResource InkStrong}" BorderWidth="2" CornerRadius="14" HeightRequest="50" />
+
+                            <Button Text="Google Login" Command="{Binding GoogleCommand}" ImageSource="icon_google.svg"
+                                    BackgroundColor="{StaticResource Surface}" TextColor="{StaticResource InkStrong}"
+                                    BorderColor="{StaticResource InkStrong}" BorderWidth="2" CornerRadius="14" HeightRequest="50" />
                         </VerticalStackLayout>
                     </Border>
                 </VerticalStackLayout>

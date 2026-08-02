@@ -17,4 +17,9 @@ public sealed partial class RegisterUserRequest
     /// Password.
     /// </summary>
     public string? Password { get; set; }
+
+    /// <summary>
+    /// Display name.
+    /// </summary>
+    public string? DisplayName { get; set; }
 }

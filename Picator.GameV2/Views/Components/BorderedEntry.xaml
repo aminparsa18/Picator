@@ -8,17 +8,27 @@
             <Grid>
                 <Border x:Name="EntryBorder" BackgroundColor="{StaticResource Surface}"
                         Stroke="{StaticResource InkStrongBrush}" StrokeThickness="2" StrokeShape="RoundRectangle 12" HeightRequest="48" Padding="0">
-                    <Entry
-                        x:Name="EntryControl"
-                           IsPassword="{Binding IsPassword, Source={x:Reference this}}"
-                           MaxLength="{Binding MaxLength, Source={x:Reference this}}"
-                           Keyboard="{Binding Keyboard, Source={x:Reference this}}"
-                           Text="{Binding Text, Source={x:Reference this}}"
-                           TextColor="{StaticResource InkStrong}"
-                           BackgroundColor="Transparent"
-                           Focused="EntryControl_Focused"
-                           Unfocused="EntryControl_Unfocused">
-                    </Entry>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Entry
+                            x:Name="EntryControl" Grid.Column="0" Margin="8,0,0,0"
+                               IsPassword="{Binding IsPassword, Source={x:Reference this}}"
+                               MaxLength="{Binding MaxLength, Source={x:Reference this}}"
+                               Keyboard="{Binding Keyboard, Source={x:Reference this}}"
+                               Text="{Binding Text, Source={x:Reference this}}"
+                               TextColor="{StaticResource InkStrong}"
+                               BackgroundColor="Transparent"
+                               Focused="EntryControl_Focused"
+                               Unfocused="EntryControl_Unfocused">
+                        </Entry>
+                        <Label x:Name="ToggleShowPasswordLabel" Grid.Column="1" Text="show"
+                               IsVisible="{Binding IsPassword, Source={x:Reference this}}"
+                               FontFamily="PatrickHandRegular" FontSize="13" TextColor="{StaticResource InkMuted}"
+                               VerticalOptions="Center" Margin="0,0,14,0">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="ToggleShowPasswordLabel_Tapped" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
                 </Border>
                 <Label x:Name="PlaceHolderLabel" Text="{Binding Placeholder, Source={x:Reference this}}" FontSize="13" Margin="16,0" VerticalOptions="Center" TextColor="{StaticResource InkFaint}"/>
 

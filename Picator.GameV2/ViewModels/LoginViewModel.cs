@@ -34,7 +34,7 @@ public partial class LoginViewModel : ViewModelBase
     private ValidatableObject<string> _password;
 
     [ObservableProperty]
-    private ValidatableObject<string> _confirmPassword;
+    private ValidatableObject<string> _displayName;
 
     [ObservableProperty]
     private ValidatableObject<string> _guestName;
@@ -47,9 +47,19 @@ public partial class LoginViewModel : ViewModelBase
         LoginPassword = new ValidatableObject<string>();
         Username = new ValidatableObject<string>();
         Password = new ValidatableObject<string>();
-        ConfirmPassword = new ValidatableObject<string>();
+        DisplayName = new ValidatableObject<string>();
         GuestName = new ValidatableObject<string>();
         AddValidations();
+    }
+
+    [RelayCommand]
+    private async Task Guest()
+    {
+        if (!GuestName.Validate())
+            return;
+
+        Barrel.Current.Add("GuestName", GuestName.Value, TimeSpan.FromDays(30));
+        await Shell.Current.GoToAsync("//main");
     }
 
     [RelayCommand]
@@ -99,9 +109,8 @@ public partial class LoginViewModel : ViewModelBase
         Password.Validations.Add(new IsNotNullOrEmptyRule<string>()
         { ValidationMessage = "EmptyPassword" });
         Password.Validations.Add(new PasswordRule<string>());
-        ConfirmPassword.Validations.Add(new IsNotNullOrEmptyRule<string>()
-        { ValidationMessage = "EmptyConfirmPassword" });
-        ConfirmPassword.Validations.Add(new PasswordRule<string>());
+        DisplayName.Validations.Add(new IsNotNullOrEmptyRule<string>()
+        { ValidationMessage = "EmptyDisplayName" });
         GuestName.Validations.Add(new IsNotNullOrEmptyRule<string>()
         { ValidationMessage = "EmptyGuestName" });
     }
@@ -189,6 +198,7 @@ public partial class LoginViewModel : ViewModelBase
                 {
                     UserName = Username.Value,
                     Password = Password.Value,
+                    DisplayName = DisplayName.Value,
                 });
                 var result = await response.Content.ReadAsMemoryPackAsync<ApiResult>();
                 if (response.IsSuccessStatusCode)
@@ -228,9 +238,7 @@ public partial class LoginViewModel : ViewModelBase
 
     private bool ValidateRegister()
     {
-        if (Password.Value != ConfirmPassword.Value)
-            Snackbar.Make("PasswordNotMatch").Show();
-        return Username.Validate() && Password.Validate() && ConfirmPassword.Validate();
+        return DisplayName.Validate() && Username.Validate() && Password.Validate();
     }
 
     public class ExternalAuthResult

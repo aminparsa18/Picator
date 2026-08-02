@@ -103,18 +103,20 @@ public partial class BorderedEntry : ContentView
             errorLabel.IsVisible = false;
     }
 
-    private void EntryControl_Focused(object sender, FocusEventArgs e)
+    private async void EntryControl_Focused(object sender, FocusEventArgs e)
     {
-        PlaceHolderLabel.ScaleTo(0.8, 250, Easing.Linear);
-        PlaceHolderLabel.TranslateTo(-45, -25, 250, Easing.CubicIn);
+        await Task.WhenAll(
+            PlaceHolderLabel.ScaleToAsync(0.8, 250, Easing.Linear),
+            PlaceHolderLabel.TranslateToAsync(-35, -15, 250, Easing.CubicIn));
     }
 
-    private void EntryControl_Unfocused(object sender, FocusEventArgs e)
+    private async void EntryControl_Unfocused(object sender, FocusEventArgs e)
     {
         if (!string.IsNullOrEmpty(EntryControl.Text))
             return;
-        PlaceHolderLabel.ScaleTo(1, 250, Easing.Linear);
-        PlaceHolderLabel.TranslateTo(0, 0, 250, Easing.CubicIn);
+        await Task.WhenAll(
+            PlaceHolderLabel.ScaleToAsync(1, 250, Easing.Linear),
+            PlaceHolderLabel.TranslateToAsync(0, 0, 250, Easing.CubicIn));
     }
 
     private void EntryControl_TextChanged(object sender, TextChangedEventArgs e)
@@ -125,5 +127,11 @@ public partial class BorderedEntry : ContentView
     private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
     {
         EntryControl.Focus();
+    }
+
+    private void ToggleShowPasswordLabel_Tapped(object sender, EventArgs e)
+    {
+        EntryControl.IsPassword = !EntryControl.IsPassword;
+        ToggleShowPasswordLabel.Text = EntryControl.IsPassword ? "show" : "hide";
     }
 }

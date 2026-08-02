@@ -77,11 +77,11 @@ public partial class LoginPage : ContentPage
 
     private void Button_Clicked_1(object sender, EventArgs e)
     {
+        RegisterDisplayNameEntry.IsEnabled = false;
+        RegisterDisplayNameEntry.IsEnabled = true;
         RegisterUsernameEntry.IsEnabled = false;
         RegisterUsernameEntry.IsEnabled = true;
         RegisterPassEntry.IsEnabled = false;
         RegisterPassEntry.IsEnabled = true;
-        ConfPassEntry.IsEnabled = false;
-        ConfPassEntry.IsEnabled = true;
     }
 }

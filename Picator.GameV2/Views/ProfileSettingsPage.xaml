@@ -17,7 +17,7 @@
             <controls:DotGridBackground DotColor="{StaticResource BorderHairline}" Spacing="18" DotRadius="1" />
 
             <ScrollView>
-                <VerticalStackLayout Margin="22,56,22,32" Spacing="26">
+                <VerticalStackLayout Margin="22,36,22,32" Spacing="26">
 
                     <!--Header-->
                     <Grid ColumnDefinitions="Auto,*">
