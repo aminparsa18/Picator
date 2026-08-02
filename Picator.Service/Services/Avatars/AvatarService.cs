@@ -20,7 +20,7 @@ public class AvatarService : IAvatarService
         // Set full uri path on avatar name.
         foreach (AvatarResult avatar in avatars)
         {
-            avatar.Name = string.Join(Data.Constants.BlobStorageEndpoint, avatar.Name);
+            avatar.Name = Data.Constants.BlobStorageEndpoint + avatar.Name;
         }
         return avatars;
     }

@@ -59,13 +59,13 @@ public class IdentityDbInitializer : IIdentityDbInitializer
 
     public async Task<IdentityResult> SeedDatabaseWithAdminUserAsync()
     {
-        var fakeAvatars = FakeDbData.InitFakeAvatars(10);
+        var avatars = FakeDbData.InitAvatars();
         using var serviceScope = _scopeFactory.CreateScope();
         using var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
         bool containAvatars = context.Avatar.Any();
         if (!containAvatars)
         {
-            await context.Avatar.AddRangeAsync(fakeAvatars);
+            await context.Avatar.AddRangeAsync(avatars);
             await context.SaveChangesAsync();
         }
         // var adminUserSeed = _adminUserSeedOptions.Value.AdminUserSeed;

@@ -16,7 +16,7 @@ public sealed class Constants
     public static string PlayerRole => "Player";
 
     /// <summary>
-    /// Azure blob storage endpoint.
+    /// RustFs blob storage endpoint.
     /// </summary>
-    public static string BlobStorageEndpoint => "https://mftorblob.azureedge.net/avatars/";
+    public static string BlobStorageEndpoint => "https://localhost:9100/avatars/";
 }

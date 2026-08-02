@@ -10,9 +10,6 @@ using Picator.Game.Models;
 using Picator.Game.Services.Avatars;
 using Picator.Game.Views.Popups;
 using System.Collections.ObjectModel;
-using System.Web;
-using Microsoft.Maui.Media;
-using Microsoft.Maui.Storage;
 
 namespace Picator.Game.ViewModels;
 
@@ -29,9 +26,6 @@ public partial class ProfileSettingsViewModel : ViewModelBase
 
     [ObservableProperty]
     private ImageSource _image = "choose_photo.png";
-
-    [ObservableProperty]
-    private bool photoSet;
 
     [ObservableProperty]
     private bool nameSaved;
@@ -65,7 +59,6 @@ public partial class ProfileSettingsViewModel : ViewModelBase
     public ObservableCollection<Avatar> Avatars { get; set; }
 
     private IEnumerable<Avatar> avatars;
-    private FileResult photo;
     private bool isEdit;
 
     private readonly IAvatarsApiService _avatarsApiService;
@@ -84,57 +77,6 @@ public partial class ProfileSettingsViewModel : ViewModelBase
     private void AddValidations()
     {
         DisplayName.Validations.Add(new IsNotNullOrEmptyRule<string>());
-    }
-
-    [RelayCommand]
-    private async Task SetPhotoAsync()
-    {
-        if (!Validate())
-            return;
-        await MopupService.Instance.PushAsync(new WaitingView("Uploading Image..."));
-        //try
-        //{
-        //    var blobServiceClient = new BlobServiceClient(
-        //        "DefaultEndpointsProtocol=https;AccountName=mftor;AccountKey=pLoQjG6uKWpWe1vG+iVU+zKjYRpuM/tPKACmd/kM/AuBXHHfsvLOGKXsq96BusnCfrx/4St1INHVk4tibVLElA==;EndpointSuffix=core.windows.net");
-        //    var blobContainerClient = blobServiceClient.GetBlobContainerClient("avatars");
-        //    var blobClient = blobContainerClient.GetBlobClient(HttpUtility.UrlEncode(photo.FileName));
-        //    await blobClient.UploadAsync(System.IO.File.OpenRead(photo.FullPath), new BlobUploadOptions());
-        //    await SetProfilePicture(HttpUtility.UrlEncode(photo.FileName));
-        //}
-        //catch (RequestFailedException)
-        //{
-        //    await MopupService.Instance.PopAsync();
-        //    Alert.Show("Upload failed,try again later", MessageType.Error);
-        //}
-    }
-
-    [RelayCommand]
-    private async Task ChoosePhotoAsync()
-    {
-        try
-        {
-            //   var result = await DialogService.ShowPickImageAsync();
-            // if (result == LocalizationResourceManager.Current.GetValue("Camera"))
-            // {
-            //   photo = await MediaPicker.CapturePhotoAsync();
-            //await NavigationService.NavigateToPopupAsync<CropImageViewModel>(photo.FullPath);
-            //}
-            // else
-            //{
-            photo = await MediaPicker.PickPhotoAsync();
-            //    //  await NavigationService.NavigateToPopupAsync<CropImageViewModel>(photo.FullPath);
-            //}
-
-            if (photo == null)
-                return;
-            PhotoSet = true;
-            Image = ImageSource.FromFile(photo.FullPath);
-        }
-        catch (Exception e)
-        {
-            await MopupService.Instance.PopAsync();
-            Alert.Show(e.Message, MessageType.Error);
-        }
     }
 
     [RelayCommand]
@@ -283,17 +225,23 @@ public partial class ProfileSettingsViewModel : ViewModelBase
     private async Task LoadAvatarsAsync()
     {
         var response = await _avatarsApiService.GetAllAvatars();
+        Console.WriteLine($"[AvatarDebug] GetAllAvatars IsSuccess={response.IsSuccess} DataCount={response.Data?.Count()}");
         if (response.IsSuccess)
         {
             avatars = new AvatarMapper().AvatarResultToAvatar(response.Data);
             Avatars.Clear();
             foreach(var avatar in avatars)
             {
+                avatar.Name = avatar.Name.Replace(".svg", ".png");
+                Console.WriteLine($"[AvatarDebug] Avatar Name={avatar.Name}");
                 Avatars.Add(avatar);
             }
         }
         else
+        {
+            Console.WriteLine($"[AvatarDebug] GetAllAvatars failed: {response.Errors}");
             Alert.Show(response.Errors.ToString(), MessageType.Error);
+        }
     }
 
     [RelayCommand]
@@ -305,37 +253,6 @@ public partial class ProfileSettingsViewModel : ViewModelBase
     public void RefreshImage()
     {
         Name = Barrel.Current.Get<string>("UserImage");
-    }
-
-    public async Task SetProfilePicture(string image)
-    {
-
-        var response = await _usersApiService.UpdateProfile(new UpdateProfileRequest()
-        {
-            Image = image,
-            Name = DisplayName.Value
-        });
-        var result = await response.Content.ReadAsMemoryPackAsync<ApiResult>();
-        if (response.IsSuccessStatusCode)
-        {
-            if (result.IsSuccess)
-            {
-                Barrel.Current.Add("UserImage", DisplayName, TimeSpan.FromDays(180));
-                Barrel.Current.Empty("User");
-                await MopupService.Instance.PopAsync();
-                await Application.Current.MainPage.Navigation.PopAsync();
-            }
-            else
-            {
-                await MopupService.Instance.PopAsync();
-                Alert.Show(result.Errors.ToString(), MessageType.Error);
-            }
-        }
-        else
-        {
-            await MopupService.Instance.PopAsync();
-            Alert.Show(result.Errors.ToString(), MessageType.Error);
-        }
     }
 
     private bool Validate()

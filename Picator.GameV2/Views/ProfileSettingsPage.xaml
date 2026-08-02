@@ -176,34 +176,6 @@
                             </Path>
                         </StackLayout>
 
-                        <Grid ColumnDefinitions="*,Auto,*">
-                            <BoxView HeightRequest="2" Color="{StaticResource BorderDashed}" VerticalOptions="Center" />
-                            <Label Grid.Column="1" Text="Or" FontFamily="PatrickHandRegular" FontSize="14"
-                                   TextColor="{StaticResource InkFaint}" Margin="8,0" />
-                            <BoxView Grid.Column="2" HeightRequest="2" Color="{StaticResource BorderDashed}" VerticalOptions="Center" />
-                        </Grid>
-
-                        <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
-                            <Border WidthRequest="96" HeightRequest="96" Padding="6" StrokeShape="RoundRectangle 48"
-                                    Stroke="{StaticResource InkStrong}" StrokeThickness="2" BackgroundColor="{StaticResource PaperBackground}">
-                                <Image Aspect="AspectFit" Source="{Binding Image}">
-                                    <Image.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding ChoosePhotoCommand}" />
-                                    </Image.GestureRecognizers>
-                                </Image>
-                            </Border>
-                            <Label Text="Upload a photo" FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" />
-                        </VerticalStackLayout>
-
-                        <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
-                                StrokeShape="RoundRectangle 12" HeightRequest="44" Padding="0" IsVisible="{Binding PhotoSet}">
-                            <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding SetPhotoCommand}" />
-                            </Border.GestureRecognizers>
-                            <Label Text="Set Photo" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}"
-                                   HorizontalOptions="Center" VerticalOptions="Center" />
-                        </Border>
-
                         <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
                                 StrokeShape="RoundRectangle 12" HeightRequest="44" Padding="0">
                             <Border.GestureRecognizers>
