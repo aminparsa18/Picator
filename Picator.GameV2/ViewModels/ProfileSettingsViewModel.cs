@@ -33,6 +33,35 @@ public partial class ProfileSettingsViewModel : ViewModelBase
     [ObservableProperty]
     private bool photoSet;
 
+    [ObservableProperty]
+    private bool nameSaved;
+
+    [ObservableProperty]
+    private bool isAvatarPickerVisible;
+
+    [ObservableProperty]
+    private string currentPassword = string.Empty;
+
+    [ObservableProperty]
+    private string newPassword = string.Empty;
+
+    [ObservableProperty]
+    private string confirmPassword = string.Empty;
+
+    [ObservableProperty]
+    private string passwordError = string.Empty;
+
+    [ObservableProperty]
+    private bool hasPasswordError;
+
+    [ObservableProperty]
+    private bool passwordSaved;
+
+    partial void OnPasswordErrorChanged(string value)
+    {
+        HasPasswordError = !string.IsNullOrEmpty(value);
+    }
+
     public ObservableCollection<Avatar> Avatars { get; set; }
 
     private IEnumerable<Avatar> avatars;
@@ -131,7 +160,8 @@ public partial class ProfileSettingsViewModel : ViewModelBase
                 {
                     //_publisher.Publish(new UpdateProfileEvent());
                 }
-                await Application.Current.MainPage.Navigation.PopAsync();
+                Image = Avatar.Name;
+                IsAvatarPickerVisible = false;
             }
             else
                 Alert.Show(result.Errors.ToString(), MessageType.Error);
@@ -141,6 +171,112 @@ public partial class ProfileSettingsViewModel : ViewModelBase
             var result = await response.Content.ReadAsMemoryPackAsync<ApiResult>();
             Alert.Show(result.Errors.ToString(), MessageType.Error);
         }
+    }
+
+    [RelayCommand]
+    private async Task SaveNameAsync()
+    {
+        if (!Validate())
+            return;
+        var response = await _usersApiService.UpdateProfile(new UpdateProfileRequest
+        {
+            Name = DisplayName.Value,
+            Image = Avatar != null ? System.IO.Path.GetFileName(new Uri(Avatar.Name).LocalPath) : null,
+        });
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadAsMemoryPackAsync<ApiResult>();
+            if (result.IsSuccess)
+            {
+                Barrel.Current.Empty("User");
+                NameSaved = true;
+                ResetNameSavedAfterDelay();
+            }
+            else
+                Alert.Show(result.Errors.ToString(), MessageType.Error);
+        }
+        else
+        {
+            var result = await response.Content.ReadAsMemoryPackAsync<ApiResult>();
+            Alert.Show(result.Errors.ToString(), MessageType.Error);
+        }
+    }
+
+    private async void ResetNameSavedAfterDelay()
+    {
+        await Task.Delay(2000);
+        NameSaved = false;
+    }
+
+    [RelayCommand]
+    private void OpenAvatarPicker()
+    {
+        IsAvatarPickerVisible = true;
+    }
+
+    [RelayCommand]
+    private void CloseAvatarPicker()
+    {
+        IsAvatarPickerVisible = false;
+    }
+
+    [RelayCommand]
+    private async Task ChangePasswordAsync()
+    {
+        if (string.IsNullOrEmpty(CurrentPassword) || string.IsNullOrEmpty(NewPassword) || string.IsNullOrEmpty(ConfirmPassword))
+        {
+            PasswordSaved = false;
+            PasswordError = "Fill in all password fields.";
+            return;
+        }
+        if (NewPassword != ConfirmPassword)
+        {
+            PasswordSaved = false;
+            PasswordError = "New passwords do not match.";
+            return;
+        }
+        if (NewPassword.Length < 6)
+        {
+            PasswordSaved = false;
+            PasswordError = "New password must be at least 6 characters.";
+            return;
+        }
+
+        PasswordError = string.Empty;
+        try
+        {
+            var response = await _usersApiService.ChangePassword(new ChangePasswordRequest
+            {
+                CurrentPassword = CurrentPassword,
+                NewPassword = NewPassword,
+            });
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsMemoryPackAsync<ApiResult>();
+                if (result.IsSuccess)
+                {
+                    PasswordSaved = true;
+                    CurrentPassword = string.Empty;
+                    NewPassword = string.Empty;
+                    ConfirmPassword = string.Empty;
+                    ResetPasswordSavedAfterDelay();
+                }
+                else
+                    PasswordError = result.Errors?.ToString() ?? "Could not update password.";
+            }
+            else
+                PasswordError = "Could not update password.";
+        }
+        catch (Exception)
+        {
+            PasswordError = "Could not update password. Please try again later.";
+        }
+    }
+
+    private async void ResetPasswordSavedAfterDelay()
+    {
+        await Task.Delay(2500);
+        PasswordSaved = false;
     }
 
     [RelayCommand]

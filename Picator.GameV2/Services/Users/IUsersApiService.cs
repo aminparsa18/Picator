@@ -45,6 +45,17 @@ public interface IUsersApiService
     Task<HttpResponseMessage> UpdateProfile(UpdateProfileRequest request);
 
     /// <summary>
+    /// Changes the current user's password.
+    /// </summary>
+    /// <remarks>
+    /// TODO: no backend endpoint exists for this yet — "users/change-password" is not
+    /// implemented server-side. Wire this up once the API supports it.
+    /// </remarks>
+    /// <param name="request">Change password request.</param>
+    /// <returns>HTTP response message.</returns>
+    Task<HttpResponseMessage> ChangePassword(ChangePasswordRequest request);
+
+    /// <summary>
     /// Get user details.
     /// </summary>
     /// <returns>User details api result.</returns>

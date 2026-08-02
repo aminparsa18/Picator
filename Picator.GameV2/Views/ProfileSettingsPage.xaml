@@ -1,22 +1,124 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:models="clr-namespace:Picator.Game.Models" 
-             xmlns:controls="clr-namespace:Picator.Game.Controls" 
+             xmlns:models="clr-namespace:Picator.Game.Models"
+             xmlns:controls="clr-namespace:Picator.Game.Controls"
              xmlns:viewmodels="clr-namespace:Picator.Game.ViewModels"
              x:Class="Picator.Game.Views.ProfileSettingsPage"
-             x:DataType="viewmodels:ProfileSettingsViewModel">
+             x:DataType="viewmodels:ProfileSettingsViewModel"
+             BackgroundColor="{StaticResource PaperBackground}"
+             NavigationPage.HasNavigationBar="False">
     <ContentPage.BindingContext>
         <viewmodels:ProfileSettingsViewModel />
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <Grid>
-            <Grid x:Name="ProfileGrid" Margin="36,64,36,36" VerticalOptions="StartAndExpand" Padding="0,0,0,136" >
-                <Frame x:Name="AvatarFrame" IsVisible="False"  CornerRadius="20" VerticalOptions="EndAndExpand"
-                       Padding="16">
-                    <StackLayout>
+
+            <controls:DotGridBackground DotColor="{StaticResource BorderHairline}" Spacing="18" DotRadius="1" />
+
+            <ScrollView>
+                <VerticalStackLayout Margin="22,56,22,32" Spacing="26">
+
+                    <!--Header-->
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Border WidthRequest="38" HeightRequest="38" Padding="0"
+                                StrokeShape="RoundRectangle 19" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                BackgroundColor="{StaticResource Surface}">
+                            <Label Text="&#8592;" FontFamily="PatrickHandRegular" FontSize="18" TextColor="{StaticResource InkStrong}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SkipCommand}" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                        <Label Grid.Column="1" Text="Profile" FontFamily="KalamBold" FontSize="22"
+                               TextColor="{StaticResource InkStrong}" VerticalOptions="Center" Margin="14,0,0,0" />
+                    </Grid>
+
+                    <!--Avatar-->
+                    <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+                        <Grid WidthRequest="96" HeightRequest="96">
+                            <Border WidthRequest="96" HeightRequest="96" Padding="6" StrokeShape="RoundRectangle 48"
+                                    Stroke="{StaticResource InkStrong}" StrokeThickness="3" BackgroundColor="{StaticResource Surface}">
+                                <Border.Shadow>
+                                    <Shadow Brush="{StaticResource InkStrongBrush}" Opacity="0.9" Radius="0" Offset="3,3" />
+                                </Border.Shadow>
+                                <Image x:Name="CachedImage" Aspect="AspectFit" Source="{Binding Image}" />
+                            </Border>
+                            <Border WidthRequest="34" HeightRequest="34" Padding="0" StrokeShape="RoundRectangle 17"
+                                    Stroke="{StaticResource InkStrong}" StrokeThickness="2" BackgroundColor="{StaticResource Surface}"
+                                    HorizontalOptions="End" VerticalOptions="End" TranslationX="4" TranslationY="4">
+                                <Label Text="&#9998;" FontSize="15" TextColor="{StaticResource InkStrong}"
+                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenAvatarPickerCommand}" />
+                                </Border.GestureRecognizers>
+                            </Border>
+                        </Grid>
+                        <Label Text="Tap the pencil to change your avatar" FontFamily="PatrickHandRegular" FontSize="14"
+                               TextColor="{StaticResource InkMuted}" />
+                    </VerticalStackLayout>
+
+                    <!--Display Name-->
+                    <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}" StrokeThickness="3"
+                            StrokeShape="RoundRectangle 20" Padding="20">
+                        <Border.Shadow>
+                            <Shadow Brush="{StaticResource InkStrongBrush}" Opacity="0.9" Radius="0" Offset="3,3" />
+                        </Border.Shadow>
+                        <VerticalStackLayout Spacing="12">
+                            <Label Text="Display Name" FontFamily="KalamBold" FontSize="17" TextColor="{StaticResource InkStrong}" />
+                            <controls:BorderedEntry Placeholder="Display name"
+                                                     Text="{Binding DisplayName.Value}"
+                                                     Errors="{Binding DisplayName.Errors}" />
+                            <Label Text="Saved!" FontFamily="PatrickHandRegular" FontSize="14"
+                                   TextColor="{StaticResource Success}" IsVisible="{Binding NameSaved}" />
+                            <Button Text="Save Name" Command="{Binding SaveNameCommand}"
+                                    FontFamily="PatrickHandRegular" FontSize="16"
+                                    BackgroundColor="{StaticResource AccentStrong}" TextColor="{StaticResource OnAccentStrong}"
+                                    BorderColor="{StaticResource InkStrong}" BorderWidth="2" CornerRadius="12" HeightRequest="46" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!--Change Password-->
+                    <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}" StrokeThickness="3"
+                            StrokeShape="RoundRectangle 20" Padding="20">
+                        <Border.Shadow>
+                            <Shadow Brush="{StaticResource InkStrongBrush}" Opacity="0.9" Radius="0" Offset="3,3" />
+                        </Border.Shadow>
+                        <VerticalStackLayout Spacing="12">
+                            <Label Text="Change Password" FontFamily="KalamBold" FontSize="17" TextColor="{StaticResource InkStrong}" />
+                            <controls:BorderedEntry Placeholder="Current password" IsPassword="True"
+                                                     Text="{Binding CurrentPassword}" />
+                            <controls:BorderedEntry Placeholder="New password" IsPassword="True"
+                                                     Text="{Binding NewPassword}" />
+                            <controls:BorderedEntry Placeholder="Confirm new password" IsPassword="True"
+                                                     Text="{Binding ConfirmPassword}" />
+                            <Label Text="{Binding PasswordError}" FontFamily="PatrickHandRegular" FontSize="14"
+                                   TextColor="{StaticResource Error}" IsVisible="{Binding HasPasswordError}" />
+                            <Label Text="Password updated!" FontFamily="PatrickHandRegular" FontSize="14"
+                                   TextColor="{StaticResource Success}" IsVisible="{Binding PasswordSaved}" />
+                            <Button Text="Update Password" Command="{Binding ChangePasswordCommand}"
+                                    FontFamily="PatrickHandRegular" FontSize="16"
+                                    BackgroundColor="{StaticResource AccentStrong}" TextColor="{StaticResource OnAccentStrong}"
+                                    BorderColor="{StaticResource InkStrong}" BorderWidth="2" CornerRadius="12" HeightRequest="46" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                </VerticalStackLayout>
+            </ScrollView>
+
+            <!--Avatar picker bottom sheet-->
+            <Grid IsVisible="{Binding IsAvatarPickerVisible}" BackgroundColor="{StaticResource OverlayScrim}">
+                <Border x:Name="AvatarSheet" VerticalOptions="End" BackgroundColor="{StaticResource Surface}"
+                        Stroke="{StaticResource InkStrong}" StrokeThickness="3" Padding="22,24,22,30">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="22,22,0,0" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="18">
+
+                        <Label Text="Choose an Avatar" FontFamily="KalamBold" FontSize="20" TextColor="{StaticResource InkStrong}" />
+
                         <StackLayout Orientation="Horizontal">
                             <Path Data="M310.5,640l-5-5,5-5"
-                                 Stroke="#363853"
+                                 Stroke="{StaticResource InkStrong}"
                                  StrokeThickness="3"
                                  Aspect="Uniform"
                                  WidthRequest="28"
@@ -48,18 +150,14 @@
                                                    Aspect="AspectFit"
                                                    Margin="8"
                                                    Scale="{Binding Scale}"
-                                                   Source="{Binding Name}" >
-                                                    <!--<forms:CachedImage.Transformations>
-                                                        <transformations:CircleTransformation />
-                                                    </forms:CachedImage.Transformations>-->
-                                                </Image>
+                                                   Source="{Binding Name}" />
                                             </Grid>
                                         </ContentView>
                                     </DataTemplate>
                                 </CarouselView.ItemTemplate>
                             </CarouselView>
                             <Path Data="M379.5,630l5,5-5,5"
-                                 Stroke="#363853"
+                                 Stroke="{StaticResource InkStrong}"
                                  StrokeThickness="3"
                                  Aspect="Uniform"
                                  WidthRequest="28"
@@ -77,55 +175,48 @@
                                 </Path.GestureRecognizers>
                             </Path>
                         </StackLayout>
-                    </StackLayout>
-                </Frame>
-                <Frame CornerRadius="20" Padding="16,24">
-                    <StackLayout Padding="24" HorizontalOptions="CenterAndExpand">
-                        <controls:BorderedEntry Placeholder="DisplayName"
-                                                    Text="{Binding DisplayName.Value}"
-                                                    Errors="{Binding DisplayName.Errors}" />
-                        <Label Margin="0,0,0,16" HorizontalOptions="CenterAndExpand" Text="UploadPP" />
-                        <Image
-                            x:Name="CachedImage"
-                            WidthRequest="120"
-                            HeightRequest="120"
-                            Margin="8"
-                            Aspect="AspectFit"
-                            Source="{Binding Image}">
-                            <!--<forms:CachedImage.Transformations>
-                                <transformations:CircleTransformation />
-                            </forms:CachedImage.Transformations>-->
-                            <Image.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding ChoosePhotoCommand}" />
-                            </Image.GestureRecognizers>
-                        </Image>
 
-                        <Button Text="Set" IsVisible="{Binding PhotoSet}" Command="{Binding SetPhotoCommand}" HorizontalOptions="CenterAndExpand"></Button>
+                        <Grid ColumnDefinitions="*,Auto,*">
+                            <BoxView HeightRequest="2" Color="{StaticResource BorderDashed}" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="Or" FontFamily="PatrickHandRegular" FontSize="14"
+                                   TextColor="{StaticResource InkFaint}" Margin="8,0" />
+                            <BoxView Grid.Column="2" HeightRequest="2" Color="{StaticResource BorderDashed}" VerticalOptions="Center" />
+                        </Grid>
 
-                        <StackLayout Margin="0,16,0,0" Orientation="Horizontal">
-                            <BoxView HeightRequest="1" HorizontalOptions="FillAndExpand"
-                                     VerticalOptions="CenterAndExpand"
-                                     BackgroundColor="White" />
-                            <Label Margin="8" Text="Or" />
-                            <BoxView HeightRequest="1" VerticalOptions="CenterAndExpand"
-                                     HorizontalOptions="FillAndExpand"
-                                     BackgroundColor="White" />
-                        </StackLayout>
-                        <StackLayout Orientation="Horizontal">
-                            <Switch Toggled="Switch_OnToggled" Margin="0,0,8,0" />
-                            <Label Text="SelectAvatar" FontSize="Medium" VerticalOptions="CenterAndExpand" />
-                        </StackLayout>
+                        <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                            <Border WidthRequest="96" HeightRequest="96" Padding="6" StrokeShape="RoundRectangle 48"
+                                    Stroke="{StaticResource InkStrong}" StrokeThickness="2" BackgroundColor="{StaticResource PaperBackground}">
+                                <Image Aspect="AspectFit" Source="{Binding Image}">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ChoosePhotoCommand}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Border>
+                            <Label Text="Upload a photo" FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" />
+                        </VerticalStackLayout>
 
-                        <Label Margin="0,16,0,0" FontSize="14" Padding="12" HorizontalOptions="CenterAndExpand" Text="Skip">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding SkipCommand}" />
-                            </Label.GestureRecognizers>
-                        </Label>
-                        <Button Text="Set" Command="{Binding AvatarSelectedCommand}" HorizontalOptions="CenterAndExpand"></Button>
+                        <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                StrokeShape="RoundRectangle 12" HeightRequest="44" Padding="0" IsVisible="{Binding PhotoSet}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SetPhotoCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Set Photo" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
 
-                    </StackLayout>
-                </Frame>
+                        <Border BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                StrokeShape="RoundRectangle 12" HeightRequest="44" Padding="0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding AvatarSelectedCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Done" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+
+                    </VerticalStackLayout>
+                </Border>
             </Grid>
+
         </Grid>
     </ContentPage.Content>
 </ContentPage>

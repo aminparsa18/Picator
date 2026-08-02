@@ -46,6 +46,14 @@ public class UsersApiService : IUsersApiService
     }
 
     /// <inheritdoc/>
+    public Task<HttpResponseMessage> ChangePassword(ChangePasswordRequest request)
+    {
+        // TODO: backend endpoint not implemented yet — this route does not exist on the API.
+        return BaseHttpClient.Instance.PostAsMemoryPackAsync(
+            new Uri($"{UrlConstants.ApiUrl}users/change-password"), request);
+    }
+
+    /// <inheritdoc/>
     public Task<ApiResult<UserDetailsResult>> GetUser()
     {
         return BaseHttpClient.Instance.GetFromMemoryPackAsync<ApiResult<UserDetailsResult>>(
