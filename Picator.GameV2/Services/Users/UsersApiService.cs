@@ -39,16 +39,22 @@ public class UsersApiService : IUsersApiService
     }
 
     /// <inheritdoc/>
-    public Task<HttpResponseMessage> UpdateProfile(UpdateProfileRequest profile)
+    public Task<HttpResponseMessage> UpdateDisplayName(UpdateDisplayNameRequest request)
     {
         return BaseHttpClient.Instance.PostAsMemoryPackAsync(
-            new Uri($"{UrlConstants.ApiUrl}users/update"), profile);
+            new Uri($"{UrlConstants.ApiUrl}users/display-name"), request);
+    }
+
+    /// <inheritdoc/>
+    public Task<HttpResponseMessage> UpdateAvatar(UpdateAvatarRequest request)
+    {
+        return BaseHttpClient.Instance.PostAsMemoryPackAsync(
+            new Uri($"{UrlConstants.ApiUrl}users/avatar"), request);
     }
 
     /// <inheritdoc/>
     public Task<HttpResponseMessage> ChangePassword(ChangePasswordRequest request)
     {
-        // TODO: backend endpoint not implemented yet — this route does not exist on the API.
         return BaseHttpClient.Instance.PostAsMemoryPackAsync(
             new Uri($"{UrlConstants.ApiUrl}users/change-password"), request);
     }

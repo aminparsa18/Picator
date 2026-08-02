@@ -82,13 +82,10 @@ public partial class ProfileSettingsViewModel : ViewModelBase
     [RelayCommand]
     private async Task AvatarSelectedAsync()
     {
-        if (!Validate())
-            return;
         await MopupService.Instance.PushAsync(new WaitingView("Changing profile picture"));
-        var response = await _usersApiService.UpdateProfile(new UpdateProfileRequest()
+        var response = await _usersApiService.UpdateAvatar(new UpdateAvatarRequest()
         {
             Image = System.IO.Path.GetFileName(new Uri(Avatar.Name).LocalPath),
-            Name = DisplayName.Value
         });
         await MopupService.Instance.PopAsync();
         if (response.IsSuccessStatusCode)
@@ -120,10 +117,9 @@ public partial class ProfileSettingsViewModel : ViewModelBase
     {
         if (!Validate())
             return;
-        var response = await _usersApiService.UpdateProfile(new UpdateProfileRequest
+        var response = await _usersApiService.UpdateDisplayName(new UpdateDisplayNameRequest
         {
             Name = DisplayName.Value,
-            Image = Avatar != null ? System.IO.Path.GetFileName(new Uri(Avatar.Name).LocalPath) : null,
         });
         if (response.IsSuccessStatusCode)
         {
@@ -225,21 +221,17 @@ public partial class ProfileSettingsViewModel : ViewModelBase
     private async Task LoadAvatarsAsync()
     {
         var response = await _avatarsApiService.GetAllAvatars();
-        Console.WriteLine($"[AvatarDebug] GetAllAvatars IsSuccess={response.IsSuccess} DataCount={response.Data?.Count()}");
         if (response.IsSuccess)
         {
             avatars = new AvatarMapper().AvatarResultToAvatar(response.Data);
             Avatars.Clear();
             foreach(var avatar in avatars)
             {
-                avatar.Name = avatar.Name.Replace(".svg", ".png");
-                Console.WriteLine($"[AvatarDebug] Avatar Name={avatar.Name}");
                 Avatars.Add(avatar);
             }
         }
         else
         {
-            Console.WriteLine($"[AvatarDebug] GetAllAvatars failed: {response.Errors}");
             Alert.Show(response.Errors.ToString(), MessageType.Error);
         }
     }

@@ -1,27 +1,25 @@
-﻿using FluentValidation;
+using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Picator.Common.Data.Dtos.Api;
 using Picator.Common.Data.Dtos.Data.Dtos.Api;
 using Picator.Common.Data.Dtos.Users;
 using Picator.Entities.Identity;
 using Picator.Service.Contracts.Users;
-using Microsoft.AspNetCore.Identity;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Picator.Service.Services.Users;
 
-public class UserUpdateService : IUserUpdateService
+public class UserChangePasswordService : IUserChangePasswordService
 {
-    private readonly IValidator<UpdateProfileRequest> _validator;
+    private readonly IValidator<ChangePasswordRequest> _validator;
     private readonly UserManager<User> _userManager;
 
-    public UserUpdateService(IValidator<UpdateProfileRequest> validator, UserManager<User> userManager)
+    public UserChangePasswordService(IValidator<ChangePasswordRequest> validator, UserManager<User> userManager)
     {
         _validator = validator;
         _userManager = userManager;
     }
 
-    public async Task<ApiResult> Update(string userId, UpdateProfileRequest request)
+    public async Task<ApiResult> ChangePassword(string userId, ChangePasswordRequest request)
     {
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid)
@@ -30,6 +28,7 @@ public class UserUpdateService : IUserUpdateService
                 StatusCode = ApiResultStatusCode.BadRequest,
                 Errors = validationResult.Errors.Select(e => e.ErrorMessage)
             };
+
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
         {
@@ -40,9 +39,16 @@ public class UserUpdateService : IUserUpdateService
             };
         }
 
-        user.DisplayName = request.Name;
-        user.Avatar = request.Image;
-        await _userManager.UpdateAsync(user);
+        var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword ?? "", request.NewPassword ?? "");
+        if (!result.Succeeded)
+        {
+            return new ApiResult()
+            {
+                StatusCode = ApiResultStatusCode.LogicError,
+                Errors = result.Errors.Select(e => e.Description)
+            };
+        }
+
         return new ApiResult() { IsSuccess = true };
     }
 }

@@ -38,19 +38,22 @@ public interface IUsersApiService
     Task<HttpResponseMessage> RegisterUser(RegisterUserRequest request);
 
     /// <summary>
-    /// Updates profile details.
+    /// Updates the current user's display name.
     /// </summary>
-    /// <param name="request">Update profile request.</param>
+    /// <param name="request">Update display name request.</param>
     /// <returns>HTTP response message.</returns>
-    Task<HttpResponseMessage> UpdateProfile(UpdateProfileRequest request);
+    Task<HttpResponseMessage> UpdateDisplayName(UpdateDisplayNameRequest request);
+
+    /// <summary>
+    /// Updates the current user's avatar.
+    /// </summary>
+    /// <param name="request">Update avatar request.</param>
+    /// <returns>HTTP response message.</returns>
+    Task<HttpResponseMessage> UpdateAvatar(UpdateAvatarRequest request);
 
     /// <summary>
     /// Changes the current user's password.
     /// </summary>
-    /// <remarks>
-    /// TODO: no backend endpoint exists for this yet — "users/change-password" is not
-    /// implemented server-side. Wire this up once the API supports it.
-    /// </remarks>
     /// <param name="request">Change password request.</param>
     /// <returns>HTTP response message.</returns>
     Task<HttpResponseMessage> ChangePassword(ChangePasswordRequest request);
