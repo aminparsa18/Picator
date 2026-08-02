@@ -1,0 +1,50 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="iPhone" />
+    <Platform Name="iPhoneSimulator" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Configuration/">
+    <File Path=".editorconfig" />
+    <File Path="Picator.Api/NuGet.Config" />
+  </Folder>
+  <Folder Name="/Domain/">
+    <Project Path="Picator.Data/Picator.Data.csproj" />
+    <Project Path="Picator.Entities/Picator.Entities.csproj" />
+  </Folder>
+  <Folder Name="/Game/">
+    <Project Path="Picator.GameV2/Picator.Game.csproj">
+      <Deploy Solution="*|Any CPU" />
+      <Deploy Solution="*|iPhone" />
+      <Deploy Solution="*|iPhoneSimulator" />
+    </Project>
+  </Folder>
+  <Folder Name="/Infrastructure/">
+    <Project Path="Picator.Repository/Picator.Repository.csproj" />
+  </Folder>
+  <Folder Name="/libs/">
+    <Project Path="QrGenerator.Binding/QrGenerator.Binding.csproj" />
+    <Project Path="XamDrawingView/XamDrawingView.csproj" />
+  </Folder>
+  <Folder Name="/Services/">
+    <Project Path="Picator.Configuration/Picator.Configuration.csproj" />
+    <Project Path="Picator.Service/Picator.Service.csproj" />
+  </Folder>
+  <Folder Name="/Shared/">
+    <Project Path="Picator.Common.Data/Picator.Common.Data.csproj" />
+    <Project Path="Picator.Common.Server/Picator.Common.Server.csproj" />
+    <Project Path="Picator.Common/Picator.Common.csproj" />
+  </Folder>
+  <Project Path="Picator.Api/Picator.Api.csproj" />
+  <Project Path="Picator.AppHost/Picator.AppHost.csproj" />
+  <Project Path="Picator.Benchmark/Picator.Benchmark.csproj" />
+  <Project Path="Picator.ExternalAuth/Picator.ExternalAuth.csproj" />
+  <Project Path="Picator.Invitement/Picator.Invitement.Client/Picator.Invitement.Client.csproj" />
+  <Project Path="Picator.Invitement/Picator.Invitement/Picator.Invitement.csproj" />
+  <Project Path="Picator.Realtime.Common/Picator.Realtime.Common.csproj" />
+  <Project Path="Picator.Realtime/Picator.Realtime.csproj" />
+  <Project Path="Picator.ServiceDefaults/Picator.ServiceDefaults.csproj" />
+  <Project Path="TempAPITest/TempAPITest.csproj" />
+</Solution>
