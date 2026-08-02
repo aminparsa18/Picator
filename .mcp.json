@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "maestro": {
+      "command": "/Users/apple/.maestro/bin/maestro",
+      "args": ["mcp"]
+    }
+  }
+}

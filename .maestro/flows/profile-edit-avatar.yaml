@@ -1,0 +1,6 @@
+appId: club.picator.gamev2
+---
+- launchApp
+- tapOn: "P"
+- tapOn: "✎"
+- takeScreenshot: avatar_picker_modal
