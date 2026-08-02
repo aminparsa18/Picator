@@ -380,3 +380,6 @@ graphify-out/
 
 # Maestro screenshots saved to repo root during local test runs
 /*.png
+
+# Local mkcert dev certificate (private key material, machine-specific)
+Picator.Api/certs/

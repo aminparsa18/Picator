@@ -1,29 +1,26 @@
 #!/usr/bin/env bash
-# Build the MAUI app for iOS, launch it in the Simulator, then start the
-# Aspire AppHost (Debug) so the app has a local backend to talk to.
+# Build the MAUI app for Android, deploy it to a connected device, then start
+# the Aspire AppHost (Debug) so the app has a local backend to talk to.
 #
-# `dotnet build -t:Run -f net10.0-ios` cannot be used on this Intel Mac: an
-# upstream dotnet/macios bug in GetAvailableDevices.cs discards every
-# simulator device once it sees "arm64" in the runtime's supported
-# architectures list, even when a valid x86_64 identifier was already found.
-# So we build plain, then drive simctl ourselves.
+# Also sets up `adb reverse` so the device can reach the Aspire-hosted API at
+# https://localhost:<port> over the USB connection.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-UDID="${1:-AE3F49B1-3BBE-40F3-B158-164EF2F4430A}"  # iPhone 16 Pro
-BUNDLE_ID="club.picator.gamev2"
-APP_PATH="Picator.GameV2/bin/Debug/net10.0-ios/iossimulator-x64/Picator.Game.app"
+SERIAL="${1:-R5CW50YDGAB}"  # Galaxy S23 Ultra
+PACKAGE="com.parsoft.picator"
 APPHOST="Picator.AppHost/Picator.AppHost.csproj"
+API_PORT="7106"
 
-dotnet build Picator.GameV2/Picator.Game.csproj -f net10.0-ios -c Debug
-
-if [ "$(xcrun simctl list devices | grep "$UDID" | grep -c Booted)" -eq 0 ]; then
-    xcrun simctl boot "$UDID"
+if ! adb devices | grep -q "^${SERIAL}[[:space:]]*device$"; then
+    echo "Error: device $SERIAL not connected (check 'adb devices')." >&2
+    exit 1
 fi
-open -a Simulator
 
-xcrun simctl install "$UDID" "$APP_PATH"
-xcrun simctl launch "$UDID" "$BUNDLE_ID"
+dotnet build Picator.GameV2/Picator.Game.csproj -f net10.0-android -t:Run -c Debug \
+    -p:AdbTarget="-s $SERIAL"
+
+adb -s "$SERIAL" reverse "tcp:$API_PORT" "tcp:$API_PORT"
 
 echo "Starting Aspire AppHost (Debug)..."
 aspire start --apphost "$APPHOST" --non-interactive --nologo

@@ -103,6 +103,12 @@
 	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
 		<ProjectReference Include="..\QrGenerator.Binding\QrGenerator.Binding.csproj" />
 	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android' And '$(Configuration)' == 'Debug'">
+		<AndroidResource Include="Platforms\Android\NetworkSecurity\network_security_config.debug.xml" LogicalName="Resources\xml\network_security_config.xml" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android' And '$(Configuration)' != 'Debug'">
+		<AndroidResource Include="Platforms\Android\NetworkSecurity\network_security_config.release.xml" LogicalName="Resources\xml\network_security_config.xml" />
+	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Views\Components\BorderedEntry.xaml.cs">
 			<DependentUpon>%(Filename)</DependentUpon>
