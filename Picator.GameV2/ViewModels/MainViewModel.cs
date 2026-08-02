@@ -35,6 +35,9 @@ public sealed partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private string _howToTab = "modes";
 
+    [ObservableProperty]
+    private bool _isMusicOn = true;
+
     public bool IsOverlayVisible => OverlayMode != HomeOverlayMode.None;
     public bool IsSearching => OverlayMode == HomeOverlayMode.Searching;
     public bool IsMatchFound => OverlayMode == HomeOverlayMode.MatchFound;
@@ -52,6 +55,8 @@ public sealed partial class MainViewModel : ViewModelBase
     public bool IsScoringTabActive => HowToTab == "scoring";
 
     public string SearchTimeDisplay => TimeSpan.FromSeconds(SearchSeconds).ToString(@"m\:ss");
+
+    public string MusicStatusDisplay => IsMusicOn ? "On" : "Off";
 
     public string ChosenFormatNote => ChosenFormat switch
     {
@@ -107,6 +112,8 @@ public sealed partial class MainViewModel : ViewModelBase
     partial void OnSearchSecondsChanged(int value) => OnPropertyChanged(nameof(SearchTimeDisplay));
 
     partial void OnChosenFormatChanged(string? value) => OnPropertyChanged(nameof(ChosenFormatNote));
+
+    partial void OnIsMusicOnChanged(bool value) => OnPropertyChanged(nameof(MusicStatusDisplay));
 
     partial void OnHowToTabChanged(string value)
     {
@@ -231,6 +238,16 @@ public sealed partial class MainViewModel : ViewModelBase
 
     [RelayCommand]
     private void OpenSettings() => OverlayMode = HomeOverlayMode.Settings;
+
+    [RelayCommand]
+    private void ToggleMusic()
+    {
+        IsMusicOn = !IsMusicOn;
+        if (IsMusicOn)
+            (Application.Current as App)?.PlayMusic();
+        else
+            (Application.Current as App)?.StopMusic();
+    }
 
     [RelayCommand]
     private void HowToPlay()

@@ -27,16 +27,30 @@ public partial class App : Application
         //                "uwp=af93ceea-b293-4d4e-8882-0b311ed9828a;" +
         //                "ios={Your iOS App secret here}",
         //    typeof(Analytics), typeof(Crashes));
-        //Dispatcher.DispatchAsync(async () =>
-        //{
-        //    using var stream = await FileSystem.OpenAppPackageFileAsync("picator.mp3");
-        //    _audioPlayer = AudioManager.Current.CreatePlayer(stream);
-        //    _audioPlayer.Play();
-        //});
+        Dispatcher.DispatchAsync(async () =>
+        {
+            try
+            {
+                using var stream = await FileSystem.OpenAppPackageFileAsync("picator.mp3");
+                _audioPlayer = AudioManager.Current.CreatePlayer(stream);
+                _audioPlayer.Loop = true;
+                _audioPlayer.Play();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError($"Failed to start background music: {ex}");
+            }
+        });
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
         return new(new AppShell());
     }
+
+    public bool IsMusicPlaying => _audioPlayer?.IsPlaying ?? false;
+
+    public void PlayMusic() => _audioPlayer?.Play();
+
+    public void StopMusic() => _audioPlayer?.Stop();
 }
