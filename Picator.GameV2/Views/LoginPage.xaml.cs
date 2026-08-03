@@ -8,20 +8,6 @@ public partial class LoginPage : ContentPage
         InitializeComponent();
     }
 
-    protected override void OnAppearing()
-    {
-        base.OnAppearing();
-
-        var a = new Animation
-            {
-                {0, 1, new Animation(v => Logo.TranslationY = v, 96, 0, Easing.SpringOut)},
-            };
-        a.Commit(
-            Logo,
-            "flip1",
-            length: 3000);
-    }
-
     private void RegisterBtn_OnClicked(object sender, EventArgs e)
     {
         RegisterBtn.BackgroundColor = (Color)Application.Current.Resources["InkStrong"];
@@ -34,14 +20,6 @@ public partial class LoginPage : ContentPage
         RegisterPanel.FadeToAsync(1, 400, Easing.Linear);
         LoginPanel.FadeToAsync(0, 400, Easing.Linear);
         LoginPanel.IsVisible = false;
-        var a = new Animation
-            {
-                {0, 1, new Animation(v => Logo.TranslationY = v, 96, 0, Easing.SpringOut)},
-            };
-        a.Commit(
-            Logo,
-            "flip1",
-            length: 1500);
     }
 
     private void LoginBtn_OnClicked(object sender, EventArgs e)
@@ -57,14 +35,6 @@ public partial class LoginPage : ContentPage
         LoginPanel.FadeToAsync(1, 400, Easing.Linear);
         RegisterPanel.FadeToAsync(0, 400, Easing.Linear);
         RegisterPanel.IsVisible = false;
-        var a = new Animation
-            {
-                {0, 1, new Animation(v => Logo.TranslationY = v, 96, 0, Easing.SpringOut)},
-            };
-        a.Commit(
-            Logo,
-            "flip1",
-            length: 1500);
     }
 
     private void Button_Clicked(object sender, EventArgs e)
