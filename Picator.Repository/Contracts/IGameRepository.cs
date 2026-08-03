@@ -41,4 +41,12 @@ public interface IGameRepository : IBaseRepository<Game>
     /// <param name="gameCode">Game code.</param>
     /// <returns>The game, or null if no game with that code exists.</returns>
     Task<Game?> GetByGameCode(string gameCode);
+
+    /// <summary>
+    /// Atomically marks a round Completed only if it's currently Active - closes the race between a correct
+    /// guess and a timeout arriving at nearly the same time.
+    /// </summary>
+    /// <param name="roundId">Round key identifier.</param>
+    /// <returns>1 if this call won the race, 0 if the round was already resolved by a concurrent call.</returns>
+    Task<int> TryCompleteRound(Guid roundId);
 }

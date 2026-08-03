@@ -49,7 +49,7 @@ public partial class StartNewGameViewModel : ViewModelBase, IDisposable
 
         CurrentState = LayoutState.Success;
 
-        var (isDrawer, _, _) = await _hub.JoinGameAsync(GameCode!);
+        var (isDrawer, _, _, _) = await _hub.JoinGameAsync(GameCode!);
         _isDrawer = isDrawer;
 
         IsBusy = false;

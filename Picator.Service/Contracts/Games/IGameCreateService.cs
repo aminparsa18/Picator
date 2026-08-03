@@ -25,4 +25,10 @@ public interface IGameCreateService
     /// on a correct guess.
     /// </summary>
     Task<GuessOutcome> SubmitGuess(string gameCode, Guid userId, string guess);
+
+    /// <summary>
+    /// Called when a client's local round timer runs out. Ends the active round scorelessly (no-op if it
+    /// was already resolved by a guess or the other player's timeout call) and advances/completes the game.
+    /// </summary>
+    Task<GuessOutcome> TimeoutRound(string gameCode, Guid userId);
 }

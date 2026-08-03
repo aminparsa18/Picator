@@ -18,7 +18,7 @@ public class GameHub : IGameDrawingReceiver, IAsyncDisposable
     public event EventHandler<string?>? WordReceived;
     public event EventHandler<uint>? ColorReceived;
     public event EventHandler<float>? ThicknessReceived;
-    public event EventHandler<(bool WasCorrect, string Word, int Points)>? RoundEnded;
+    public event EventHandler<(bool WasCorrect, string Word, int Points, bool GameCompleted, int DrawerScore, int GuesserScore)>? RoundEnded;
 
     private GameHub()
     {
@@ -58,7 +58,7 @@ public class GameHub : IGameDrawingReceiver, IAsyncDisposable
         }
     }
 
-    public async ValueTask<(bool IsDrawer, string? Word, int WordLength)> JoinGameAsync(string gameCode)
+    public async ValueTask<(bool IsDrawer, string? Word, int WordLength, int RoundDurationSeconds)> JoinGameAsync(string gameCode)
     {
         if (_client is null)
             throw new InvalidOperationException("GameHub is not connected. Call ConnectAsync first.");
@@ -72,6 +72,14 @@ public class GameHub : IGameDrawingReceiver, IAsyncDisposable
             throw new InvalidOperationException("GameHub is not connected.");
 
         return await _client.SubmitGuessAsync(guess);
+    }
+
+    public async ValueTask SubmitTimeoutAsync()
+    {
+        if (_client is null)
+            throw new InvalidOperationException("GameHub is not connected.");
+
+        await _client.SubmitTimeoutAsync();
     }
 
     public async ValueTask SendDrawingPoint(string gameCode, float x, float y)
@@ -156,6 +164,6 @@ public class GameHub : IGameDrawingReceiver, IAsyncDisposable
     public void OnThicknessChanged(float thickness) =>
         ThicknessReceived?.Invoke(this, thickness);
 
-    public void OnRoundEnded(bool wasCorrect, string word, int pointsAwarded) =>
-        RoundEnded?.Invoke(this, (wasCorrect, word, pointsAwarded));
+    public void OnRoundEnded(bool wasCorrect, string word, int pointsAwarded, bool gameCompleted, int drawerScore, int guesserScore) =>
+        RoundEnded?.Invoke(this, (wasCorrect, word, pointsAwarded, gameCompleted, drawerScore, guesserScore));
 }

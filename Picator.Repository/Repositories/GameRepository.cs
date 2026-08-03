@@ -1,4 +1,5 @@
 ﻿using Picator.Common.Data.Dtos.Games;
+using Picator.Common.Data.Enums;
 
 namespace Picator.Repository.Repositories;
 
@@ -47,7 +48,14 @@ public sealed class GameRepository : BaseRepository<Game>, IGameRepository
     {
         return Context.Game
             .Include(g => g.Round)
-            .Include(g => g.GameMember)
+            .Include(g => g.GameMember).ThenInclude(m => m.User)
             .FirstOrDefaultAsync(g => g.GameCode == gameCode);
+    }
+
+    /// <inheritdoc/>
+    public Task<int> TryCompleteRound(Guid roundId)
+    {
+        return Context.Database.ExecuteSqlAsync(
+            $"UPDATE dbo.\"Round\" SET \"Status\" = {(int)RoundStatus.Completed} WHERE \"Id\" = {roundId} AND \"Status\" = {(int)RoundStatus.Active}");
     }
 }

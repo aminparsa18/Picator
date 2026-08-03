@@ -112,10 +112,13 @@ sealed class CliOptions
                 --jwt-secret   Default: the dev secret from appsettings.json (npvFXTOBcSnzwZV8rpc1xBn61mFfqH5Y). Must match Picator.Realtime's Jwt:Secret.
                 --scenario     Default: pair,cancel,unauthorized. Add "expire" to also run the 65s TTL-expiry check.
                                Add "live-bot" (not in the default set - must be requested explicitly) to play the
-                               second player interactively against a REAL device: it prompts you to start Quick
-                               Match on the device first (so you become the drawer), then prompts again before
-                               submitting its guess so you can watch strokes arrive. It always ends up as guesser
-                               and reads the answer straight from Postgres, never over the wire.
+                               second player interactively against a REAL device across every round until the
+                               game completes: it prompts you to start Quick Match first (so you queue older and
+                               become round 1's drawer), then for each round either draws a few scripted lines
+                               itself (bot's turn as drawer - not aiming for art, just exercising the sync path)
+                               or prompts you before submitting a correct guess (bot's turn as guesser, reading
+                               the answer straight from Postgres, never over the wire), looping until the game
+                               reports GameCompleted.
                 """);
             return null;
         }
@@ -169,11 +172,16 @@ sealed class TestReceiver : IMatchFoundReceiver
 
 sealed class BotGameReceiver : IGameDrawingReceiver
 {
-    public readonly TaskCompletionSource<(bool WasCorrect, string Word, int Points)> RoundEnded = new();
+    private TaskCompletionSource<(bool WasCorrect, string Word, int Points, bool GameCompleted, int DrawerScore, int GuesserScore)> _roundEndedTcs = new();
     public int PointsReceived { get; private set; }
     public int LinesCompleted { get; private set; }
 
-    public void OnPlayerJoined() => Console.WriteLine("  [bot] drawer joined the game group.");
+    /// <summary>Call before taking this round's action (join/draw/guess), so a fresh completion is armed for it.</summary>
+    public void ResetRoundEnded() => _roundEndedTcs = new();
+
+    public Task<(bool WasCorrect, string Word, int Points, bool GameCompleted, int DrawerScore, int GuesserScore)> WaitForRoundEndedAsync() => _roundEndedTcs.Task;
+
+    public void OnPlayerJoined() => Console.WriteLine("  [bot] other player joined the game group.");
     public void OnPlayerLeft() => Console.WriteLine("  [bot] the other player left.");
     public void OnGameWordReceived(string? word) { }
     public void OnPointAdded(float x, float y) => PointsReceived++;
@@ -184,8 +192,8 @@ sealed class BotGameReceiver : IGameDrawingReceiver
         LinesCompleted++;
         Console.WriteLine($"  [bot] drawer completed a stroke (line #{LinesCompleted}, {PointsReceived} points received so far).");
     }
-    public void OnRoundEnded(bool wasCorrect, string word, int pointsAwarded) =>
-        RoundEnded.TrySetResult((wasCorrect, word, pointsAwarded));
+    public void OnRoundEnded(bool wasCorrect, string word, int pointsAwarded, bool gameCompleted, int drawerScore, int guesserScore) =>
+        _roundEndedTcs.TrySetResult((wasCorrect, word, pointsAwarded, gameCompleted, drawerScore, guesserScore));
 }
 
 static class DevChannel
@@ -392,41 +400,61 @@ static class Scenarios
             if (isDrawer)
                 return ("live-bot", false, "Bot was matched as the drawer - it must queue AFTER the human. Restart the human's Quick Match first, then re-run the bot.");
 
-            Console.WriteLine($"Matched into game {gameCode} as guesser. Joining the game hub...");
+            Console.WriteLine($"Matched into game {gameCode}. Joining the game hub...");
 
             BotGameReceiver gameReceiver;
             (gameHub, gameReceiver, gameChannel) = await GameHubConnection.ConnectAsync(options.RealtimeUrl, jwt);
-            var (joinIsDrawer, _, _) = await gameHub.JoinGameAsync(gameCode);
-            if (joinIsDrawer)
-                return ("live-bot", false, "GameHub.JoinGameAsync disagreed with matchmaking's role assignment (bot ended up as drawer).");
 
-            var round = await db.Round.AsNoTracking()
-                .Where(r => r.Game!.GameCode == gameCode && r.Status == RoundStatus.Active)
-                .OrderByDescending(r => r.RoundNumber)
-                .FirstOrDefaultAsync();
-            if (round == null)
-                return ("live-bot", false, $"No active round found in the database for game {gameCode}.");
+            // Loop rounds until the game completes - roles swap each round (Solo: RoundsPerPlayer * 2
+            // total rounds), so the bot needs to handle being either drawer or guesser depending on the round.
+            var roundNumber = 1;
+            while (true)
+            {
+                gameReceiver.ResetRoundEnded();
+                var (joinIsDrawer, _, _, roundDurationSeconds) = await gameHub.JoinGameAsync(gameCode);
+                Console.WriteLine($"--- Round {roundNumber}: bot is {(joinIsDrawer ? "drawer" : "guesser")} ---");
 
-            Console.WriteLine("Joined as guesser. Draw a stroke or two on the device to confirm drawing sync, then press Enter here to submit the bot's (correct) guess...");
-            Console.ReadLine();
+                if (joinIsDrawer)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(3)); // rough alignment with the human's 10s intro screen
+                    Console.WriteLine("Bot is drawing a few scripted lines (not expecting a masterpiece)...");
+                    await DrawScriptedLinesAsync(gameHub, gameCode);
+                    Console.WriteLine("Bot finished drawing. Guess it on the device (or let the round time out) to continue...");
+                }
+                else
+                {
+                    var round = await db.Round.AsNoTracking()
+                        .Where(r => r.Game!.GameCode == gameCode && r.Status == RoundStatus.Active)
+                        .OrderByDescending(r => r.RoundNumber)
+                        .FirstOrDefaultAsync();
+                    if (round == null)
+                        return ("live-bot", false, $"No active round found in the database for game {gameCode} (round {roundNumber}).");
 
-            var wasCorrect = await gameHub.SubmitGuessAsync(round.Word);
-            var roundEndedReceived = await Task.WhenAny(gameReceiver.RoundEnded.Task, Task.Delay(TimeSpan.FromSeconds(10))) == gameReceiver.RoundEnded.Task;
+                    Console.WriteLine("Joined as guesser. Draw a stroke or two on the device to confirm drawing sync, then press Enter here to submit the bot's (correct) guess...");
+                    Console.ReadLine();
 
-            var completedRound = await db.Round.AsNoTracking().FirstOrDefaultAsync(r => r.Id == round.Id);
-            var dbConfirmsCompleted = completedRound?.Status == RoundStatus.Completed;
+                    var wasCorrect = await gameHub.SubmitGuessAsync(round.Word);
+                    if (!wasCorrect)
+                        return ("live-bot", false, $"Bot's guess of \"{round.Word}\" was rejected as incorrect by the server (round {roundNumber}).");
+                }
 
-            if (!wasCorrect)
-                return ("live-bot", false, $"Bot's guess of \"{round.Word}\" was rejected as incorrect by the server.");
+                var roundTimeout = TimeSpan.FromSeconds(roundDurationSeconds + 60);
+                var roundEndedReceived = await Task.WhenAny(gameReceiver.WaitForRoundEndedAsync(), Task.Delay(roundTimeout)) == gameReceiver.WaitForRoundEndedAsync();
+                if (!roundEndedReceived)
+                    return ("live-bot", false, $"Round {roundNumber} never resolved - no OnRoundEnded within {roundTimeout.TotalSeconds}s.");
 
-            if (!roundEndedReceived)
-                return ("live-bot", false, "Guess was accepted but OnRoundEnded was never received by the bot.");
+                var result = await gameReceiver.WaitForRoundEndedAsync();
+                Console.WriteLine($"Round {roundNumber} ended: correct={result.WasCorrect}, word=\"{result.Word}\", gameCompleted={result.GameCompleted}");
 
-            if (!dbConfirmsCompleted)
-                return ("live-bot", false, $"Guess was accepted and broadcast, but the round's DB status is still {completedRound?.Status}, not Completed.");
+                if (result.GameCompleted)
+                {
+                    return ("live-bot", true, $"Game completed after {roundNumber} round(s) in {gameCode}. " +
+                        $"Final scores - drawer role: {result.DrawerScore}, guesser role: {result.GuesserScore} " +
+                        $"(received {gameReceiver.PointsReceived} drawing points across {gameReceiver.LinesCompleted} strokes total as guesser).");
+                }
 
-            return ("live-bot", true, $"Round completed end-to-end in game {gameCode}: bot guessed \"{round.Word}\" correctly " +
-                $"(received {gameReceiver.PointsReceived} drawing points across {gameReceiver.LinesCompleted} strokes from the drawer).");
+                roundNumber++;
+            }
         }
         finally
         {
@@ -437,6 +465,29 @@ static class Scenarios
                 await gameHub.DisposeAsync();
             if (gameChannel != null)
                 await gameChannel.ShutdownAsync();
+        }
+    }
+
+    // Scripted, deliberately unimpressive doodle - just enough to exercise the drawing-sync path
+    // (point/color/line-completed broadcasts) when the bot ends up as drawer for a later round.
+    private static async Task DrawScriptedLinesAsync(IGameHub gameHub, string gameCode)
+    {
+        var random = new Random();
+        await gameHub.SendDrawingColor(gameCode, 0xFF1A1A1AU);
+
+        for (var line = 0; line < 3; line++)
+        {
+            var startX = random.Next(40, 220);
+            var startY = random.Next(40, 220);
+            for (var p = 0; p < 10; p++)
+            {
+                var x = startX + p * 6;
+                var y = startY + (float)(Math.Sin(p * 0.6) * 30);
+                await gameHub.SendDrawingPoint(gameCode, x, y);
+                await Task.Delay(30);
+            }
+            await gameHub.SendDrawingCompleted(gameCode);
+            await Task.Delay(300);
         }
     }
 }

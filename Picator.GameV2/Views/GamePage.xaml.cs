@@ -21,13 +21,14 @@ public partial class GamePage : ContentPage
         PlayerDrawingView.Lines = _lines;
        
         this.BindingContext = new GameViewModel(isDrawingPlayer, gameCode);
-        if (!isDrawingPlayer)
-        {
-            GameHub.Instance.PointReceived += PointReceived;
-            GameHub.Instance.LineCompleted += LineCompleted;
-            GameHub.Instance.ColorReceived += ColorReceived;
-            GameHub.Instance.ThicknessReceived += ThicknessReceived;
-        }
+
+        // Always subscribed, not gated on the initial role: a drawer's own hub instance never receives
+        // its own broadcast points anyway (server excludes the sender), and role can swap mid-page-lifetime
+        // once a game plays more than one round.
+        GameHub.Instance.PointReceived += PointReceived;
+        GameHub.Instance.LineCompleted += LineCompleted;
+        GameHub.Instance.ColorReceived += ColorReceived;
+        GameHub.Instance.ThicknessReceived += ThicknessReceived;
     }
 
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)

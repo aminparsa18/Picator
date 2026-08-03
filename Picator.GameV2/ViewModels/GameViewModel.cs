@@ -56,6 +56,12 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
     private string? _roundResultMessage;
 
     [ObservableProperty]
+    private bool _showGameOver;
+
+    [ObservableProperty]
+    private string? _gameOverMessage;
+
+    [ObservableProperty]
     private ObservableCollection<DrawingLine> _lines = [new DrawingLine()];
     [ObservableProperty]
     private double _remainingSeconds;
@@ -81,8 +87,10 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
     private readonly IGameWordsApiService _gameWordsApiService;
     private CancellationTokenSource? _timerCts;
     private readonly GameHub _hub;
+    private int _roundDurationSeconds = 60;
 
-    public bool IsDrawingPlayer { get; set; }
+    [ObservableProperty]
+    private bool _isDrawingPlayer;
 
     public GameViewModel(bool isDrawingPlayer, string gameCode)
     {
@@ -118,8 +126,32 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
 
         await _hub.ConnectAsync(channel, jwt!);
 
-        var (isDrawer, word, wordLength) = await _hub.JoinGameAsync(_gameCode!);
+        var (isDrawer, word, wordLength, roundDurationSeconds) = await _hub.JoinGameAsync(_gameCode!);
+        _roundDurationSeconds = roundDurationSeconds;
+
+        if (word != null || wordLength > 0)
+        {
+            // Round already active (pre-matched quick-match, or reconnect to an already-paired legacy game).
+            BeginRound(isDrawer, word, wordLength);
+        }
+        else
+        {
+            // Legacy join-by-code first joiner, still WaitingFriend - the real word arrives later via OnGameWordReceived.
+            IsDrawingPlayer = isDrawer;
+        }
+
+        IsBusy = false;
+    }
+
+    // Sets up a round's UI state (word/tiles, drawer tools, timer) - used both for the first round and
+    // for every subsequent round after RoundEndedReceived rejoins to pick up the next one.
+    private void BeginRound(bool isDrawer, string? word, int wordLength)
+    {
         IsDrawingPlayer = isDrawer;
+        ShowRoundResult = false;
+        ShowWrongGuess = false;
+        ShowCorrectGuess = false;
+        Lines = [new DrawingLine()];
 
         if (isDrawer && ColorItems is null)
         {
@@ -134,31 +166,27 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
 
         if (word != null)
         {
-            // Drawer, round already active (pre-matched quick-match, or reconnect to an already-paired legacy game).
-            GameWordReceived(this, word);
+            CorrectWord = word;
+            PrepareLetters();
         }
         else if (wordLength > 0)
         {
-            // Guesser, round already active: only the word length is known - the real word stays server-side.
+            // Clear any previous round's word - if this player drew last round, CorrectWord (and its
+            // length, which WordLengthHint prefers over CorrectWordLetters) would otherwise stick around
+            // stale now that they're guessing a different word this round.
+            CorrectWord = null;
             PrepareLettersFromLength(wordLength);
-            StartGameTimer(60);
         }
-        // else: legacy join-by-code first joiner, still WaitingFriend - the real word arrives later via OnGameWordReceived.
 
         IsBusy = false;
+        StartGameTimer(_roundDurationSeconds);
     }
 
-    private void GameWordReceived(object? sender, string? e)
-    {
-        CorrectWord = e;
-        IsBusy = false;
+    // Legacy join-by-code: fires once the second player joins and completes pairing, pushing the word
+    // to this (already-connected, already-drawing) client.
+    private void GameWordReceived(object? sender, string? e) => BeginRound(isDrawer: true, word: e, wordLength: 0);
 
-        PrepareLetters();
-
-        StartGameTimer(60);
-    }
-
-    private void RoundEndedReceived(object? sender, (bool WasCorrect, string Word, int Points) e)
+    private async void RoundEndedReceived(object? sender, (bool WasCorrect, string Word, int Points, bool GameCompleted, int DrawerScore, int GuesserScore) e)
     {
         _hasWon = e.WasCorrect;
         IsTimerRunning = false;
@@ -166,6 +194,34 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
         RoundResultMessage = e.WasCorrect
             ? $"Guessed! The word was \"{e.Word}\" (+{e.Points} pts)"
             : $"Round over. The word was \"{e.Word}\"";
+
+        if (e.GameCompleted)
+        {
+            var myScore = IsDrawingPlayer ? e.DrawerScore : e.GuesserScore;
+            var opponentScore = IsDrawingPlayer ? e.GuesserScore : e.DrawerScore;
+
+            await Task.Delay(2000);
+            ShowRoundResult = false;
+            GameOverMessage = myScore == opponentScore
+                ? $"It's a tie! {myScore} - {opponentScore}"
+                : myScore > opponentScore
+                    ? $"You win! {myScore} - {opponentScore}"
+                    : $"You lose. {myScore} - {opponentScore}";
+            ShowGameOver = true;
+            return;
+        }
+
+        await Task.Delay(2500);
+
+        var (isDrawer, word, wordLength, roundDurationSeconds) = await _hub.JoinGameAsync(_gameCode!);
+        _roundDurationSeconds = roundDurationSeconds;
+        BeginRound(isDrawer, word, wordLength);
+    }
+
+    [RelayCommand]
+    private async Task BackToMenu()
+    {
+        await Application.Current.MainPage.Navigation.PopToRootAsync();
     }
 
     private void PrepareLetters()
@@ -276,10 +332,18 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
 
             if (!_hasWon && !ct.IsCancellationRequested)
             {
-                // Time’s up -> lose
                 IsTimerRunning = false;
-                // TODO: expose Lose state / raise event / navigate to result page
-                // e.g. ShowLoseState();
+                try
+                {
+                    // Either player's timer can report the timeout - the server no-ops if the round was
+                    // already resolved (a guess landed first, or the other client got here first).
+                    await _hub.SubmitTimeoutAsync();
+                }
+                catch (Exception)
+                {
+                    // Best-effort: if this call fails (e.g. mid-disconnect), the other player's own
+                    // timer will still catch the timeout and resolve the round.
+                }
             }
         }
         catch (TaskCanceledException)

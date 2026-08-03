@@ -285,6 +285,21 @@
                                    TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
                         </VerticalStackLayout>
                     </Grid>
+
+                    <Grid Grid.RowSpan="4" IsVisible="{Binding ShowGameOver}" BackgroundColor="{StaticResource PaperBackground}">
+                        <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="16">
+                            <Label Text="Game Over" FontFamily="KalamBold" FontSize="28" TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" />
+                            <Label Text="{Binding GameOverMessage}" FontFamily="PatrickHandRegular" FontSize="18"
+                                   TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                            <Border BackgroundColor="{StaticResource AccentStrong}" Stroke="{StaticResource InkStrong}"
+                                    StrokeThickness="2" StrokeShape="RoundRectangle 14" Padding="24,10">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding BackToMenuCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="Back to Menu" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource OnAccentStrong}" />
+                            </Border>
+                        </VerticalStackLayout>
+                    </Grid>
                 </Grid>
                 <Grid toolkit:StateView.StateKey="PlayerGame" VerticalOptions="Fill" HorizontalOptions="Fill"
                       BackgroundColor="{StaticResource PaperBackground}">
@@ -413,6 +428,21 @@
                             <Label Text="Round over!" FontFamily="KalamBold" FontSize="22" TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" />
                             <Label Text="{Binding RoundResultMessage}" FontFamily="PatrickHandRegular" FontSize="16"
                                    TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Grid Grid.RowSpan="6" IsVisible="{Binding ShowGameOver}" BackgroundColor="{StaticResource PaperBackground}">
+                        <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="16">
+                            <Label Text="Game Over" FontFamily="KalamBold" FontSize="28" TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" />
+                            <Label Text="{Binding GameOverMessage}" FontFamily="PatrickHandRegular" FontSize="18"
+                                   TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                            <Border BackgroundColor="{StaticResource AccentStrong}" Stroke="{StaticResource InkStrong}"
+                                    StrokeThickness="2" StrokeShape="RoundRectangle 14" Padding="24,10">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding BackToMenuCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="Back to Menu" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource OnAccentStrong}" />
+                            </Border>
                         </VerticalStackLayout>
                     </Grid>
                 </Grid>

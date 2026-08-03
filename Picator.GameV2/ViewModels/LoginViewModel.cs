@@ -75,7 +75,7 @@ public partial class LoginViewModel : ViewModelBase
             if (result != null)
             {
                 // Handle successful authentication
-                Barrel.Current.Add("Token", result.Token, TimeSpan.FromMinutes(20));
+                Barrel.Current.Add("Token", result.Token, TimeSpan.FromDays(7));
                 Barrel.Current.Add("RefreshToken", result.RefreshToken, TimeSpan.FromDays(150));
                 BaseHttpClient.Instance.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", result.Token);
@@ -135,7 +135,7 @@ public partial class LoginViewModel : ViewModelBase
                 var result = await response.Content.ReadAsMemoryPackAsync<AuthResult>();
                 if (result.IsSuccess)
                 {
-                    Barrel.Current.Add("Token", result.Token, TimeSpan.FromMinutes(20));
+                    Barrel.Current.Add("Token", result.Token, TimeSpan.FromDays(7));
                     Barrel.Current.Add("RefreshToken", result.RefreshToken, TimeSpan.FromDays(150));
                     BaseHttpClient.Instance.DefaultRequestHeaders.Authorization =
                         new AuthenticationHeaderValue("Bearer", result.Token);

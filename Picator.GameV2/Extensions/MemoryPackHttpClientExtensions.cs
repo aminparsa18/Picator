@@ -169,9 +169,9 @@ public static class MemoryPackHttpClientExtensions
                 if (!data.IsSuccess)
                     return new ApiResult() { IsSuccess = false, Errors = data.Errors };
 
-                Barrel.Current.Add("Token", data.Token, TimeSpan.FromMinutes(6));
+                Barrel.Current.Add("Token", data.Token, TimeSpan.FromDays(7));
                 Barrel.Current.Add("RefreshToken", data.RefreshToken, TimeSpan.FromDays(150));
-                Barrel.Current.Add("TokenExpiration", DateTime.UtcNow.AddMinutes(6), TimeSpan.FromMinutes(6));
+                Barrel.Current.Add("TokenExpiration", DateTime.UtcNow.AddDays(7), TimeSpan.FromDays(7));
 
                 // No need to manually update HttpClient header - AuthenticationHandler will get the new token automatically!
 

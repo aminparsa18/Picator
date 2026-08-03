@@ -11,4 +11,5 @@ namespace Picator.Common.Data.Dtos.Games;
 /// the caller should push the word to the already-connected drawer via <see cref="DrawerWordToPush"/>.
 /// </param>
 /// <param name="DrawerWordToPush">The word to push to the already-connected drawer when <see cref="JustCompletedLegacyPairing"/> is true.</param>
-public sealed record GameJoinOutcome(bool IsDrawer, string? Word, int WordLength, bool JustCompletedLegacyPairing, string? DrawerWordToPush);
+/// <param name="RoundDurationSeconds">How long the active round's timer runs for, in seconds.</param>
+public sealed record GameJoinOutcome(bool IsDrawer, string? Word, int WordLength, bool JustCompletedLegacyPairing, string? DrawerWordToPush, int RoundDurationSeconds);

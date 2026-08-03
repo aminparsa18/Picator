@@ -9,5 +9,5 @@ public interface IGameDrawingReceiver
     void OnColorChanged(uint color);
     void OnThicknessChanged(float thickness);
     void OnLineCompleted();
-    void OnRoundEnded(bool wasCorrect, string word, int pointsAwarded);
+    void OnRoundEnded(bool wasCorrect, string word, int pointsAwarded, bool gameCompleted, int drawerScore, int guesserScore);
 }

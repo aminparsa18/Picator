@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
 using MagicOnion.Server.Hubs;
 using Microsoft.AspNetCore.Authorization;
+using Picator.Common.Data.Dtos.Games;
 using Picator.Realtime.Common.Services;
 using Picator.Service.Contracts.Games;
 using System.Security.Claims;
@@ -21,7 +22,7 @@ public class GameHub : StreamingHubBase<IGameHub, IGameDrawingReceiver>, IGameHu
         _logger = logger;
     }
 
-    public async ValueTask<(bool IsDrawer, string? Word, int WordLength)> JoinGameAsync(string gameCode)
+    public async ValueTask<(bool IsDrawer, string? Word, int WordLength, int RoundDurationSeconds)> JoinGameAsync(string gameCode)
     {
         var userId = Guid.Parse(Context.CallContext.GetHttpContext()!.User.FindFirstValue(ClaimTypes.Name)!);
 
@@ -40,21 +41,31 @@ public class GameHub : StreamingHubBase<IGameHub, IGameDrawingReceiver>, IGameHu
             _logger.LogInformation("***Sent game word to drawer in game {GameCode}***", gameCode);
         }
 
-        return (outcome.IsDrawer, outcome.Word, outcome.WordLength);
+        return (outcome.IsDrawer, outcome.Word, outcome.WordLength, outcome.RoundDurationSeconds);
     }
 
     public async ValueTask<bool> SubmitGuessAsync(string guess)
     {
         var userId = Guid.Parse(Context.CallContext.GetHttpContext()!.User.FindFirstValue(ClaimTypes.Name)!);
         var outcome = await _gameCreateService.SubmitGuess(_gameCode!, userId, guess);
-
-        if (outcome.RoundJustCompleted)
-        {
-            _group!.All.OnRoundEnded(outcome.WasCorrect, outcome.Word, outcome.PointsAwarded);
-            _logger.LogInformation("***Round ended in game {GameCode}: correct={WasCorrect}***", _gameCode, outcome.WasCorrect);
-        }
-
+        BroadcastIfRoundEnded(outcome);
         return outcome.WasCorrect;
+    }
+
+    public async ValueTask SubmitTimeoutAsync()
+    {
+        var userId = Guid.Parse(Context.CallContext.GetHttpContext()!.User.FindFirstValue(ClaimTypes.Name)!);
+        var outcome = await _gameCreateService.TimeoutRound(_gameCode!, userId);
+        BroadcastIfRoundEnded(outcome);
+    }
+
+    private void BroadcastIfRoundEnded(GuessOutcome outcome)
+    {
+        if (!outcome.RoundJustCompleted)
+            return;
+
+        _group!.All.OnRoundEnded(outcome.WasCorrect, outcome.Word, outcome.PointsAwarded, outcome.GameCompleted, outcome.DrawerScore, outcome.GuesserScore);
+        _logger.LogInformation("***Round ended in game {GameCode}: correct={WasCorrect}, gameCompleted={GameCompleted}***", _gameCode, outcome.WasCorrect, outcome.GameCompleted);
     }
 
     public async ValueTask LeaveAsync()
