@@ -1,4 +1,8 @@
+using Grpc.Net.Client;
+using Picator.Common.Data.Enums;
 using Picator.Game.Cache;
+using Picator.Game.Constants;
+using Picator.Game.Hubs;
 using Picator.GameV2;
 using System.Web;
 
@@ -19,6 +23,8 @@ public enum HomeOverlayMode
 public sealed partial class MainViewModel : ViewModelBase
 {
     private CancellationTokenSource? _searchCts;
+    private MatchmakingHubClient? _matchmakingHub;
+    private GrpcChannel? _matchmakingChannel;
 
     [ObservableProperty]
     private HomeOverlayMode _overlayMode = HomeOverlayMode.None;
@@ -148,14 +154,21 @@ public sealed partial class MainViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void StartQuickMatch()
+    private async Task StartQuickMatch()
     {
+        if (!Barrel.Current.Exists("Token"))
+        {
+            await Shell.Current.GoToAsync("//login");
+            return;
+        }
+
         _searchCts?.Cancel();
         _searchCts = new CancellationTokenSource();
         SearchSeconds = 0;
         OverlayMode = HomeOverlayMode.Searching;
+
         _ = TickSearchAsync(_searchCts.Token);
-        _ = FinishSearchAsync(_searchCts.Token);
+        _ = EnterQuickMatchAsync(_searchCts.Token);
     }
 
     private async Task TickSearchAsync(CancellationToken token)
@@ -173,23 +186,75 @@ public sealed partial class MainViewModel : ViewModelBase
         }
     }
 
-    private async Task FinishSearchAsync(CancellationToken token)
+    private async Task EnterQuickMatchAsync(CancellationToken token)
     {
         try
         {
-            await Task.Delay(2600, token);
-            OverlayMode = HomeOverlayMode.MatchFound;
+            await DisconnectMatchmakingHubAsync();
+
+            var jwt = Barrel.Current.Get<string>("Token");
+            _matchmakingChannel = GrpcChannel.ForAddress(UrlConstants.GameHubUrl);
+            _matchmakingHub = new MatchmakingHubClient();
+            _matchmakingHub.MatchFound += OnMatchFound;
+            await _matchmakingHub.ConnectAsync(_matchmakingChannel, jwt!);
+
+            if (token.IsCancellationRequested)
+                return;
+
+            await _matchmakingHub.EnterQueueAsync(GameFormat.Solo);
         }
-        catch (TaskCanceledException)
+        catch (Exception ex)
         {
+            if (token.IsCancellationRequested)
+                return;
+
+            Console.WriteLine($"MainViewModel: quick match failed - {ex.Message}");
+            OverlayMode = HomeOverlayMode.None;
+            await DisconnectMatchmakingHubAsync();
         }
     }
 
+    private async void OnMatchFound(object? sender, string gameCode)
+    {
+        _searchCts?.Cancel();
+
+        await MainThread.InvokeOnMainThreadAsync(async () =>
+        {
+            OverlayMode = HomeOverlayMode.MatchFound;
+            await Task.Delay(1200);
+            OverlayMode = HomeOverlayMode.None;
+            await Application.Current.MainPage.Navigation.PushAsync(new GamePage(false, gameCode));
+        });
+
+        await DisconnectMatchmakingHubAsync();
+    }
+
     [RelayCommand]
-    private void CancelSearch()
+    private async Task CancelSearch()
     {
         _searchCts?.Cancel();
         OverlayMode = HomeOverlayMode.None;
+
+        if (_matchmakingHub is not null)
+            await _matchmakingHub.CancelQueueAsync();
+
+        await DisconnectMatchmakingHubAsync();
+    }
+
+    private async Task DisconnectMatchmakingHubAsync()
+    {
+        if (_matchmakingHub is not null)
+        {
+            _matchmakingHub.MatchFound -= OnMatchFound;
+            await _matchmakingHub.DisposeAsync();
+            _matchmakingHub = null;
+        }
+
+        if (_matchmakingChannel is not null)
+        {
+            await _matchmakingChannel.ShutdownAsync();
+            _matchmakingChannel = null;
+        }
     }
 
     [RelayCommand]
