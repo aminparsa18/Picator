@@ -33,6 +33,11 @@ public interface IUnitOfWork
     IGameWordRepository GameWord { get; }
 
     /// <summary>
+    /// Repository provides methods to retrieve/handle matchmaking ticket data.
+    /// </summary>
+    IMatchTicketRepository MatchTicket { get; }
+
+    /// <summary>
     /// Repository provides methods to retrieve/handle refresh token data.
     /// </summary>
     IRefreshTokenRepository RefreshToken { get; }

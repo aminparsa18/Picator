@@ -66,6 +66,11 @@ public sealed class User : IdentityUser<Guid>
     public ICollection<RoomMember>? RoomMember { get; set; }
 
     /// <summary>
+    /// Collection of matchmaking tickets.
+    /// </summary>
+    public ICollection<MatchTicket>? MatchTicket { get; set; }
+
+    /// <summary>
     /// Collection of user roles.
     /// </summary>
     public ICollection<UserRole>? Roles { get; set; }

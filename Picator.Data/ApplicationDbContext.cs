@@ -19,6 +19,7 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, Guid, UserClai
     public virtual DbSet<GameMember> GameMember { get; set; }
     public virtual DbSet<GameMessage> GameMessage { get; set; }
     public virtual DbSet<GameWord> GameWord { get; set; }
+    public virtual DbSet<MatchTicket> MatchTicket { get; set; }
     public virtual DbSet<RefreshToken> RefreshToken { get; set; }
     public virtual DbSet<Room> Room { get; set; }
     public virtual DbSet<RoomMember> RoomMember { get; set; }

@@ -15,6 +15,7 @@ public sealed class UnitOfWork : IUnitOfWork
     private IGameMessageRepository? _gameMessage;
     private IGameRepository? _game;
     private IGameWordRepository? _gameWord;
+    private IMatchTicketRepository? _matchTicket;
     private IRefreshTokenRepository? _refreshToken;
     private IRoomMemberRepository? _roomMember;
     private IRoomRepository? _room;
@@ -37,6 +38,8 @@ public sealed class UnitOfWork : IUnitOfWork
     public IGameRepository Game => _game ??= new GameRepository(_context, _connection);
 
     public IGameWordRepository GameWord => _gameWord ??= new GameWordRepository(_context, _connection);
+
+    public IMatchTicketRepository MatchTicket => _matchTicket ??= new MatchTicketRepository(_context, _connection);
 
     public IRefreshTokenRepository RefreshToken => _refreshToken ??= new RefreshTokenRepository(_context, _connection);
 

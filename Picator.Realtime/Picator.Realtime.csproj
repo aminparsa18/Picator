@@ -10,9 +10,16 @@
     <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.4.6" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.80.0" />
     <PackageReference Include="MagicOnion.Server" Version="7.10.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageReference Include="TickerQ" Version="10.4.0" />
+    <PackageReference Include="TickerQ.EntityFrameworkCore" Version="10.4.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Picator.Configuration\Picator.Configuration.csproj" />
     <ProjectReference Include="..\Picator.Realtime.Common\Picator.Realtime.Common.csproj" />
     <ProjectReference Include="..\Picator.ServiceDefaults\Picator.ServiceDefaults.csproj" />
     <ProjectReference Include="..\Picator.Service\Picator.Service.csproj" />

@@ -15,7 +15,7 @@ var rustfs = builder.AddRustFs("rustfs", port: 9100, accessKey: rustfsAccessKey,
 
 var apiService =builder.AddProject<Projects.Picator_Api>("picator-api").WithReference(postgres).WaitFor(postgres);
 
-// builder.AddProject<Projects.Picator_Realtime>("picator-realtime").WithReference(postgres).WaitFor(postgres);
+builder.AddProject<Projects.Picator_Realtime>("picator-realtime").WithReference(postgres).WaitFor(postgres);
 
 // builder.AddProject<Projects.Picator_ExternalAuth>("picator-externalauth").WithReference(postgres).WaitFor(postgres);
 
