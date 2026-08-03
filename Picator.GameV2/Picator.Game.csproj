@@ -113,9 +113,6 @@
 		<Compile Update="Views\Components\BorderedEntry.xaml.cs">
 			<DependentUpon>%(Filename)</DependentUpon>
 		</Compile>
-		<Compile Update="Views\Components\CircularProgressBar.xaml.cs">
-			<DependentUpon>%(Filename)</DependentUpon>
-		</Compile>
 		<Compile Update="Views\Components\CopyButton.xaml.cs">
 			<DependentUpon>%(Filename)</DependentUpon>
 		</Compile>
@@ -137,19 +134,12 @@
 		<Compile Update="Views\ProfileSettingsPage.xaml.cs">
 			<DependentUpon>%(Filename)</DependentUpon>
 		</Compile>
-		<Compile Update="Views\StartNewGamePage.xaml.cs">
-			<DependentUpon>%(Filename)</DependentUpon>
-		</Compile>
 		<Compile Update="Views\TimerGameView.xaml.cs">
 			<DependentUpon>%(Filename)</DependentUpon>
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
 		<MauiXaml Update="Views\Components\BorderedEntry.xaml">
-			<SubType>Designer</SubType>
-			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\Components\CircularProgressBar.xaml">
 			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
@@ -189,10 +179,6 @@
 		<MauiXaml Update="Views\ProfileSettingsPage.xaml">
 			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\StartNewGamePage.xaml">
-			<SubType>Designer</SubType>
-			<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
 		</MauiXaml>
 		<MauiXaml Update="Views\TimerGameView.xaml">
 			<SubType>Designer</SubType>

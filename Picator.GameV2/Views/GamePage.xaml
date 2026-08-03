@@ -9,7 +9,6 @@
              x:Class="Picator.Game.Views.GamePage"
              x:DataType="viewmodels:GameViewModel"
              NavigationPage.HasNavigationBar="False"
-             BackgroundColor="#ff5995"
              x:Name="this">
     <ContentPage.Resources>
         <toolkit:IsListNullOrEmptyConverter x:Key="IsListNullOrEmptyConverter"/>
@@ -58,17 +57,17 @@
                             <VerticalStackLayout Spacing="10">
                                 <Label Text="Drawing tips" FontFamily="KalamBold" FontSize="16" TextColor="{StaticResource InkStrong}" />
                                 <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
-                                    <Label Text="✎" FontSize="15" TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                                    <Image Source="icon_pencil.svg" WidthRequest="16" HeightRequest="16" HorizontalOptions="Center" VerticalOptions="Start" Margin="0,2,0,0" />
                                     <Label Grid.Column="1" Text="Shapes and outlines first — details later if there's time."
                                            FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" LineBreakMode="WordWrap" />
                                 </Grid>
                                 <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
-                                    <Label Text="🚫" FontSize="15" TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                                    <Image Source="icon_ban.svg" WidthRequest="16" HeightRequest="16" HorizontalOptions="Center" VerticalOptions="Start" Margin="0,2,0,0" />
                                     <Label Grid.Column="1" Text="No letters, numbers, or words in your drawing."
                                            FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" LineBreakMode="WordWrap" />
                                 </Grid>
                                 <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
-                                    <Label Text="⏰" FontSize="15" TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                                    <Image Source="icon_clock.svg" WidthRequest="16" HeightRequest="16" HorizontalOptions="Center" VerticalOptions="Start" Margin="0,2,0,0" />
                                     <Label Grid.Column="1" Text="You'll have limited time once the round starts — work fast."
                                            FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" LineBreakMode="WordWrap" />
                                 </Grid>
@@ -117,17 +116,17 @@
                             <VerticalStackLayout Spacing="10">
                                 <Label Text="Guessing tips" FontFamily="KalamBold" FontSize="16" TextColor="{StaticResource InkStrong}" />
                                 <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
-                                    <Label Text="👁" FontSize="15" TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                                    <Image Source="icon_eye.svg" WidthRequest="16" HeightRequest="16" HorizontalOptions="Center" VerticalOptions="Start" Margin="0,2,0,0" />
                                     <Label Grid.Column="1" Text="Watch the strokes as they appear — the order gives clues."
                                            FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" LineBreakMode="WordWrap" />
                                 </Grid>
                                 <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
-                                    <Label Text="🔤" FontSize="15" TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                                    <Image Source="icon_keyboard.svg" WidthRequest="16" HeightRequest="16" HorizontalOptions="Center" VerticalOptions="Start" Margin="0,2,0,0" />
                                     <Label Grid.Column="1" Text="Tap the letter tiles in order to spell out the word."
                                            FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" LineBreakMode="WordWrap" />
                                 </Grid>
                                 <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
-                                    <Label Text="⚡" FontSize="15" TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                                    <Image Source="icon_zap.svg" WidthRequest="16" HeightRequest="16" HorizontalOptions="Center" VerticalOptions="Start" Margin="0,2,0,0" />
                                     <Label Grid.Column="1" Text="Faster correct guesses earn more points."
                                            FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" LineBreakMode="WordWrap" />
                                 </Grid>
@@ -225,14 +224,14 @@
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding UndoCommand}" />
                             </Border.GestureRecognizers>
-                            <Label Text="↺" FontSize="18" TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" VerticalOptions="Center" />
+                            <Image Source="icon_undo.svg" WidthRequest="17" HeightRequest="17" HorizontalOptions="Center" VerticalOptions="Center" />
                         </Border>
                         <Border Grid.Column="2" WidthRequest="36" HeightRequest="36" BackgroundColor="{StaticResource Surface}"
                                 Stroke="{StaticResource InkStrong}" StrokeThickness="2" StrokeShape="RoundRectangle 10" Padding="0">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding ClearCanvasCommand}" />
                             </Border.GestureRecognizers>
-                            <Label Text="🗑" FontSize="16" TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" VerticalOptions="Center" />
+                            <Image Source="icon_trash.svg" WidthRequest="17" HeightRequest="17" HorizontalOptions="Center" VerticalOptions="Center" />
                         </Border>
                     </Grid>
 

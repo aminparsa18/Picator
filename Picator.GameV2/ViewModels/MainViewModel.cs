@@ -133,19 +133,6 @@ public sealed partial class MainViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private async Task NavigateToStartGame()
-    {
-        try
-        {
-            await Application.Current.MainPage.Navigation.PushAsync(Barrel.Current.Exists("Token") ? new StartNewGamePage() : new StartNewGamePage());
-        }
-        catch (Exception)
-        {
-            // Ignored: navigation failures are surfaced by the platform.
-        }
-    }
-
-    [RelayCommand]
     private async Task NavigateToLogin()
     {
         if (Barrel.Current.Exists("Token"))
@@ -271,11 +258,10 @@ public sealed partial class MainViewModel : ViewModelBase
     private void OpenFriendsPicker() => OverlayMode = HomeOverlayMode.Friends;
 
     [RelayCommand]
-    private async Task ChooseSolo()
+    private void ChooseSolo()
     {
         ChosenFormat = "solo";
         OverlayMode = HomeOverlayMode.None;
-        await NavigateToStartGame();
     }
 
     [RelayCommand]
