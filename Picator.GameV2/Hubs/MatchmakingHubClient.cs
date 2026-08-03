@@ -9,7 +9,7 @@ public sealed class MatchmakingHubClient : IMatchFoundReceiver, IAsyncDisposable
 {
     private IMatchmakingHub? _client;
 
-    public event EventHandler<string>? MatchFound;
+    public event EventHandler<(string GameCode, bool IsDrawer)>? MatchFound;
     public event EventHandler? QueueExpired;
 
     public bool IsConnected => _client is not null;
@@ -38,8 +38,8 @@ public sealed class MatchmakingHubClient : IMatchFoundReceiver, IAsyncDisposable
         await _client.CancelQueueAsync();
     }
 
-    public void OnMatchFound(string gameCode) =>
-        MatchFound?.Invoke(this, gameCode);
+    public void OnMatchFound(string gameCode, bool isDrawer) =>
+        MatchFound?.Invoke(this, (gameCode, isDrawer));
 
     public void OnQueueExpired() =>
         QueueExpired?.Invoke(this, EventArgs.Empty);

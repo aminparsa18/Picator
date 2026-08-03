@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Core.Views;
+using Picator.Game.Cache;
 using Picator.Game.Constants;
 using Picator.Game.Hubs;
 using Picator.Game.Services.GameWords;
@@ -15,7 +16,7 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
     [ObservableProperty]
     private string? _correctWord;
 
-    public string WordLengthHint => $"{CorrectWord?.Count(c => !char.IsWhiteSpace(c)) ?? 0} letters";
+    public string WordLengthHint => $"{CorrectWord?.Count(c => !char.IsWhiteSpace(c)) ?? CorrectWordLetters?.Count ?? 0} letters";
 
     partial void OnCorrectWordChanged(string? value) => OnPropertyChanged(nameof(WordLengthHint));
 
@@ -47,6 +48,12 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
 
     [ObservableProperty]
     private bool _showCorrectGuess;
+
+    [ObservableProperty]
+    private bool _showRoundResult;
+
+    [ObservableProperty]
+    private string? _roundResultMessage;
 
     [ObservableProperty]
     private ObservableCollection<DrawingLine> _lines = [new DrawingLine()];
@@ -83,6 +90,7 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
         _gameCode = gameCode;
         _hub = GameHub.Instance;
         _hub.WordReceived += GameWordReceived;
+        _hub.RoundEnded += RoundEndedReceived;
         if (IsDrawingPlayer)
         {
             ColorItems =
@@ -105,15 +113,37 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
     {
         IsBusy = true;
 
-        var channel = Grpc.Net.Client.GrpcChannel.ForAddress(UrlConstants.GameHubUrl);
+        var channel = Picator.Game.Helpers.GrpcChannelFactory.Create(UrlConstants.GameHubUrl);
+        var jwt = Barrel.Current.Get<string>("Token");
 
-        await _hub.ConnectAsync(channel);
+        await _hub.ConnectAsync(channel, jwt!);
 
-        if (IsDrawingPlayer)
+        var (isDrawer, word, wordLength) = await _hub.JoinGameAsync(_gameCode!);
+        IsDrawingPlayer = isDrawer;
+
+        if (isDrawer && ColorItems is null)
         {
-            var playerId = Guid.NewGuid().ToString();
-            await _hub.JoinGameAsync(_gameCode!, playerId);
+            ColorItems =
+            [
+                Color.FromArgb("#1A1A1A"), Color.FromArgb("#C7431F"), Color.FromArgb("#E8532E"), Color.FromArgb("#2F9E44"),
+                Color.FromArgb("#1D5FAD"), Color.FromArgb("#F2B705"), Color.FromArgb("#8E44AD"), Color.FromArgb("#FDFCF8"),
+            ];
+            LineWidths = [3, 7, 13];
+            SelectedLineWidth = LineWidths[1];
         }
+
+        if (word != null)
+        {
+            // Drawer, round already active (pre-matched quick-match, or reconnect to an already-paired legacy game).
+            GameWordReceived(this, word);
+        }
+        else if (wordLength > 0)
+        {
+            // Guesser, round already active: only the word length is known - the real word stays server-side.
+            PrepareLettersFromLength(wordLength);
+            StartGameTimer(60);
+        }
+        // else: legacy join-by-code first joiner, still WaitingFriend - the real word arrives later via OnGameWordReceived.
 
         IsBusy = false;
     }
@@ -126,6 +156,16 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
         PrepareLetters();
 
         StartGameTimer(60);
+    }
+
+    private void RoundEndedReceived(object? sender, (bool WasCorrect, string Word, int Points) e)
+    {
+        _hasWon = e.WasCorrect;
+        IsTimerRunning = false;
+        ShowRoundResult = true;
+        RoundResultMessage = e.WasCorrect
+            ? $"Guessed! The word was \"{e.Word}\" (+{e.Points} pts)"
+            : $"Round over. The word was \"{e.Word}\"";
     }
 
     private void PrepareLetters()
@@ -153,6 +193,23 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
         }
 
         CorrectWordLetters = [.. MapStringToNullableChars(CorrectWord)];
+    }
+
+    private void PrepareLettersFromLength(int length)
+    {
+        // Guesser never receives the real word (server-authoritative guessing) - build a plain random
+        // tile pool and word-length blanks; the guess itself is validated server-side in SubmitGuess().
+        const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        var random = new Random();
+
+        ObservableCollection<char> pool = [];
+        while (pool.Count < Math.Max(16, length))
+        {
+            pool.Add(alphabet[random.Next(alphabet.Length)]);
+        }
+        Letters = pool;
+
+        CorrectWordLetters = [.. Enumerable.Repeat((char?)' ', length)];
     }
 
     private static List<char?> MapStringToNullableChars(string input)
@@ -347,7 +404,10 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
         if (!IsSubmitEnabled)
             return;
 
-        if (MapNullableCharsToString([.. CorrectWordLetters]).Equals(CorrectWord, StringComparison.InvariantCultureIgnoreCase))
+        var guess = MapNullableCharsToString([.. CorrectWordLetters]);
+        var wasCorrect = await _hub.SubmitGuessAsync(guess);
+
+        if (wasCorrect)
         {
             _hasWon = true;
             IsTimerRunning = false;
@@ -396,6 +456,7 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
         _timerCts = null;
 
         _hub.WordReceived -= GameWordReceived;
+        _hub.RoundEnded -= RoundEndedReceived;
 
         if (!IsDrawingPlayer)
         {

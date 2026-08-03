@@ -1,5 +1,6 @@
 using Picator.Common.Data.Enums;
 using Picator.Realtime.Services;
+using Picator.Service.Contracts.Games;
 using Picator.Service.Contracts.Matchmaking;
 using TickerQ.Utilities.Base;
 
@@ -15,12 +16,14 @@ public class MatchmakingSweepJob
     private static readonly TimeSpan TicketTtl = TimeSpan.FromSeconds(60);
 
     private readonly IMatchmakingService _matchmakingService;
+    private readonly IGameCreateService _gameCreateService;
     private readonly MatchmakingGroupService _groupService;
     private readonly ILogger<MatchmakingSweepJob> _logger;
 
-    public MatchmakingSweepJob(IMatchmakingService matchmakingService, MatchmakingGroupService groupService, ILogger<MatchmakingSweepJob> logger)
+    public MatchmakingSweepJob(IMatchmakingService matchmakingService, IGameCreateService gameCreateService, MatchmakingGroupService groupService, ILogger<MatchmakingSweepJob> logger)
     {
         _matchmakingService = matchmakingService;
+        _gameCreateService = gameCreateService;
         _groupService = groupService;
         _logger = logger;
     }
@@ -36,8 +39,12 @@ public class MatchmakingSweepJob
                 if (pair is not { } p)
                     break;
 
-                _groupService.GetGroup(format).Only([p.UserIdA, p.UserIdB]).OnMatchFound(p.GameCode);
-                _logger.LogInformation("***Sweep matched {UserIdA} vs {UserIdB} -> {GameCode}***", p.UserIdA, p.UserIdB, p.GameCode);
+                // UserIdA is the older ticket (queued first) - it becomes the drawer, same convention as the Hub's fast path.
+                await _gameCreateService.CreateMatchedGame(p.GameCode, drawerUserId: p.UserIdA, guesserUserId: p.UserIdB);
+
+                _groupService.GetGroup(format).Only([p.UserIdA]).OnMatchFound(p.GameCode, isDrawer: true);
+                _groupService.GetGroup(format).Only([p.UserIdB]).OnMatchFound(p.GameCode, isDrawer: false);
+                _logger.LogInformation("***Sweep matched {UserIdA} (drawer) vs {UserIdB} (guesser) -> {GameCode}***", p.UserIdA, p.UserIdB, p.GameCode);
             }
         }
 

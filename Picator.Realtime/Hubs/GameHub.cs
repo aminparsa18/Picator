@@ -1,42 +1,67 @@
-﻿using MagicOnion.Server.Hubs;
+﻿using Grpc.Core;
+using MagicOnion.Server.Hubs;
+using Microsoft.AspNetCore.Authorization;
 using Picator.Realtime.Common.Services;
 using Picator.Service.Contracts.Games;
+using System.Security.Claims;
 
 namespace Picator.Realtime.Services;
 
+[Authorize]
 public class GameHub : StreamingHubBase<IGameHub, IGameDrawingReceiver>, IGameHub
 {
     private readonly IGameCreateService _gameCreateService;
     private readonly ILogger<GameHub> _logger;
     private IGroup<IGameDrawingReceiver>? _group;
+    private string? _gameCode;
 
     public GameHub(IGameCreateService gameCreateService, ILogger<GameHub> logger)
     {
-        _gameCreateService = gameCreateService; 
+        _gameCreateService = gameCreateService;
         _logger = logger;
     }
 
-    // Seconf player creates a new game code and Join as player
-    public async ValueTask JoinGameAsync(string gameCode, string playerId)
+    public async ValueTask<(bool IsDrawer, string? Word, int WordLength)> JoinGameAsync(string gameCode)
     {
+        var userId = Guid.Parse(Context.CallContext.GetHttpContext()!.User.FindFirstValue(ClaimTypes.Name)!);
+
         // Join/create the group for this game
         _group = await Group.AddAsync(gameCode);
-        _logger.LogInformation("***Player {PlayerId} joined game {GameCode}***", playerId, gameCode);
-        // notify others that game is created.
+        _gameCode = gameCode;
+        _logger.LogInformation("***User {UserId} joined game {GameCode}***", userId, gameCode);
         _group.Except([ConnectionId]).OnPlayerJoined();
-        _logger.LogInformation("***Notified other players in game {GameCode} of new player {PlayerId}***", gameCode, playerId);
-        var count = await _group.CountAsync();
-        if (count == 2)
+
+        var outcome = await _gameCreateService.JoinGame(gameCode, userId);
+        if (outcome.JustCompletedLegacyPairing)
         {
-            var gameword = await _gameCreateService.CreateTimeGame(gameCode);
-            _group.All.OnGameWordReceived(gameword);
-            _logger.LogInformation("***Sent game word to players in game {GameCode}***", gameCode);
-            _logger.LogInformation("***Number of people in the game: {Count}***", count);
+            // We (the guesser) just completed pairing - push the word to the already-connected drawer,
+            // whose own JoinGameAsync call returned long before this round existed.
+            _group.Except([ConnectionId]).OnGameWordReceived(outcome.DrawerWordToPush);
+            _logger.LogInformation("***Sent game word to drawer in game {GameCode}***", gameCode);
         }
+
+        return (outcome.IsDrawer, outcome.Word, outcome.WordLength);
+    }
+
+    public async ValueTask<bool> SubmitGuessAsync(string guess)
+    {
+        var userId = Guid.Parse(Context.CallContext.GetHttpContext()!.User.FindFirstValue(ClaimTypes.Name)!);
+        var outcome = await _gameCreateService.SubmitGuess(_gameCode!, userId, guess);
+
+        if (outcome.RoundJustCompleted)
+        {
+            _group!.All.OnRoundEnded(outcome.WasCorrect, outcome.Word, outcome.PointsAwarded);
+            _logger.LogInformation("***Round ended in game {GameCode}: correct={WasCorrect}***", _gameCode, outcome.WasCorrect);
+        }
+
+        return outcome.WasCorrect;
     }
 
     public async ValueTask LeaveAsync()
     {
+        if (_group == null)
+            return;
+
         _group.All.OnPlayerLeft();
         await _group.RemoveAsync(Context);
     }
@@ -44,7 +69,7 @@ public class GameHub : StreamingHubBase<IGameHub, IGameDrawingReceiver>, IGameHu
     // notifies other player when drawing a line is completed
     public ValueTask SendDrawingCompleted(string roomName)
     {
-        _group.Except([ConnectionId]).OnLineCompleted();
+        _group?.Except([ConnectionId]).OnLineCompleted();
         _logger.LogInformation("***Notified other players in game {GameCode} of line completion***", roomName);
         return ValueTask.CompletedTask;
     }
@@ -52,21 +77,21 @@ public class GameHub : StreamingHubBase<IGameHub, IGameDrawingReceiver>, IGameHu
     // notifies other player when player is drawing a line
     public ValueTask SendDrawingPoint(string roomName, float x, float y)
     {
-        _group.Except([ConnectionId]).OnPointAdded(x, y);
+        _group?.Except([ConnectionId]).OnPointAdded(x, y);
         return ValueTask.CompletedTask;
     }
 
     // notifies other player when player change color
     public ValueTask SendDrawingColor(string roomName, uint color)
     {
-        _group.Except([ConnectionId]).OnColorChanged(color);
+        _group?.Except([ConnectionId]).OnColorChanged(color);
         return ValueTask.CompletedTask;
     }
 
     // notifies other player when player change line thickness
     public ValueTask SendDrawingThickness(string roomName, float thickness)
     {
-        _group.Except([ConnectionId]).OnThicknessChanged(thickness);
+        _group?.Except([ConnectionId]).OnThicknessChanged(thickness);
         return ValueTask.CompletedTask;
     }
 }

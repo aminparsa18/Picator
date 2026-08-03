@@ -18,6 +18,7 @@ public class GameHub : IGameDrawingReceiver, IAsyncDisposable
     public event EventHandler<string?>? WordReceived;
     public event EventHandler<uint>? ColorReceived;
     public event EventHandler<float>? ThicknessReceived;
+    public event EventHandler<(bool WasCorrect, string Word, int Points)>? RoundEnded;
 
     private GameHub()
     {
@@ -36,7 +37,7 @@ public class GameHub : IGameDrawingReceiver, IAsyncDisposable
 
     public bool IsConnected => _client is not null;
 
-    public async Task<IGameHub> ConnectAsync(ChannelBase grpcChannel)
+    public async Task<IGameHub> ConnectAsync(ChannelBase grpcChannel, string jwt)
     {
         await _gate.WaitAsync();
         try
@@ -44,8 +45,10 @@ public class GameHub : IGameDrawingReceiver, IAsyncDisposable
             if (_client is not null)
                 return _client;
 
+            var callOptions = new CallOptions(headers: new Metadata { { "Authorization", $"Bearer {jwt}" } });
+
             _client = await StreamingHubClient.ConnectAsync<IGameHub, IGameDrawingReceiver>(
-                grpcChannel, this);
+                grpcChannel, this, option: callOptions);
 
             return _client;
         }
@@ -55,12 +58,20 @@ public class GameHub : IGameDrawingReceiver, IAsyncDisposable
         }
     }
 
-    public async ValueTask JoinGameAsync(string gameCode, string playerId)
+    public async ValueTask<(bool IsDrawer, string? Word, int WordLength)> JoinGameAsync(string gameCode)
     {
         if (_client is null)
             throw new InvalidOperationException("GameHub is not connected. Call ConnectAsync first.");
 
-        await _client.JoinGameAsync(gameCode, playerId);
+        return await _client.JoinGameAsync(gameCode);
+    }
+
+    public async ValueTask<bool> SubmitGuessAsync(string guess)
+    {
+        if (_client is null)
+            throw new InvalidOperationException("GameHub is not connected.");
+
+        return await _client.SubmitGuessAsync(guess);
     }
 
     public async ValueTask SendDrawingPoint(string gameCode, float x, float y)
@@ -144,4 +155,7 @@ public class GameHub : IGameDrawingReceiver, IAsyncDisposable
 
     public void OnThicknessChanged(float thickness) =>
         ThicknessReceived?.Invoke(this, thickness);
+
+    public void OnRoundEnded(bool wasCorrect, string word, int pointsAwarded) =>
+        RoundEnded?.Invoke(this, (wasCorrect, word, pointsAwarded));
 }

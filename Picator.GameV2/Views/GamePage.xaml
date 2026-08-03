@@ -273,6 +273,18 @@
                             </CollectionView.ItemTemplate>
                         </CollectionView>
                     </HorizontalStackLayout>
+
+                    <Grid Grid.RowSpan="4" IsVisible="{Binding ShowRoundResult}" BackgroundColor="#F2F0EEE9">
+                        <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="12">
+                            <Border WidthRequest="64" HeightRequest="64" StrokeShape="RoundRectangle 32" Stroke="{StaticResource Success}"
+                                    StrokeThickness="3" BackgroundColor="Transparent" Padding="0">
+                                <Label Text="✓" FontSize="30" TextColor="{StaticResource Success}" HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <Label Text="Round over!" FontFamily="KalamBold" FontSize="22" TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" />
+                            <Label Text="{Binding RoundResultMessage}" FontFamily="PatrickHandRegular" FontSize="16"
+                                   TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Grid>
                 </Grid>
                 <Grid toolkit:StateView.StateKey="PlayerGame" VerticalOptions="Fill" HorizontalOptions="Fill"
                       BackgroundColor="{StaticResource PaperBackground}">
@@ -392,22 +404,15 @@
                                HorizontalOptions="Center" HorizontalTextAlignment="Center" />
                     </Border>
 
-                    <Grid Grid.RowSpan="6" IsVisible="{Binding ShowCorrectGuess}" BackgroundColor="#F2F0EEE9">
+                    <Grid Grid.RowSpan="6" IsVisible="{Binding ShowRoundResult}" BackgroundColor="#F2F0EEE9">
                         <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="12">
                             <Border WidthRequest="64" HeightRequest="64" StrokeShape="RoundRectangle 32" Stroke="{StaticResource Success}"
                                     StrokeThickness="3" BackgroundColor="Transparent" Padding="0">
                                 <Label Text="✓" FontSize="30" TextColor="{StaticResource Success}" HorizontalOptions="Center" VerticalOptions="Center" />
                             </Border>
-                            <Label Text="Correct!" FontFamily="KalamBold" FontSize="22" TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" />
-                            <Label FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkMuted}" HorizontalOptions="Center">
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="The word was &quot;" />
-                                        <Span Text="{Binding CorrectWord}" />
-                                        <Span Text="&quot;" />
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
+                            <Label Text="Round over!" FontFamily="KalamBold" FontSize="22" TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" />
+                            <Label Text="{Binding RoundResultMessage}" FontFamily="PatrickHandRegular" FontSize="16"
+                                   TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
                         </VerticalStackLayout>
                     </Grid>
                 </Grid>

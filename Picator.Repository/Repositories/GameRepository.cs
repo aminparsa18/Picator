@@ -41,4 +41,13 @@ public sealed class GameRepository : BaseRepository<Game>, IGameRepository
     {
         return Context.Database.ExecuteSqlAsync($"UPDATE [Game] SET [Status] = 1 WHERE [Id] = {gameId}");
     }
+
+    /// <inheritdoc/>
+    public Task<Game?> GetByGameCode(string gameCode)
+    {
+        return Context.Game
+            .Include(g => g.Round)
+            .Include(g => g.GameMember)
+            .FirstOrDefaultAsync(g => g.GameCode == gameCode);
+    }
 }

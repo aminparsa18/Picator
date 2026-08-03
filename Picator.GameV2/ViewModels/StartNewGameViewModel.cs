@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Converters;
+using Picator.Game.Cache;
 using Picator.Game.Constants;
 using Picator.Game.Helpers;
 using Picator.Game.Hubs;
@@ -11,6 +12,7 @@ public partial class StartNewGameViewModel : ViewModelBase, IDisposable
     private readonly GameHub _hub;
     private bool _initialized;
     private bool _gameStarted;
+    private bool _isDrawer;
 
     [ObservableProperty]
     private LayoutState _currentState = LayoutState.Loading;
@@ -40,14 +42,15 @@ public partial class StartNewGameViewModel : ViewModelBase, IDisposable
         GameCode = RandomHelper.CreateRandomText(12);
 
         // Create a fresh channel *per page* and pass it to the hub
-        var channel = Grpc.Net.Client.GrpcChannel.ForAddress(UrlConstants.GameHubUrl);
+        var channel = Picator.Game.Helpers.GrpcChannelFactory.Create(UrlConstants.GameHubUrl);
+        var jwt = Barrel.Current.Get<string>("Token");
 
-        await _hub.ConnectAsync(channel);
+        await _hub.ConnectAsync(channel, jwt!);
 
         CurrentState = LayoutState.Success;
 
-        var playerId = Guid.NewGuid().ToString();
-        await _hub.JoinGameAsync(GameCode!, playerId);
+        var (isDrawer, _, _) = await _hub.JoinGameAsync(GameCode!);
+        _isDrawer = isDrawer;
 
         IsBusy = false;
     }
@@ -62,7 +65,7 @@ public partial class StartNewGameViewModel : ViewModelBase, IDisposable
             await MainThread.InvokeOnMainThreadAsync(async () =>
             {
                 await Application.Current.MainPage.Navigation
-                    .PushAsync(new GamePage(false, GameCode));
+                    .PushAsync(new GamePage(_isDrawer, GameCode));
 
                 await Snackbar.Make("player joined").Show();
             });
@@ -110,7 +113,7 @@ public partial class StartNewGameViewModel : ViewModelBase, IDisposable
         _gameStarted = true;
         await MainThread.InvokeOnMainThreadAsync(async () =>
         {
-            await Application.Current.MainPage.Navigation.PushAsync(new GamePage(false, GameCode));
+            await Application.Current.MainPage.Navigation.PushAsync(new GamePage(_isDrawer, GameCode));
         });
     }
 

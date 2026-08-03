@@ -34,4 +34,11 @@ public interface IGameRepository : IBaseRepository<Game>
     /// <param name="gameId">Game key identifier.</param>
     /// <returns>Number of affected rows.</returns>
     Task<int> StartGame(string gameId);
+
+    /// <summary>
+    /// Retrieves a tracked game by its game code, with its rounds and members loaded, for the game hub to mutate.
+    /// </summary>
+    /// <param name="gameCode">Game code.</param>
+    /// <returns>The game, or null if no game with that code exists.</returns>
+    Task<Game?> GetByGameCode(string gameCode);
 }

@@ -7,6 +7,7 @@ var rustfsSecretKey = builder.AddParameter("rustfs-secret-key", secret: true);
 var postgres = builder.AddPostgres("sql", password: dbPassword)
     .WithDataVolume()
     .WithLifetime(ContainerLifetime.Persistent)
+    .WithHostPort(50925)
     .AddDatabase("PicatorDB");
 
 var rustfs = builder.AddRustFs("rustfs", port: 9100, accessKey: rustfsAccessKey, secretKey: rustfsSecretKey)

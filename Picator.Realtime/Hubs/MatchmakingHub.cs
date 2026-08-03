@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Picator.Common.Data.Enums;
 using Picator.Realtime.Common.Services;
 using Picator.Realtime.Services;
+using Picator.Service.Contracts.Games;
 using Picator.Service.Contracts.Matchmaking;
 using System.Security.Claims;
 
@@ -13,6 +14,7 @@ namespace Picator.Realtime.Hubs;
 public class MatchmakingHub : StreamingHubBase<IMatchmakingHub, IMatchFoundReceiver>, IMatchmakingHub
 {
     private readonly IMatchmakingService _matchmakingService;
+    private readonly IGameCreateService _gameCreateService;
     private readonly MatchmakingGroupService _groupService;
     private readonly ILogger<MatchmakingHub> _logger;
 
@@ -21,9 +23,10 @@ public class MatchmakingHub : StreamingHubBase<IMatchmakingHub, IMatchFoundRecei
     private GameFormat _format;
     private bool _inQueue;
 
-    public MatchmakingHub(IMatchmakingService matchmakingService, MatchmakingGroupService groupService, ILogger<MatchmakingHub> logger)
+    public MatchmakingHub(IMatchmakingService matchmakingService, IGameCreateService gameCreateService, MatchmakingGroupService groupService, ILogger<MatchmakingHub> logger)
     {
         _matchmakingService = matchmakingService;
+        _gameCreateService = gameCreateService;
         _groupService = groupService;
         _logger = logger;
     }
@@ -49,8 +52,20 @@ public class MatchmakingHub : StreamingHubBase<IMatchmakingHub, IMatchFoundRecei
         var pair = await _matchmakingService.TryPairAsync(format);
         if (pair is { } p)
         {
-            _groupService.GetGroup(format).Only([p.UserIdA, p.UserIdB]).OnMatchFound(p.GameCode);
-            _logger.LogInformation("***Matched {UserIdA} vs {UserIdB} -> {GameCode}***", p.UserIdA, p.UserIdB, p.GameCode);
+            try
+            {
+                // UserIdA is the older ticket (queued first) - it becomes the drawer.
+                await _gameCreateService.CreateMatchedGame(p.GameCode, drawerUserId: p.UserIdA, guesserUserId: p.UserIdB);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "***Failed to create matched game {GameCode} for {UserIdA} vs {UserIdB}***", p.GameCode, p.UserIdA, p.UserIdB);
+                throw;
+            }
+
+            _groupService.GetGroup(format).Only([p.UserIdA]).OnMatchFound(p.GameCode, isDrawer: true);
+            _groupService.GetGroup(format).Only([p.UserIdB]).OnMatchFound(p.GameCode, isDrawer: false);
+            _logger.LogInformation("***Matched {UserIdA} (drawer) vs {UserIdB} (guesser) -> {GameCode}***", p.UserIdA, p.UserIdB, p.GameCode);
         }
 
         return _userId;

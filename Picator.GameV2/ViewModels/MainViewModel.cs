@@ -2,6 +2,7 @@ using Grpc.Net.Client;
 using Picator.Common.Data.Enums;
 using Picator.Game.Cache;
 using Picator.Game.Constants;
+using Picator.Game.Helpers;
 using Picator.Game.Hubs;
 using Picator.GameV2;
 using System.Web;
@@ -193,7 +194,7 @@ public sealed partial class MainViewModel : ViewModelBase
             await DisconnectMatchmakingHubAsync();
 
             var jwt = Barrel.Current.Get<string>("Token");
-            _matchmakingChannel = GrpcChannel.ForAddress(UrlConstants.GameHubUrl);
+            _matchmakingChannel = GrpcChannelFactory.Create(UrlConstants.GameHubUrl);
             _matchmakingHub = new MatchmakingHubClient();
             _matchmakingHub.MatchFound += OnMatchFound;
             await _matchmakingHub.ConnectAsync(_matchmakingChannel, jwt!);
@@ -214,7 +215,7 @@ public sealed partial class MainViewModel : ViewModelBase
         }
     }
 
-    private async void OnMatchFound(object? sender, string gameCode)
+    private async void OnMatchFound(object? sender, (string GameCode, bool IsDrawer) e)
     {
         _searchCts?.Cancel();
 
@@ -223,7 +224,7 @@ public sealed partial class MainViewModel : ViewModelBase
             OverlayMode = HomeOverlayMode.MatchFound;
             await Task.Delay(1200);
             OverlayMode = HomeOverlayMode.None;
-            await Application.Current.MainPage.Navigation.PushAsync(new GamePage(false, gameCode));
+            await Application.Current.MainPage.Navigation.PushAsync(new GamePage(e.IsDrawer, e.GameCode));
         });
 
         await DisconnectMatchmakingHubAsync();
