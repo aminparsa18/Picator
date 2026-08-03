@@ -15,6 +15,7 @@
                                MaxLength="{Binding MaxLength, Source={x:Reference this}}"
                                Keyboard="{Binding Keyboard, Source={x:Reference this}}"
                                Text="{Binding Text, Source={x:Reference this}}"
+                               FontFamily="PatrickHandRegular"
                                TextColor="{StaticResource InkStrong}"
                                BackgroundColor="Transparent"
                                Focused="EntryControl_Focused"
@@ -30,10 +31,10 @@
                         </Label>
                     </Grid>
                 </Border>
-                <Label x:Name="PlaceHolderLabel" Text="{Binding Placeholder, Source={x:Reference this}}" FontSize="13" Margin="16,0" VerticalOptions="Center" TextColor="{StaticResource InkFaint}"/>
+                <Label x:Name="PlaceHolderLabel" Text="{Binding Placeholder, Source={x:Reference this}}" FontFamily="PatrickHandRegular" FontSize="13" Margin="16,0" VerticalOptions="Center" TextColor="{StaticResource InkFaint}"/>
 
             </Grid>
-            <Label x:Name="ErrorLabel" Margin="16,0" IsVisible="False" FontSize="10" TextColor="{StaticResource Error}"/>
+            <Label x:Name="ErrorLabel" Margin="16,0" IsVisible="False" FontFamily="PatrickHandRegular" FontSize="10" TextColor="{StaticResource Error}"/>
             <VerticalStackLayout.GestureRecognizers>
                 <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" />
             </VerticalStackLayout.GestureRecognizers>

@@ -20,18 +20,40 @@
                 <VerticalStackLayout Margin="22,36,22,32" Spacing="26">
 
                     <!--Header-->
-                    <Grid ColumnDefinitions="Auto,*">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
                         <Border WidthRequest="38" HeightRequest="38" Padding="0"
                                 StrokeShape="RoundRectangle 19" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
                                 BackgroundColor="{StaticResource Surface}">
-                            <Label Text="&#8592;" FontFamily="PatrickHandRegular" FontSize="18" TextColor="{StaticResource InkStrong}"
-                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                            <Path Data="M19 12H5M12 19l-7-7 7-7"
+                                  Stroke="{StaticResource InkStrong}"
+                                  StrokeThickness="2"
+                                  Aspect="Uniform"
+                                  WidthRequest="18"
+                                  HeightRequest="18"
+                                  StrokeLineCap="Round"
+                                  StrokeLineJoin="Round"
+                                  HorizontalOptions="Center"
+                                  VerticalOptions="Center" />
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SkipCommand}" />
                             </Border.GestureRecognizers>
                         </Border>
                         <Label Grid.Column="1" Text="Profile" FontFamily="KalamBold" FontSize="22"
                                TextColor="{StaticResource InkStrong}" VerticalOptions="Center" Margin="14,0,0,0" />
+                        <Border Grid.Column="2" WidthRequest="38" HeightRequest="38" Padding="0"
+                                StrokeShape="RoundRectangle 19" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                BackgroundColor="{StaticResource Surface}">
+                            <Path Data="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"
+                                  Stroke="{StaticResource InkStrong}"
+                                  StrokeThickness="2"
+                                  Aspect="Uniform"
+                                  WidthRequest="18"
+                                  HeightRequest="18"
+                                  StrokeLineCap="Round"
+                                  StrokeLineJoin="Round"
+                                  HorizontalOptions="Center"
+                                  VerticalOptions="Center" />
+                        </Border>
                     </Grid>
 
                     <!--Avatar-->
@@ -51,8 +73,16 @@
                             <Border WidthRequest="34" HeightRequest="34" Padding="0" StrokeShape="RoundRectangle 17"
                                     Stroke="{StaticResource InkStrong}" StrokeThickness="2" BackgroundColor="{StaticResource Surface}"
                                     HorizontalOptions="End" VerticalOptions="End" TranslationX="4" TranslationY="4">
-                                <Label Text="&#9998;" FontSize="15" TextColor="{StaticResource InkStrong}"
-                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                <Path Data="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"
+                                      Stroke="{StaticResource InkStrong}"
+                                      StrokeThickness="2"
+                                      Aspect="Uniform"
+                                      WidthRequest="15"
+                                      HeightRequest="15"
+                                      StrokeLineCap="Round"
+                                      StrokeLineJoin="Round"
+                                      HorizontalOptions="Center"
+                                      VerticalOptions="Center" />
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding OpenAvatarPickerCommand}" />
                                 </Border.GestureRecognizers>
@@ -130,8 +160,16 @@
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding CloseAvatarPickerCommand}" />
                                 </Border.GestureRecognizers>
-                                <Label Text="✕" FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkStrong}"
-                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                <Path Data="M18 6L6 18M6 6l12 12"
+                                      Stroke="{StaticResource InkStrong}"
+                                      StrokeThickness="2"
+                                      Aspect="Uniform"
+                                      WidthRequest="15"
+                                      HeightRequest="15"
+                                      StrokeLineCap="Round"
+                                      StrokeLineJoin="Round"
+                                      HorizontalOptions="Center"
+                                      VerticalOptions="Center" />
                             </Border>
                         </Grid>
 
