@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Core.Views;
+﻿using CommunityToolkit.Maui.Core.Views;
 using Picator.Game.Constants;
 using Picator.Game.Hubs;
 using Picator.Game.Services.GameWords;
@@ -15,6 +14,10 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
     private string _gameCode;
     [ObservableProperty]
     private string? _correctWord;
+
+    public string WordLengthHint => $"{CorrectWord?.Count(c => !char.IsWhiteSpace(c)) ?? 0} letters";
+
+    partial void OnCorrectWordChanged(string? value) => OnPropertyChanged(nameof(WordLengthHint));
 
     [ObservableProperty]
     private ObservableCollection<Color> _colorItems;
@@ -36,13 +39,37 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
     private ObservableCollection<char> _letters = [];
     [ObservableProperty]
     private ObservableCollection<char?> _correctWordLetters = [];
+
+    public bool IsSubmitEnabled => CorrectWordLetters is not null && !CorrectWordLetters.Contains(' ');
+
+    [ObservableProperty]
+    private bool _showWrongGuess;
+
+    [ObservableProperty]
+    private bool _showCorrectGuess;
+
     [ObservableProperty]
     private ObservableCollection<DrawingLine> _lines = [new DrawingLine()];
     [ObservableProperty]
     private double _remainingSeconds;
 
+    public string RemainingTimeDisplay => TimeSpan.FromSeconds(Math.Max(0, RemainingSeconds)).ToString(@"m\:ss");
+
+    public bool IsTimeCritical => RemainingSeconds <= 10;
+
+    partial void OnRemainingSecondsChanged(double value)
+    {
+        OnPropertyChanged(nameof(RemainingTimeDisplay));
+        OnPropertyChanged(nameof(IsTimeCritical));
+    }
+
     [ObservableProperty]
     private bool _isTimerRunning;
+
+    [ObservableProperty]
+    private bool _isIntroTimerRunning;
+
+    private const int IntroSeconds = 10;
 
     private readonly IGameWordsApiService _gameWordsApiService;
     private CancellationTokenSource? _timerCts;
@@ -58,9 +85,13 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
         _hub.WordReceived += GameWordReceived;
         if (IsDrawingPlayer)
         {
-            ColorItems = [Colors.Black, Colors.Red, Colors.Orange, Colors.Yellow, Colors.Green, Colors.Blue, Colors.Purple, Colors.White, Colors.LightGray];
-            LineWidths = [5, 10, 15, 20];
-            SelectedLineWidth = LineWidths[0];
+            ColorItems =
+            [
+                Color.FromArgb("#1A1A1A"), Color.FromArgb("#C7431F"), Color.FromArgb("#E8532E"), Color.FromArgb("#2F9E44"),
+                Color.FromArgb("#1D5FAD"), Color.FromArgb("#F2B705"), Color.FromArgb("#8E44AD"), Color.FromArgb("#FDFCF8"),
+            ];
+            LineWidths = [3, 7, 13];
+            SelectedLineWidth = LineWidths[1];
         }
         _gameWordsApiService = new GameWordsApiService();
     }
@@ -168,7 +199,9 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
             else
                 CurrentState = "IntroForPlayer";
 
-            await Task.Delay(5000);
+            IsIntroTimerRunning = true;
+            await Task.Delay(IntroSeconds * 1000, ct);
+            IsIntroTimerRunning = false;
 
             if (IsDrawingPlayer)
                 CurrentState = "DrawerGame";
@@ -199,6 +232,7 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
         finally
         {
             IsTimerRunning = false;
+            IsIntroTimerRunning = false;
         }
     }
     
@@ -273,21 +307,8 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
             CorrectWordLetters[index] = letter;
         }
         Letters.Remove(letter);
-
-        if (!CorrectWordLetters.Contains(' '))
-        {
-            if (MapNullableCharsToString([.. CorrectWordLetters]).Equals(CorrectWord, StringComparison.InvariantCultureIgnoreCase))
-            {
-                // Player has guessed the word
-                Snackbar.Make("Afarin chaghal!!!", duration: TimeSpan.FromSeconds(3)).Show();
-                _hasWon = true;
-                IsTimerRunning = false;
-            }
-            else
-            {
-                Snackbar.Make("Nice Try chaghal!!!", duration: TimeSpan.FromSeconds(3)).Show();
-            }
-        }
+        ShowWrongGuess = false;
+        OnPropertyChanged(nameof(IsSubmitEnabled));
         return Task.CompletedTask;
     }
 
@@ -299,7 +320,61 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
         Letters.Insert(0, letter.Value);
         var index = CorrectWordLetters.IndexOf(letter);
         CorrectWordLetters[index] = ' ';
+        OnPropertyChanged(nameof(IsSubmitEnabled));
         return Task.CompletedTask;
+    }
+
+    [RelayCommand]
+    private Task ClearGuess()
+    {
+        for (int i = CorrectWordLetters.Count - 1; i >= 0; i--)
+        {
+            var filled = CorrectWordLetters[i];
+            if (filled != null && filled != ' ')
+            {
+                Letters.Insert(0, filled.Value);
+                CorrectWordLetters[i] = ' ';
+            }
+        }
+        ShowWrongGuess = false;
+        OnPropertyChanged(nameof(IsSubmitEnabled));
+        return Task.CompletedTask;
+    }
+
+    [RelayCommand]
+    private async Task SubmitGuess()
+    {
+        if (!IsSubmitEnabled)
+            return;
+
+        if (MapNullableCharsToString([.. CorrectWordLetters]).Equals(CorrectWord, StringComparison.InvariantCultureIgnoreCase))
+        {
+            _hasWon = true;
+            IsTimerRunning = false;
+            ShowCorrectGuess = true;
+        }
+        else
+        {
+            ShowWrongGuess = true;
+            await Task.Delay(1200);
+            await ClearGuess();
+        }
+    }
+
+    [RelayCommand]
+    private void Undo()
+    {
+        // Local-only: removes the drawer's own last completed stroke. Not synced to the guesser —
+        // GameHub has no undo/clear message today, only point/line/color/thickness broadcasts.
+        if (Lines.Count > 1)
+            Lines.RemoveAt(Lines.Count - 2);
+    }
+
+    [RelayCommand]
+    private void ClearCanvas()
+    {
+        // Local-only, same caveat as Undo.
+        Lines = [new DrawingLine()];
     }
 
     [RelayCommand]

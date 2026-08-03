@@ -11,7 +11,7 @@ public partial class GamePage : ContentPage
 {
     private List<PointF> _points = [];
     private Color _selectedColor = Colors.Black;
-    private float _selectedThickness = 5f;
+    private float _selectedThickness = 7f;
 
     public ObservableCollection<IDrawingLine> _lines { get; set; } = [new DrawingLine() { Points = [], LineColor = Colors.Black }];
 
@@ -91,13 +91,6 @@ public partial class GamePage : ContentPage
     private void ColorReceived(object? sender, uint e)
     {
         _selectedColor = Color.FromUint(e);
-    }
-
-    private async void ImageButton_Clicked(object sender, EventArgs e)
-    {
-        _selectedColor = Colors.LightPink;
-        DrawerDrawingView.LineColor = _selectedColor;
-        await GameHub.Instance.SendDrawingColor(_selectedColor.ToUint());
     }
 
     private async void CollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)

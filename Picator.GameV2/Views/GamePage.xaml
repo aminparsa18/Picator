@@ -22,113 +22,311 @@
                     <cmp:WaitingView IsBusy="True" />
                     <Label Text="Waiting for second player to join..." HorizontalOptions="Center" HorizontalTextAlignment="Center" FontSize="24" />
                 </VerticalStackLayout>
-                <VerticalStackLayout toolkit:StateView.StateKey="IntroForDrawer" VerticalOptions="Center" Spacing="12" Margin="24">
-                    <Label HorizontalOptions="Center" HorizontalTextAlignment="Center" VerticalOptions="Center" FontSize="20">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="You have 60 seconds to draw " />
-                                <Span Text="{Binding CorrectWord}" FontSize="36"/>
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                    <Label Text="Game starts soon..." HorizontalOptions="Center"/>
-                </VerticalStackLayout>
-                <VerticalStackLayout toolkit:StateView.StateKey="IntroForPlayer" VerticalOptions="Center" Margin="24" Spacing="12">
-                    <Label Text="You have 60 seconds to guess what your opponent is drawing..." HorizontalOptions="Center" HorizontalTextAlignment="Center" FontSize="20"/>
-                    <Label Text="Game starts soon..." HorizontalOptions="Center"/>
-                </VerticalStackLayout>
-                <Grid toolkit:StateView.StateKey="DrawerGame" VerticalOptions="Fill" HorizontalOptions="Fill">
+                <Grid toolkit:StateView.StateKey="IntroForDrawer" VerticalOptions="Fill" HorizontalOptions="Fill"
+                      BackgroundColor="{StaticResource PaperBackground}">
+                    <controls:DotGridBackground DotColor="{StaticResource BorderHairline}" Spacing="18" DotRadius="1" />
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*,Auto" RowSpacing="20" Margin="24,32,24,24">
+
+                        <VerticalStackLayout Grid.Row="0" HorizontalOptions="Center" Spacing="8">
+                            <cmp:CircularTimer Duration="10" IsRunning="{Binding IsIntroTimerRunning}"
+                                                Color="{StaticResource Accent}" TextColor="{StaticResource InkStrong}"
+                                                Stroke="18" FontSize="30" WidthRequest="110" HeightRequest="110" />
+                            <Label Text="Round starts in" FontFamily="PatrickHandRegular" FontSize="14"
+                                   TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+
+                        <Border Grid.Row="1" HorizontalOptions="Center" BackgroundColor="{StaticResource AccentStrong}"
+                                Stroke="{StaticResource InkStrong}" StrokeThickness="2" StrokeShape="RoundRectangle 20" Padding="18,6">
+                            <Label Text="You're the Drawer" FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource OnAccentStrong}" />
+                        </Border>
+
+                        <Border Grid.Row="2" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}"
+                                StrokeThickness="3" StrokeShape="RoundRectangle 20" Padding="20,22" Rotation="-0.6">
+                            <Border.Shadow>
+                                <Shadow Brush="{StaticResource InkStrongBrush}" Opacity="0.9" Radius="0" Offset="3,3" />
+                            </Border.Shadow>
+                            <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                                <Label Text="YOUR WORD" FontFamily="PatrickHandRegular" FontSize="14" CharacterSpacing="1"
+                                       TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                                <Label Text="{Binding CorrectWord}" FontFamily="KalamBold" FontSize="38"
+                                       TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Grid.Row="3" BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}"
+                                StrokeThickness="2" StrokeShape="RoundRectangle 16" Padding="18,16">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="Drawing tips" FontFamily="KalamBold" FontSize="16" TextColor="{StaticResource InkStrong}" />
+                                <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
+                                    <Label Text="✎" FontSize="15" TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                                    <Label Grid.Column="1" Text="Shapes and outlines first — details later if there's time."
+                                           FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" LineBreakMode="WordWrap" />
+                                </Grid>
+                                <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
+                                    <Label Text="🚫" FontSize="15" TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                                    <Label Grid.Column="1" Text="No letters, numbers, or words in your drawing."
+                                           FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" LineBreakMode="WordWrap" />
+                                </Grid>
+                                <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
+                                    <Label Text="⏰" FontSize="15" TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                                    <Label Grid.Column="1" Text="You'll have limited time once the round starts — work fast."
+                                           FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" LineBreakMode="WordWrap" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Label Grid.Row="5" Text="Get ready — the round starts automatically when the timer ends."
+                               FontFamily="PatrickHandRegular" FontSize="13" TextColor="{StaticResource InkFaint}"
+                               HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                    </Grid>
+                </Grid>
+
+                <Grid toolkit:StateView.StateKey="IntroForPlayer" VerticalOptions="Fill" HorizontalOptions="Fill"
+                      BackgroundColor="{StaticResource PaperBackground}">
+                    <controls:DotGridBackground DotColor="{StaticResource BorderHairline}" Spacing="18" DotRadius="1" />
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*,Auto" RowSpacing="20" Margin="24,32,24,24">
+
+                        <VerticalStackLayout Grid.Row="0" HorizontalOptions="Center" Spacing="8">
+                            <cmp:CircularTimer Duration="10" IsRunning="{Binding IsIntroTimerRunning}"
+                                                Color="{StaticResource Accent}" TextColor="{StaticResource InkStrong}"
+                                                Stroke="12" FontSize="30" WidthRequest="110" HeightRequest="110" />
+                            <Label Text="Round starts in" FontFamily="PatrickHandRegular" FontSize="14"
+                                   TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+
+                        <Border Grid.Row="1" HorizontalOptions="Center" BackgroundColor="{StaticResource Surface}"
+                                Stroke="{StaticResource InkStrong}" StrokeThickness="2" StrokeShape="RoundRectangle 20" Padding="18,6">
+                            <Label Text="You're the Guesser" FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkStrong}" />
+                        </Border>
+
+                        <Border Grid.Row="2" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}"
+                                StrokeThickness="3" StrokeShape="RoundRectangle 20" Padding="20,22" Rotation="-0.6">
+                            <Border.Shadow>
+                                <Shadow Brush="{StaticResource InkStrongBrush}" Opacity="0.9" Radius="0" Offset="3,3" />
+                            </Border.Shadow>
+                            <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                                <Label Text="GET READY" FontFamily="PatrickHandRegular" FontSize="14" CharacterSpacing="1"
+                                       TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                                <Label Text="Your opponent is drawing" FontFamily="KalamBold" FontSize="24"
+                                       TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Grid.Row="3" BackgroundColor="{StaticResource SurfaceAlt}" Stroke="{StaticResource InkStrong}"
+                                StrokeThickness="2" StrokeShape="RoundRectangle 16" Padding="18,16">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="Guessing tips" FontFamily="KalamBold" FontSize="16" TextColor="{StaticResource InkStrong}" />
+                                <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
+                                    <Label Text="👁" FontSize="15" TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                                    <Label Grid.Column="1" Text="Watch the strokes as they appear — the order gives clues."
+                                           FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" LineBreakMode="WordWrap" />
+                                </Grid>
+                                <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
+                                    <Label Text="🔤" FontSize="15" TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                                    <Label Grid.Column="1" Text="Tap the letter tiles in order to spell out the word."
+                                           FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" LineBreakMode="WordWrap" />
+                                </Grid>
+                                <Grid ColumnDefinitions="24,*" ColumnSpacing="10">
+                                    <Label Text="⚡" FontSize="15" TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                                    <Label Grid.Column="1" Text="Faster correct guesses earn more points."
+                                           FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" LineBreakMode="WordWrap" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Label Grid.Row="5" Text="Get ready — the round starts automatically when the timer ends."
+                               FontFamily="PatrickHandRegular" FontSize="13" TextColor="{StaticResource InkFaint}"
+                               HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                    </Grid>
+                </Grid>
+                <Grid toolkit:StateView.StateKey="DrawerGame" VerticalOptions="Fill" HorizontalOptions="Fill"
+                      BackgroundColor="{StaticResource PaperBackground}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <HorizontalStackLayout Margin="8" Spacing="24">
-                        <controls:CircularProgressBar Stroke="20"
-                               Progress="{Binding RemainingSeconds}"
-                               MaxProgress="60"
-                               VerticalOptions="Center" 
-                               WidthRequest="72" HeightRequest="72"
-                               Color="{StaticResource Primary}"/>
-                        <Label Text="{Binding CorrectWord}" HorizontalOptions="Center" VerticalOptions="Center" FontSize="28"/>
-                    </HorizontalStackLayout>
-                    <Border Grid.Row="1" StrokeShape="RoundRectangle 8" Margin="8,12">
+
+                    <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="12,12,12,0">
+                        <Border Grid.Column="0" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}"
+                                StrokeThickness="2" StrokeShape="RoundRectangle 10" Padding="10,4" VerticalOptions="Center">
+                            <Label Text="{Binding RemainingTimeDisplay}" FontFamily="SpaceMonoRegular" FontSize="18"
+                                   TextColor="{StaticResource InkStrong}" HorizontalOptions="Center">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsTimeCritical}" Value="True">
+                                        <Setter Property="TextColor" Value="{StaticResource Error}" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="0">
+                            <Label Text="DRAW" FontFamily="PatrickHandRegular" FontSize="12" CharacterSpacing="1"
+                                   TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                            <Label Text="{Binding CorrectWord}" FontFamily="KalamBold" FontSize="22"
+                                   TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                        <HorizontalStackLayout Grid.Column="2" Spacing="6" VerticalOptions="Center">
+                            <Label Text="👉" FontSize="14" VerticalOptions="Center" />
+                            <Label Text="Opponent" FontFamily="PatrickHandRegular" FontSize="14"
+                                   TextColor="{StaticResource InkMuted}" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Grid>
+
+                    <Border Grid.Row="1" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}"
+                            StrokeThickness="3" StrokeShape="RoundRectangle 16" Margin="12" Padding="0">
+                        <Border.Shadow>
+                            <Shadow Brush="{StaticResource InkStrongBrush}" Opacity="0.9" Radius="0" Offset="3,3" />
+                        </Border.Shadow>
                         <Grid>
-                            <toolkit:DrawingView x:Name="DrawerDrawingView" Lines="{Binding Lines}" HorizontalOptions="Fill" VerticalOptions="Fill" HeightRequest="{Binding WidthRequest, Source={RelativeSource Self}}" BackgroundColor="LightPink"
+                            <toolkit:DrawingView x:Name="DrawerDrawingView" Lines="{Binding Lines}" HorizontalOptions="Fill" VerticalOptions="Fill" HeightRequest="{Binding WidthRequest, Source={RelativeSource Self}}" BackgroundColor="{StaticResource Surface}"
                                                  IsMultiLineModeEnabled="True" DrawingLineStarted="DrawingView_DrawingLineStarted" PointDrawnCommand="{Binding DrawingPointAddedCommand}" DrawingLineCompletedCommand="{Binding DrawingLineCompletedCommand}" />
-                            <Label x:Name="DrawHereLbl" Text="DRAW HERE!!" FontSize="30" HorizontalOptions="Center" VerticalOptions="Center" TextColor="{StaticResource Gray300}" IsVisible="{Binding Lines, Converter={StaticResource IsListNullOrEmptyConverter}}" />
+                            <Label x:Name="DrawHereLbl" Text="Draw here" FontFamily="PatrickHandRegular" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center" TextColor="{StaticResource InkFaint}" IsVisible="{Binding Lines, Converter={StaticResource IsListNullOrEmptyConverter}}" />
                         </Grid>
                     </Border>
-                    
-                    <!-- Color Picker -->
-                    <Grid ColumnDefinitions="*,Auto" Grid.Row="2">
-                        <CollectionView ItemsSource="{Binding ColorItems}"
+
+                    <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10" Margin="12,0">
+                        <CollectionView Grid.Column="0" ItemsSource="{Binding ColorItems}"
                                         SelectionMode="Single"
                                         SelectionChanged="CollectionView_SelectionChanged"
-                                        HorizontalOptions="Fill"
-                                        VerticalOptions="Start"
-                                        HeightRequest="64"
-                                        Margin="8,0">
+                                        HorizontalOptions="Start"
+                                        VerticalOptions="Center"
+                                        HeightRequest="34">
                             <CollectionView.ItemsLayout>
-                                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="12" />
+                                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8" />
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="Color">
-                                    <Border WidthRequest="36" 
-                                            HeightRequest="36" 
-                                            StrokeShape="RoundRectangle 20"
-                                            Padding="0"
-                                            BackgroundColor="{Binding .}">
+                                    <Border WidthRequest="30" HeightRequest="30" StrokeShape="RoundRectangle 15" Padding="0" BackgroundColor="{Binding .}">
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroupList>
+                                                <VisualStateGroup x:Name="CommonStates">
+                                                    <VisualState x:Name="Normal">
+                                                        <VisualState.Setters>
+                                                            <Setter Property="Stroke" Value="{StaticResource BorderHairline}" />
+                                                            <Setter Property="StrokeThickness" Value="2" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                    <VisualState x:Name="Selected">
+                                                        <VisualState.Setters>
+                                                            <Setter Property="Stroke" Value="{StaticResource InkStrong}" />
+                                                            <Setter Property="StrokeThickness" Value="3" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateGroupList>
+                                        </VisualStateManager.VisualStateGroups>
                                     </Border>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
-                        <ImageButton Grid.Column="1" Source="rubber.png" CornerRadius="100" WidthRequest="36" VerticalOptions="Start" Aspect="AspectFill" Padding="6" Margin="0,8,8,0" HeightRequest="32" Clicked="ImageButton_Clicked" BackgroundColor="{StaticResource Primary}" />
+                        <Border Grid.Column="1" WidthRequest="36" HeightRequest="36" BackgroundColor="{StaticResource Surface}"
+                                Stroke="{StaticResource InkStrong}" StrokeThickness="2" StrokeShape="RoundRectangle 10" Padding="0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding UndoCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="↺" FontSize="18" TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <Border Grid.Column="2" WidthRequest="36" HeightRequest="36" BackgroundColor="{StaticResource Surface}"
+                                Stroke="{StaticResource InkStrong}" StrokeThickness="2" StrokeShape="RoundRectangle 10" Padding="0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ClearCanvasCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="🗑" FontSize="16" TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
                     </Grid>
 
-                    <CollectionView ItemsSource="{Binding LineWidths}"
-                                    SelectionMode="Single"
-                                    SelectionChanged="CollectionView_SelectionChanged_1"
-                                    HorizontalOptions="Fill"
-                                    Margin="8,16"
-                                    Grid.Row="3">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="x:Int32">
-                                <BoxView HorizontalOptions="Fill" 
-                                         HeightRequest="{Binding .}" 
-                                         Color="Black"
-                                         CornerRadius="8"
-                                         Margin="0,8">
-                                </BoxView>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                    <HorizontalStackLayout Grid.Row="3" Spacing="10" Margin="12" VerticalOptions="Center">
+                        <Label Text="Brush" FontFamily="PatrickHandRegular" FontSize="13" TextColor="{StaticResource InkMuted}" VerticalOptions="Center" />
+                        <CollectionView ItemsSource="{Binding LineWidths}"
+                                        SelectionMode="Single"
+                                        SelectionChanged="CollectionView_SelectionChanged_1"
+                                        HeightRequest="40"
+                                        VerticalOptions="Center">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8" />
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="x:Int32">
+                                    <Border WidthRequest="36" HeightRequest="36" StrokeShape="RoundRectangle 18" Padding="0" BackgroundColor="Transparent">
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroupList>
+                                                <VisualStateGroup x:Name="CommonStates">
+                                                    <VisualState x:Name="Normal">
+                                                        <VisualState.Setters>
+                                                            <Setter Property="Stroke" Value="Transparent" />
+                                                            <Setter Property="BackgroundColor" Value="Transparent" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                    <VisualState x:Name="Selected">
+                                                        <VisualState.Setters>
+                                                            <Setter Property="Stroke" Value="{StaticResource InkStrong}" />
+                                                            <Setter Property="BackgroundColor" Value="{StaticResource PaperBackground}" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateGroupList>
+                                        </VisualStateManager.VisualStateGroups>
+                                        <Ellipse Fill="{StaticResource InkStrongBrush}" WidthRequest="{Binding .}" HeightRequest="{Binding .}" HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </HorizontalStackLayout>
                 </Grid>
-                <Grid toolkit:StateView.StateKey="PlayerGame" VerticalOptions="Fill" HorizontalOptions="Fill">
+                <Grid toolkit:StateView.StateKey="PlayerGame" VerticalOptions="Fill" HorizontalOptions="Fill"
+                      BackgroundColor="{StaticResource PaperBackground}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <HorizontalStackLayout Padding="8" Spacing="24">
-                        <controls:CircularProgressBar Stroke="20"
-                                                      Progress="{Binding RemainingSeconds}"
-                                                      MaxProgress="60"
-                                                      VerticalOptions="Center" 
-                                                      WidthRequest="72" HeightRequest="72"
-                                                      Color="{StaticResource Primary}"/>
-                        <Label Text="Guess the drawing!" HorizontalOptions="Center" VerticalOptions="Center" FontSize="28"/>
-                    </HorizontalStackLayout>
-                    <toolkit:DrawingView Grid.Row="1" x:Name="PlayerDrawingView" LineColor="Black" HorizontalOptions="Fill" HeightRequest="{Binding WidthRequest, Source={RelativeSource Self}}" BackgroundColor="LightPink"
-                                         LineWidth="5" IsMultiLineModeEnabled="True" Margin="0,12"  />
-                    <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding CorrectWordLetters}" Grid.Row="2" Margin="12" HorizontalOptions="Center">
+
+                    <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="12,12,12,0">
+                        <Border Grid.Column="0" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}"
+                                StrokeThickness="2" StrokeShape="RoundRectangle 10" Padding="10,4" VerticalOptions="Center">
+                            <Label Text="{Binding RemainingTimeDisplay}" FontFamily="SpaceMonoRegular" FontSize="18"
+                                   TextColor="{StaticResource InkStrong}" HorizontalOptions="Center">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsTimeCritical}" Value="True">
+                                        <Setter Property="TextColor" Value="{StaticResource Error}" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="0">
+                            <Label Text="GUESS THE WORD" FontFamily="PatrickHandRegular" FontSize="12" CharacterSpacing="1"
+                                   TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                            <Label Text="{Binding WordLengthHint}" FontFamily="KalamBold" FontSize="18"
+                                   TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                        <HorizontalStackLayout Grid.Column="2" Spacing="6" VerticalOptions="Center">
+                            <Label Text="✏️" FontSize="14" VerticalOptions="Center" />
+                            <Label Text="Opponent" FontFamily="PatrickHandRegular" FontSize="14"
+                                   TextColor="{StaticResource InkMuted}" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Grid>
+
+                    <Border Grid.Row="1" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}"
+                            StrokeThickness="3" StrokeShape="RoundRectangle 16" Margin="12" Padding="0">
+                        <Border.Shadow>
+                            <Shadow Brush="{StaticResource InkStrongBrush}" Opacity="0.9" Radius="0" Offset="3,3" />
+                        </Border.Shadow>
+                        <toolkit:DrawingView x:Name="PlayerDrawingView" LineColor="Black" HorizontalOptions="Fill" VerticalOptions="Fill"
+                                             HeightRequest="{Binding WidthRequest, Source={RelativeSource Self}}"
+                                             LineWidth="5" IsMultiLineModeEnabled="True" BackgroundColor="{StaticResource Surface}" />
+                    </Border>
+
+                    <FlexLayout Wrap="Wrap" JustifyContent="Center" BindableLayout.ItemsSource="{Binding CorrectWordLetters}" Grid.Row="2" Margin="12,4">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate x:DataType="x:Char">
-                                <Border Margin="3" StrokeShape="RoundRectangle 8" HeightRequest="36" WidthRequest="36" BackgroundColor="{Binding .,Converter={StaticResource GameWordSpaceCharColorConverter}}" Padding="8">
-                                    <Label Text="{Binding .}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Border Margin="3" StrokeShape="RoundRectangle 8" StrokeThickness="2" Stroke="{StaticResource InkStrong}"
+                                        HeightRequest="40" WidthRequest="34" Padding="0" BackgroundColor="{Binding ., Converter={StaticResource GameWordSpaceCharColorConverter}}">
+                                    <Label Text="{Binding .}" FontFamily="KalamBold" FontSize="20" TextColor="{StaticResource InkStrong}"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding BindingContext.SelectedCorrectLetterChangedCommand, Source={x:Reference this}}" CommandParameter="{Binding .}" />
                                     </Border.GestureRecognizers>
@@ -136,11 +334,19 @@
                             </DataTemplate>
                         </BindableLayout.ItemTemplate>
                     </FlexLayout>
-                    <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Letters}" Grid.Row="3" Margin="12" HorizontalOptions="Center">
+
+                    <BoxView Grid.Row="3" HeightRequest="1" Color="{StaticResource BorderHairline}" Margin="12,2" />
+
+                    <FlexLayout Wrap="Wrap" JustifyContent="Center" BindableLayout.ItemsSource="{Binding Letters}" Grid.Row="4" Margin="12,4">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate x:DataType="x:Char">
-                                <Border Margin="3" StrokeShape="RoundRectangle 8" HeightRequest="36" WidthRequest="36" BackgroundColor="{StaticResource Primary}" Padding="8">
-                                    <Label Text="{Binding .}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Border Margin="3" StrokeShape="RoundRectangle 8" StrokeThickness="2" Stroke="{StaticResource InkStrong}"
+                                        HeightRequest="40" WidthRequest="34" Padding="0" BackgroundColor="{StaticResource SurfaceAlt}">
+                                    <Border.Shadow>
+                                        <Shadow Brush="{StaticResource InkStrongBrush}" Opacity="0.9" Radius="0" Offset="2,2" />
+                                    </Border.Shadow>
+                                    <Label Text="{Binding .}" FontFamily="KalamBold" FontSize="20" TextColor="{StaticResource InkStrong}"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding BindingContext.SelectedLetterChangedCommand, Source={x:Reference this}}" CommandParameter="{Binding .}" />
                                     </Border.GestureRecognizers>
@@ -148,6 +354,62 @@
                             </DataTemplate>
                         </BindableLayout.ItemTemplate>
                     </FlexLayout>
+
+                    <Grid Grid.Row="5" ColumnDefinitions="*,2*" ColumnSpacing="10" Margin="12">
+                        <Border Grid.Column="0" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}"
+                                StrokeThickness="2" StrokeShape="RoundRectangle 14" HeightRequest="48" Padding="0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ClearGuessCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Clear" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <Border Grid.Column="1" BackgroundColor="{StaticResource AccentTint}" Stroke="{StaticResource InkStrong}"
+                                StrokeThickness="2" StrokeShape="RoundRectangle 14" HeightRequest="48" Padding="0" IsEnabled="{Binding IsSubmitEnabled}">
+                            <Border.Shadow>
+                                <Shadow Brush="{StaticResource InkStrongBrush}" Opacity="0.9" Radius="0" Offset="3,3" />
+                            </Border.Shadow>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SubmitGuessCommand}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Submit Guess" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding IsSubmitEnabled}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="{StaticResource AccentStrong}" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                        </Border>
+                    </Grid>
+
+                    <Border Grid.Row="2" Grid.RowSpan="3" IsVisible="{Binding ShowWrongGuess}" VerticalOptions="Start" HorizontalOptions="Fill"
+                            Margin="16,0" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Error}" StrokeThickness="2"
+                            StrokeShape="RoundRectangle 14" Padding="16,10">
+                        <Border.Shadow>
+                            <Shadow Brush="{StaticResource InkStrongBrush}" Opacity="0.9" Radius="0" Offset="3,3" />
+                        </Border.Shadow>
+                        <Label Text="Not quite — try again!" FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource Error}"
+                               HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                    </Border>
+
+                    <Grid Grid.RowSpan="6" IsVisible="{Binding ShowCorrectGuess}" BackgroundColor="#F2F0EEE9">
+                        <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="12">
+                            <Border WidthRequest="64" HeightRequest="64" StrokeShape="RoundRectangle 32" Stroke="{StaticResource Success}"
+                                    StrokeThickness="3" BackgroundColor="Transparent" Padding="0">
+                                <Label Text="✓" FontSize="30" TextColor="{StaticResource Success}" HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <Label Text="Correct!" FontFamily="KalamBold" FontSize="22" TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" />
+                            <Label FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkMuted}" HorizontalOptions="Center">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="The word was &quot;" />
+                                        <Span Text="{Binding CorrectWord}" />
+                                        <Span Text="&quot;" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </VerticalStackLayout>
+                    </Grid>
                 </Grid>
             </toolkit:StateContainer.StateViews>
         </Grid>

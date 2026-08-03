@@ -272,14 +272,14 @@ public partial class CircularTimer : ContentView
 
         canvas.DrawText(timeText, centerX, textY, SKTextAlign.Center, textFont, textPaint);
 
-        //// Continue animation if running
-        //if (IsRunning && remainingTime.TotalSeconds > 0)
-        //{
-        //    Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(16), () => // ~60fps
-        //    {
-        //        canvas.InvalidateSurface();
-        //    });
-        //}
+        // Continue animation if running
+        if (IsRunning && remainingTime.TotalSeconds > 0)
+        {
+            Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(16), () => // ~60fps
+            {
+                this.canvas.InvalidateSurface();
+            });
+        }
     }
 
     private static double XamDIUConvertToPixels(double XamDIU)
