@@ -4,6 +4,7 @@
              xmlns:viewModels="clr-namespace:Picator.Game.ViewModels"
              xmlns:controls="clr-namespace:Picator.Game.Controls"
              xmlns:ads="clr-namespace:Plugin.MauiMtAdmob.Controls;assembly=Plugin.MauiMtAdmob"
+             xmlns:skiaLottie="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
              x:Class="Picator.Game.Views.MainPage"
              x:DataType="viewModels:MainViewModel"
             
@@ -143,7 +144,8 @@
 
                     <!--Searching-->
                     <VerticalStackLayout IsVisible="{Binding IsSearching}" Spacing="16" HorizontalOptions="Center">
-                        <ActivityIndicator IsRunning="{Binding IsSearching}" Color="{StaticResource Accent}" WidthRequest="56" HeightRequest="56" />
+                        <skiaLottie:SKLottieView Source="loading.json" IsAnimationEnabled="{Binding IsSearching}"
+                                       RepeatCount="-1" WidthRequest="56" HeightRequest="56" />
                         <Label Text="Finding an opponent…" FontFamily="KalamBold" FontSize="20" TextColor="{StaticResource InkStrong}" HorizontalOptions="Center" />
                         <Label Text="{Binding SearchTimeDisplay}" FontFamily="SpaceMonoRegular" FontSize="22" TextColor="{StaticResource Accent}" HorizontalOptions="Center" />
                         <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
