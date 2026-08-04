@@ -18,6 +18,10 @@ var apiService =builder.AddProject<Projects.Picator_Api>("picator-api").WithRefe
 
 builder.AddProject<Projects.Picator_Realtime>("picator-realtime").WithReference(postgres).WaitFor(postgres);
 
+builder.AddNextJsApp("picator-web", "../Picator.Web")
+    .WithReference(apiService)
+    .WaitFor(apiService);
+
 // builder.AddProject<Projects.Picator_ExternalAuth>("picator-externalauth").WithReference(postgres).WaitFor(postgres);
 
 // builder.AddProject<Projects.TempAPITest>("tempapitest").WithReference(apiService).WaitFor(apiService);

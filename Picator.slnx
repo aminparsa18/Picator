@@ -24,10 +24,6 @@
   <Folder Name="/Infrastructure/">
     <Project Path="Picator.Repository/Picator.Repository.csproj" />
   </Folder>
-  <Folder Name="/libs/">
-    <Project Path="QrGenerator.Binding/QrGenerator.Binding.csproj" />
-    <Project Path="XamDrawingView/XamDrawingView.csproj" />
-  </Folder>
   <Folder Name="/Services/">
     <Project Path="Picator.Configuration/Picator.Configuration.csproj" />
     <Project Path="Picator.Service/Picator.Service.csproj" />

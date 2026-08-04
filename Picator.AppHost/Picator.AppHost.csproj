@@ -7,10 +7,12 @@
     <Nullable>enable</Nullable>
     <IsAspireHost>true</IsAspireHost>
     <UserSecretsId>e5bf973a-c7ab-4f69-8a3b-9e378e630b94</UserSecretsId>
+    <NoWarn>$(NoWarn);ASPIREJAVASCRIPT001</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.4.6" />
+    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.4.6" />
   </ItemGroup>
 
   <ItemGroup>
