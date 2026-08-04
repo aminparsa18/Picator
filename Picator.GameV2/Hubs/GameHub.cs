@@ -18,6 +18,8 @@ public class GameHub : IGameDrawingReceiver, IAsyncDisposable
     public event EventHandler<string?>? WordReceived;
     public event EventHandler<uint>? ColorReceived;
     public event EventHandler<float>? ThicknessReceived;
+    public event EventHandler? UndoReceived;
+    public event EventHandler? CanvasCleared;
     public event EventHandler<(bool WasCorrect, string Word, int Points, bool GameCompleted, int DrawerScore, int GuesserScore)>? RoundEnded;
 
     private GameHub()
@@ -114,6 +116,22 @@ public class GameHub : IGameDrawingReceiver, IAsyncDisposable
         await _client.SendDrawingColor("", color);
     }
 
+    public async ValueTask SendDrawingUndo()
+    {
+        if (_client is null)
+            throw new InvalidOperationException("GameHub is not connected.");
+
+        await _client.SendDrawingUndo("");
+    }
+
+    public async ValueTask SendDrawingClear()
+    {
+        if (_client is null)
+            throw new InvalidOperationException("GameHub is not connected.");
+
+        await _client.SendDrawingClear("");
+    }
+
     // dispose client-connection before channel.ShutDownAsync is important!
     public async ValueTask DisposeAsync()
     {
@@ -163,6 +181,12 @@ public class GameHub : IGameDrawingReceiver, IAsyncDisposable
 
     public void OnThicknessChanged(float thickness) =>
         ThicknessReceived?.Invoke(this, thickness);
+
+    public void OnUndoRequested() =>
+        UndoReceived?.Invoke(this, EventArgs.Empty);
+
+    public void OnCanvasCleared() =>
+        CanvasCleared?.Invoke(this, EventArgs.Empty);
 
     public void OnRoundEnded(bool wasCorrect, string word, int pointsAwarded, bool gameCompleted, int drawerScore, int guesserScore) =>
         RoundEnded?.Invoke(this, (wasCorrect, word, pointsAwarded, gameCompleted, drawerScore, guesserScore));

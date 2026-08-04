@@ -105,4 +105,18 @@ public class GameHub : StreamingHubBase<IGameHub, IGameDrawingReceiver>, IGameHu
         _group?.Except([ConnectionId]).OnThicknessChanged(thickness);
         return ValueTask.CompletedTask;
     }
+
+    // notifies other player when player undoes their last stroke
+    public ValueTask SendDrawingUndo(string roomName)
+    {
+        _group?.Except([ConnectionId]).OnUndoRequested();
+        return ValueTask.CompletedTask;
+    }
+
+    // notifies other player when player clears the whole canvas
+    public ValueTask SendDrawingClear(string roomName)
+    {
+        _group?.Except([ConnectionId]).OnCanvasCleared();
+        return ValueTask.CompletedTask;
+    }
 }

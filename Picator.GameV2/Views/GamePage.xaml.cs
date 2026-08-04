@@ -29,6 +29,8 @@ public partial class GamePage : ContentPage
         GameHub.Instance.LineCompleted += LineCompleted;
         GameHub.Instance.ColorReceived += ColorReceived;
         GameHub.Instance.ThicknessReceived += ThicknessReceived;
+        GameHub.Instance.UndoReceived += UndoReceived;
+        GameHub.Instance.CanvasCleared += CanvasCleared;
     }
 
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)
@@ -92,6 +94,26 @@ public partial class GamePage : ContentPage
     private void ColorReceived(object? sender, uint e)
     {
         _selectedColor = Color.FromUint(e);
+    }
+
+    private void UndoReceived(object? sender, EventArgs e)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            // Mirrors GameViewModel.Undo(): drop the last completed stroke, keep the in-progress placeholder.
+            if (_lines.Count > 1)
+                _lines.RemoveAt(_lines.Count - 2);
+        });
+    }
+
+    private void CanvasCleared(object? sender, EventArgs e)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            _points.Clear();
+            _lines.Clear();
+            _lines.Add(new DrawingLine { Points = [], LineColor = _selectedColor, LineWidth = _selectedThickness });
+        });
     }
 
     private async void CollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)

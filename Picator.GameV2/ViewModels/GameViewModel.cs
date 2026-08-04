@@ -486,19 +486,18 @@ public partial class GameViewModel : ViewModelBase, IAsyncDisposable
     }
 
     [RelayCommand]
-    private void Undo()
+    private async Task Undo()
     {
-        // Local-only: removes the drawer's own last completed stroke. Not synced to the guesser —
-        // GameHub has no undo/clear message today, only point/line/color/thickness broadcasts.
         if (Lines.Count > 1)
             Lines.RemoveAt(Lines.Count - 2);
+        await _hub.SendDrawingUndo();
     }
 
     [RelayCommand]
-    private void ClearCanvas()
+    private async Task ClearCanvas()
     {
-        // Local-only, same caveat as Undo.
         Lines = [new DrawingLine()];
+        await _hub.SendDrawingClear();
     }
 
     [RelayCommand]
