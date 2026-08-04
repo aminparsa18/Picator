@@ -20,13 +20,15 @@ var ingress = k8s.AddIngress("public")
 const string apiHostname = "api.localhost";
 
 var postgres = builder.AddPostgres("sql", password: dbPassword)
-    .WithDataVolume()
+    // Kubernetes volume names can't contain dots; the auto-generated name derives
+    // from the AppHost project name ("Picator.AppHost"), which does. Name it explicitly.
+    .WithDataVolume("sql-data")
     .WithLifetime(ContainerLifetime.Persistent)
     .WithHostPort(50925)
     .AddDatabase("PicatorDB");
 
 var rustfs = builder.AddRustFs("rustfs", port: 9100, accessKey: rustfsAccessKey, secretKey: rustfsSecretKey)
-    .WithDataVolume()
+    .WithDataVolume("rustfs-data")
     .WithLifetime(ContainerLifetime.Persistent);
 
 var apiService = builder.AddProject<Projects.Picator_Api>("picator-api")
