@@ -58,7 +58,10 @@ var picatorWeb = builder.AddNextJsApp("picator-web", "../Picator.Web")
     .WaitFor(apiService)
     .WithExternalHttpEndpoints();
 
-ingress.WithDefaultBackend(picatorWeb.GetEndpoint("http"));
+// WithDefaultBackend maps to the Ingress spec.defaultBackend field, which this
+// cluster's Traefik doesn't seem to honor. A host-less path rule matches all
+// hosts the same way, through the more standard rules[] code path instead.
+ingress.WithPath("/", picatorWeb.GetEndpoint("http"));
 
 // builder.AddProject<Projects.Picator_ExternalAuth>("picator-externalauth").WithReference(postgres).WaitFor(postgres);
 
