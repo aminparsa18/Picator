@@ -1,0 +1,60 @@
+name: Deploy Picator to Debian/k3s
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  deploy:
+    # This runs on the self-hosted runner installed on the Debian server itself,
+    # so `aspire deploy` talks to the local k3s cluster over the local kubeconfig
+    # and pushes images to GHCR from the same box that builds them.
+    runs-on: [self-hosted]
+    environment: production
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      DOTNET_NOLOGO: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore and build workspace
+        run: |
+          dotnet restore Picator.slnx
+          dotnet build Picator.slnx --no-restore
+
+      - name: Install/update Aspire CLI
+        run: |
+          curl -sSL https://aspire.dev/install.sh | bash
+          echo "$HOME/.aspire/bin" >> "$GITHUB_PATH"
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Preview deployment steps
+        working-directory: Picator.AppHost
+        run: aspire deploy --list-steps --non-interactive
+
+      - name: Deploy with Aspire
+        working-directory: Picator.AppHost
+        env:
+          Parameters__registry_endpoint: ghcr.io
+          Parameters__registry_repository: ${{ github.repository }}
+          Parameters__DbPassword: ${{ secrets.DB_PASSWORD }}
+          Parameters__rustfs_access_key: ${{ secrets.RUSTFS_ACCESS_KEY }}
+          Parameters__rustfs_secret_key: ${{ secrets.RUSTFS_SECRET_KEY }}
+        run: aspire deploy --environment production --non-interactive
