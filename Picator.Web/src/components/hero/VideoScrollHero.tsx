@@ -10,6 +10,14 @@ const INTRO_SECONDS = 2;
 const INTRO_END_FRAME = Math.round(INTRO_SECONDS * FRAME_FPS) + 1;
 const HINT_FADE_PROGRESS = 0.05;
 
+// Scroll-track height (must match the h-[350vh] section below) and how much of
+// its pin duration, at the end, is reserved as a hold on the last frame — this
+// is what gives the next section room to slide up and cover the still-pinned
+// video instead of the pin releasing the instant scrubbing finishes. Keep
+// HOLD_VH in sync with the -mt-[--hero-hold] reveal-overlap rule in globals.css.
+const PIN_TRACK_VH = 350;
+const HOLD_VH = 50;
+
 const GRAIN_BACKGROUND_IMAGE =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
 
@@ -151,7 +159,14 @@ export default function VideoScrollHero() {
       const rect = section.getBoundingClientRect();
       const scrollableRange = rect.height - window.innerHeight;
       if (scrollableRange <= 0) return 0;
-      return Math.min(1, Math.max(0, -rect.top / scrollableRange));
+      const raw = Math.min(1, Math.max(0, -rect.top / scrollableRange));
+
+      // Reserve the last HOLD_VH of the pin's scroll range: scrubbing finishes
+      // at scrubFraction instead of 1, then holds on the last frame (still
+      // pinned) for the remainder, giving the reveal-overlap room to work.
+      const pinDurationVh = PIN_TRACK_VH - 100;
+      const scrubFraction = (pinDurationVh - HOLD_VH) / pinDurationVh;
+      return Math.min(1, raw / scrubFraction);
     };
 
     const tick = (time: number) => {

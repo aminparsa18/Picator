@@ -119,3 +119,15 @@ body {
   background-image: radial-gradient(var(--border-hairline) 1px, transparent 1px);
   background-size: 18px 18px;
 }
+
+/*
+ * Pulls the content after the video hero up by the hero's HOLD_VH so it slides
+ * over the still-pinned last frame instead of only appearing once the pin
+ * releases. Only when motion is allowed — the reduced-motion hero has no pin
+ * to hold, so the overlap would just cut off part of its content.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-reveal-overlap {
+    margin-top: -50vh;
+  }
+}
