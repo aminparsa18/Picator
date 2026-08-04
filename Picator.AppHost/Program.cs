@@ -16,8 +16,7 @@ var k8s = builder.AddKubernetesEnvironment("k8s")
 var ingress = k8s.AddIngress("public")
     .WithIngressClass("traefik");
 
-// TODO: swap "api.localhost" for your real "api.<your-domain>" once DNS is pointed at the server.
-const string apiHostname = "api.localhost";
+const string apiHostname = "api.picator.online";
 
 var postgres = builder.AddPostgres("sql", password: dbPassword)
     // Kubernetes volume names can't contain dots; the auto-generated name derives
