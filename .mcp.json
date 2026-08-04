@@ -2,7 +2,16 @@
   "mcpServers": {
     "maestro": {
       "command": "/Users/apple/.maestro/bin/maestro",
-      "args": ["mcp"]
+      "args": [
+        "mcp"
+      ]
+    },
+    "21st": {
+      "type": "http",
+      "url": "https://21st.dev/api/mcp",
+      "headers": {
+        "x-api-key": "21st_sk_55d70271ba9474bd91d44390e7b6629b6c99bb001e2f29daf8fe16149e716642"
+      }
     }
   }
 }
