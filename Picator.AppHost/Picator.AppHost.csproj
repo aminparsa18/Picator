@@ -20,7 +20,6 @@
     <ProjectReference Include="..\Picator.ExternalAuth\Picator.ExternalAuth.csproj" />
     <ProjectReference Include="..\Picator.Invitement\Picator.Invitement\Picator.Invitement.csproj" />
     <ProjectReference Include="..\Picator.Realtime\Picator.Realtime.csproj" />
-    <ProjectReference Include="..\TempAPITest\TempAPITest.csproj" />
   </ItemGroup>
 
 </Project>

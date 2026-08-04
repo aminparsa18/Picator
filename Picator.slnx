@@ -43,5 +43,4 @@
   <Project Path="Picator.Realtime.TestClient/Picator.Realtime.TestClient.csproj" />
   <Project Path="Picator.Realtime/Picator.Realtime.csproj" />
   <Project Path="Picator.ServiceDefaults/Picator.ServiceDefaults.csproj" />
-  <Project Path="TempAPITest/TempAPITest.csproj" />
 </Solution>
