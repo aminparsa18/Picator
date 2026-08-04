@@ -18,13 +18,21 @@ var ingress = k8s.AddIngress("public")
 
 const string apiHostname = "api.picator.online";
 
-var postgres = builder.AddPostgres("sql", password: dbPassword)
+var sqlServer = builder.AddPostgres("sql", password: dbPassword)
     // Kubernetes volume names can't contain dots; the auto-generated name derives
     // from the AppHost project name ("Picator.AppHost"), which does. Name it explicitly.
     .WithDataVolume("sql-data")
-    .WithLifetime(ContainerLifetime.Persistent)
-    .WithHostPort(50925)
-    .AddDatabase("PicatorDB");
+    .WithLifetime(ContainerLifetime.Persistent);
+
+if (!builder.ExecutionContext.IsPublishMode)
+{
+    // Pin a stable local port for `aspire run`. Publishing to Kubernetes generates its
+    // own Service port for cluster-internal access, so this must not apply there --
+    // it previously clobbered the k8s Service's port, breaking picator-api's connection.
+    sqlServer.WithHostPort(50925);
+}
+
+var postgres = sqlServer.AddDatabase("PicatorDB");
 
 var rustfs = builder.AddRustFs("rustfs", port: 9100, accessKey: rustfsAccessKey, secretKey: rustfsSecretKey)
     .WithDataVolume("rustfs-data")
