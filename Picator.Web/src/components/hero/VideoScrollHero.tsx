@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
-// Generated via:
-// ffmpeg -i public/intro.mp4 -vf "fps=15,scale=1280:720:flags=lanczos" -q:v 4 public/intro-frames/%04d.jpg
+// Generated via (source video deleted afterward — the frames are the only copy):
+// ffmpeg -i intro.mp4 -vf "fps=15,scale=1280:720:flags=lanczos" -q:v 4 public/intro-frames/%04d.jpg
 const FRAME_COUNT = 151;
 const FRAME_FPS = 15;
 const INTRO_SECONDS = 2;
@@ -77,8 +77,8 @@ export default function VideoScrollHero() {
   }, []);
 
   // Preload the intro frames eagerly, then the rest of the clip in small batches.
+  // Runs regardless of reducedMotion: both render paths draw from this frame sequence.
   useEffect(() => {
-    if (reducedMotion) return;
     let cancelled = false;
     const images: HTMLImageElement[] = new Array(FRAME_COUNT);
     framesRef.current = images;
@@ -112,7 +112,7 @@ export default function VideoScrollHero() {
       cancelled = true;
       if (batchTimer) clearTimeout(batchTimer);
     };
-  }, [reducedMotion, drawFrame]);
+  }, [drawFrame]);
 
   // Single rAF loop: auto-play frames 1 -> INTRO_END_FRAME over 2s, then hand off
   // to scroll. Scroll progress is polled from getBoundingClientRect() every frame
@@ -172,18 +172,33 @@ export default function VideoScrollHero() {
     };
   }, [reducedMotion, drawFrame, nearestLoadedFrame]);
 
+  // Reduced motion: play the frame sequence through once at its native rate, no scroll.
+  useEffect(() => {
+    if (!reducedMotion) return;
+    let raf = 0;
+    let start: number | null = null;
+    let cancelled = false;
+
+    const tick = (time: number) => {
+      if (cancelled) return;
+      if (start === null) start = time;
+      const elapsed = (time - start) / 1000;
+      const frame = Math.min(FRAME_COUNT, Math.floor(elapsed * FRAME_FPS) + 1);
+      drawFrame(nearestLoadedFrame(frame));
+      if (frame < FRAME_COUNT) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+    };
+  }, [reducedMotion, drawFrame, nearestLoadedFrame]);
+
   if (reducedMotion) {
     return (
       <section className="relative h-dvh w-full overflow-hidden bg-black">
-        <video
-          className="h-full w-full object-cover"
-          src="/intro.mp4"
-          muted
-          playsInline
-          autoPlay
-          preload="auto"
-          onLoadedData={() => setFirstFrameReady(true)}
-        />
+        <canvas ref={canvasRef} className="h-full w-full object-cover" />
         <div
           aria-hidden
           className={`pointer-events-none absolute inset-0 mix-blend-overlay transition-opacity duration-300 ${
