@@ -35,6 +35,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Lowercase the repository name for GHCR
+        run: echo "REPO_LOWER=${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+
       - name: Preview deployment steps
         working-directory: Picator.AppHost
         run: aspire deploy --list-steps --non-interactive
@@ -43,7 +46,7 @@ jobs:
         working-directory: Picator.AppHost
         env:
           Parameters__registry_endpoint: ghcr.io
-          Parameters__registry_repository: ${{ github.repository }}
+          Parameters__registry_repository: ${{ env.REPO_LOWER }}
           Parameters__DbPassword: ${{ secrets.DB_PASSWORD }}
           Parameters__rustfs_access_key: ${{ secrets.RUSTFS_ACCESS_KEY }}
           Parameters__rustfs_secret_key: ${{ secrets.RUSTFS_SECRET_KEY }}
