@@ -1,26 +1,121 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Neutrals — paper & ink */
+  --paper: #f0eee9;
+  --paper-sunken: #e4e1d8;
+  --surface: #fdfcf8;
+  --surface-alt: #f5f3ee;
+  --ink: #1a1a1a;
+  --ink-muted: #5c5a54;
+  --ink-faint: #a8a59c;
+  --on-ink: #fdfcf8;
+  --border-hairline: rgb(26 26 26 / 14%);
+  --border-dashed: rgb(26 26 26 / 20%);
+  --overlay: rgb(26 26 26 / 50%);
+
+  /* Brand — primary action & accent */
+  --accent: #e8532e;
+  --on-accent: #ffffff;
+  --accent-strong: #c7431f;
+  --on-accent-strong: #ffffff;
+  --accent-hover: #b23a1a;
+  --accent-tint: #fbe0d6;
+
+  /* Status feedback */
+  --success: #2f9e44;
+  --success-strong: #1f7a34;
+  --on-success: #ffffff;
+  --warning: #d98c0a;
+  --on-warning: #1a1a1a;
+  --error: #c1272d;
+  --on-error: #ffffff;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-paper-sunken: var(--paper-sunken);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-on-ink: var(--on-ink);
+  --color-border-hairline: var(--border-hairline);
+  --color-border-dashed: var(--border-dashed);
+  --color-overlay: var(--overlay);
+
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-on-accent-strong: var(--on-accent-strong);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-tint: var(--accent-tint);
+
+  --color-success: var(--success);
+  --color-success-strong: var(--success-strong);
+  --color-on-success: var(--on-success);
+  --color-warning: var(--warning);
+  --color-on-warning: var(--on-warning);
+  --color-error: var(--error);
+  --color-on-error: var(--on-error);
+
+  --font-sans: var(--font-patrick-hand);
+  --font-heading: var(--font-kalam);
+  --font-mono: var(--font-space-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --paper: #1b1a17;
+    --paper-sunken: #2c2a26;
+    --surface: #242220;
+    --surface-alt: #2c2a26;
+    --ink: #f0eee9;
+    --ink-muted: #a6a39b;
+    --ink-faint: #6e6b63;
+    --on-ink: #1a1a1a;
+    --border-hairline: rgb(253 252 248 / 14%);
+    --border-dashed: rgb(253 252 248 / 20%);
+    --overlay: rgb(0 0 0 / 60%);
+
+    --accent: #ff6b45;
+    --on-accent: #1b1a17;
+    --accent-strong: #ff6b45;
+    --on-accent-strong: #1b1a17;
+    --accent-tint: rgb(255 107 69 / 20%);
+
+    --success: #5cc97c;
+    --success-strong: #5cc97c;
+    --on-success: #1b1a17;
+    --warning: #f0ac3d;
+    --on-warning: #1b1a17;
+    --error: #e8615f;
+    --on-error: #1b1a17;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans), sans-serif;
+}
+
+/* Hard, unblurred offset shadow — the app's signature "pressed paper" look. */
+.shadow-ink-sm {
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.shadow-ink {
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.shadow-ink-lg {
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+/* Dot-grid paper texture, matching the app's DotGridBackground (18px spacing, 1px dots). */
+.bg-dot-grid {
+  background-image: radial-gradient(var(--border-hairline) 1px, transparent 1px);
+  background-size: 18px 18px;
 }

@@ -114,6 +114,24 @@ export default function VideoScrollHero() {
     };
   }, [drawFrame]);
 
+  // Lock page scroll for the 2s auto-play intro. Without this, a scroll during
+  // that window still moves the real page (just with no visible effect on the
+  // video), so the moment the intro ends the next tick reads that already-changed
+  // scroll position and the video jumps straight to it instead of scrubbing.
+  useEffect(() => {
+    if (reducedMotion || introDone) return;
+    const html = document.documentElement;
+    const { body } = document;
+    const previousHtmlOverflow = html.style.overflow;
+    const previousBodyOverflow = body.style.overflow;
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    return () => {
+      html.style.overflow = previousHtmlOverflow;
+      body.style.overflow = previousBodyOverflow;
+    };
+  }, [reducedMotion, introDone]);
+
   // Single rAF loop: auto-play frames 1 -> INTRO_END_FRAME over 2s, then hand off
   // to scroll. Scroll progress is polled from getBoundingClientRect() every frame
   // instead of driven by the native "scroll" event, because browsers coalesce/skip
