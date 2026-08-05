@@ -19,8 +19,8 @@ var ingress = k8s.AddIngress("public")
     .WithIngressClass("traefik");
 
 const string apiHostname = "api.picator.online";
+const string webHostname = "picator.online";
 const string externalAuthHostname = "auth.picator.online";
-const string externalAuthTlsSecretName = "auth-picator-online-tls";
 const string clusterIssuerName = "letsencrypt-prod";
 
 var sqlServer = builder.AddPostgres("sql", password: dbPassword)
@@ -103,13 +103,22 @@ var externalAuth = builder.AddProject<Projects.Picator_ExternalAuth>("picator-ex
 
 ingress.WithPath(externalAuthHostname, "/", externalAuth.GetEndpoint("http"));
 
-// TLS for the OAuth callback host only -- api/docs/web stay on plain HTTP for now.
-// Aspire bootstraps a self-signed placeholder for this Secret on first deploy; cert-manager
+// TLS for every public hostname on this shared ingress. Enabling TLS for even one host turns
+// on Traefik's HTTPS entrypoint (443) for the whole ingress -- any other host hit over https
+// then falls back to Traefik's mismatched default cert and browsers show a security warning.
+// So every hostname is covered rather than leaving some on plain HTTP. WithTls captures every
+// hostname registered via WithHostname on this ingress (regardless of call order), so a single
+// call here produces one multi-SAN certificate covering all four -- not four separate calls,
+// which would instead generate four redundant/ambiguous tls[] entries all listing every host.
+// Aspire bootstraps a self-signed placeholder for the Secret on first deploy; cert-manager
 // (installed separately on the cluster, not by Aspire) replaces it with a real Let's Encrypt
-// cert using the ClusterIssuer named below.
-ingress.WithHostname(externalAuthHostname)
-    .WithTls(externalAuthTlsSecretName)
-    .WithIngressAnnotation("cert-manager.io/cluster-issuer", clusterIssuerName);
+// cert via the ClusterIssuer named below.
+ingress.WithIngressAnnotation("cert-manager.io/cluster-issuer", clusterIssuerName);
+ingress.WithHostname(externalAuthHostname);
+ingress.WithHostname(apiHostname);
+ingress.WithHostname(rustfsConsoleHostname);
+ingress.WithHostname(webHostname)
+    .WithTls("picator-online-tls");
 
 // builder.AddProject<Projects.Picator_Invitement>("picator-invitement");
 
