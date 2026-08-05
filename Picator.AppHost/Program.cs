@@ -5,6 +5,8 @@ var builder = DistributedApplication.CreateBuilder(args);
 var dbPassword = builder.AddParameter("DbPassword", true);
 var rustfsAccessKey = builder.AddParameter("rustfs-access-key", secret: true);
 var rustfsSecretKey = builder.AddParameter("rustfs-secret-key", secret: true);
+var googleClientId = builder.AddParameter("google-client-id", secret: true);
+var googleClientSecret = builder.AddParameter("google-client-secret", secret: true);
 
 var registryEndpoint = builder.AddParameter("registry-endpoint");
 var registryRepository = builder.AddParameter("registry-repository");
@@ -17,6 +19,7 @@ var ingress = k8s.AddIngress("public")
     .WithIngressClass("traefik");
 
 const string apiHostname = "api.picator.online";
+const string externalAuthHostname = "auth.picator.online";
 
 var sqlServer = builder.AddPostgres("sql", password: dbPassword)
     // Kubernetes volume names can't contain dots; the auto-generated name derives
@@ -89,9 +92,14 @@ var picatorWeb = builder.AddNextJsApp("picator-web", "../Picator.Web")
 // hosts the same way, through the more standard rules[] code path instead.
 ingress.WithPath("/", picatorWeb.GetEndpoint("http"));
 
-// builder.AddProject<Projects.Picator_ExternalAuth>("picator-externalauth").WithReference(postgres).WaitFor(postgres);
+var externalAuth = builder.AddProject<Projects.Picator_ExternalAuth>("picator-externalauth")
+    .WithReference(postgres)
+    .WaitFor(postgres)
+    .WithEnvironment("Google__ClientId", googleClientId)
+    .WithEnvironment("Google__ClientSecret", googleClientSecret)
+    .WithExternalHttpEndpoints();
 
-// builder.AddProject<Projects.TempAPITest>("tempapitest").WithReference(apiService).WaitFor(apiService);
+ingress.WithPath(externalAuthHostname, "/", externalAuth.GetEndpoint("http"));
 
 // builder.AddProject<Projects.Picator_Invitement>("picator-invitement");
 

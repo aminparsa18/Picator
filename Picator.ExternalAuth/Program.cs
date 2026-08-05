@@ -80,8 +80,10 @@ builder.Services.AddAuthentication(o =>
     })
     .AddGoogle(GoogleDefaults.AuthenticationScheme, g =>
     {
-        g.ClientId = "890605411237-srmckel8r27meeu680c1b1qgnl3urkr1.apps.googleusercontent.com";
-        g.ClientSecret = "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";
+        g.ClientId = builder.Configuration["Google:ClientId"]
+            ?? throw new InvalidOperationException("Missing configuration: Google:ClientId");
+        g.ClientSecret = builder.Configuration["Google:ClientSecret"]
+            ?? throw new InvalidOperationException("Missing configuration: Google:ClientSecret");
         g.SaveTokens = true;
     });
 builder.Services.AddAuthorization();
