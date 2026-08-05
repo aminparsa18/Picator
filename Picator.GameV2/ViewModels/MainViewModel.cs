@@ -196,9 +196,13 @@ public sealed partial class MainViewModel : ViewModelBase
             if (token.IsCancellationRequested)
                 return;
 
-            Console.WriteLine($"MainViewModel: quick match failed - {ex.Message}");
+            Console.WriteLine($"MainViewModel: quick match failed - {ex}");
             OverlayMode = HomeOverlayMode.None;
             await DisconnectMatchmakingHubAsync();
+
+            var page = Application.Current?.MainPage;
+            if (page is not null)
+                await page.DisplayAlert("Quick match failed", ex.ToString(), "OK");
         }
     }
 
