@@ -57,7 +57,6 @@
 		<None Remove="Resources\Images\random_game.png" />
 		<None Remove="Resources\Images\room.png" />
 		<None Remove="Resources\Images\user.png" />
-		<None Remove="Resources\Raw\day.mp4" />
 		<None Remove="Resources\Splash\splash.png" />
 	</ItemGroup>
 	<ItemGroup>
