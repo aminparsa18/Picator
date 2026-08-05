@@ -16,7 +16,9 @@ public sealed class Constants
     public static string PlayerRole => "Player";
 
     /// <summary>
-    /// RustFs blob storage endpoint.
+    /// RustFs blob storage endpoint. Routed through the Traefik ingress (rustfsStorageHostname
+    /// in Picator.AppHost/Program.cs) rather than RustFS's raw NodePort, so avatar URLs handed
+    /// back to browser clients don't get blocked as mixed content on the https web app.
     /// </summary>
-    public static string BlobStorageEndpoint => "http://84.32.83.4:30101/avatars/";
+    public static string BlobStorageEndpoint => "https://kososher.picator.online/avatars/";
 }

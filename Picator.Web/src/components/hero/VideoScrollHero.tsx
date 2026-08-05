@@ -4,10 +4,11 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "
 
 // Generated via (source video deleted afterward — the frames are the only copy):
 // ffmpeg -i intro.mp4 -vf "fps=15,scale=1280:720:flags=lanczos" -q:v 4 intro-frames/%04d.jpg
-// Served from RustFS's S3-compatible API via its fixed NodePort (see picator-api's
-// 30100 gRPC NodePort in Picator.AppHost/Program.cs for the same pattern), not
-// bundled under public/ anymore.
-const INTRO_FRAMES_BASE_URL = "http://84.32.83.4:30101/intro-frames";
+// Served from RustFS's S3-compatible API, routed through the same Traefik ingress as the
+// rest of the site (see rustfsStorageHostname in Picator.AppHost/Program.cs) rather than
+// the raw NodePort -- this page loads over https, so a plain-http image URL gets blocked
+// as mixed content. Not bundled under public/ anymore.
+const INTRO_FRAMES_BASE_URL = "https://kososher.picator.online/intro-frames";
 const FRAME_COUNT = 151;
 const FRAME_FPS = 15;
 const INTRO_SECONDS = 2;

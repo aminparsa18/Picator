@@ -40,14 +40,16 @@ if (!builder.ExecutionContext.IsPublishMode)
 var postgres = sqlServer.AddDatabase("PicatorDB");
 
 const string rustfsConsoleHostname = "docs.picator.online";
+const string rustfsStorageHostname = "kososher.picator.online";
 
 var rustfs = builder.AddRustFs("rustfs", port: 9100, accessKey: rustfsAccessKey, secretKey: rustfsSecretKey)
     .WithDataVolume("rustfs-data")
     .WithLifetime(ContainerLifetime.Persistent)
     .WithExternalHttpEndpoints()
-    // Storage (S3-compatible) API reachable directly at <server-ip>:30101 for external clients.
-    // The console endpoint keeps its own auto-assigned NodePort too (unused/harmless) since
-    // both endpoints live on the same k8s Service; it's still reached via ingress below.
+    // Storage (S3-compatible) API also reachable directly at <server-ip>:30101, unencrypted, for
+    // external S3 clients that want a raw endpoint. The console endpoint keeps its own
+    // auto-assigned NodePort too (unused/harmless) since both endpoints live on the same k8s
+    // Service; it's still reached via ingress below.
     .PublishAsKubernetesService(resource =>
     {
         resource.Service!.Spec.Type = "NodePort";
@@ -61,6 +63,10 @@ var rustfs = builder.AddRustFs("rustfs", port: 9100, accessKey: rustfsAccessKey,
     });
 
 ingress.WithPath(rustfsConsoleHostname, "/", rustfs.GetEndpoint(RustFsResource.ConsoleEndpointName));
+// Browser-facing HTTPS path for objects (images, intro frames, avatars) -- the NodePort above
+// stays plain HTTP, so anything loaded by a browser on an https page needs this route instead
+// or it gets blocked as mixed content.
+ingress.WithPath(rustfsStorageHostname, "/", rustfs.GetEndpoint(RustFsResource.PrimaryEndpointName));
 
 var apiService = builder.AddProject<Projects.Picator_Api>("picator-api")
     .WithReference(postgres)
@@ -117,6 +123,7 @@ ingress.WithIngressAnnotation("cert-manager.io/cluster-issuer", clusterIssuerNam
 ingress.WithHostname(externalAuthHostname);
 ingress.WithHostname(apiHostname);
 ingress.WithHostname(rustfsConsoleHostname);
+ingress.WithHostname(rustfsStorageHostname);
 ingress.WithHostname(webHostname)
     .WithTls("picator-online-tls");
 
