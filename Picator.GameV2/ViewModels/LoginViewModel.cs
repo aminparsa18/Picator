@@ -65,6 +65,7 @@ public partial class LoginViewModel : ViewModelBase
     [RelayCommand]
     private async Task Google()
     {
+        IsBusy = true;
         try
         {
 #if WINDOWS
@@ -74,28 +75,46 @@ public partial class LoginViewModel : ViewModelBase
             var result = await ExternalAuthService.AuthResultTcs.Task;
             if (result != null)
             {
-                // Handle successful authentication
-                Barrel.Current.Add("Token", result.Token, TimeSpan.FromDays(7));
-                Barrel.Current.Add("RefreshToken", result.RefreshToken, TimeSpan.FromDays(150));
-                BaseHttpClient.Instance.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", result.Token);
+                await CompleteLoginAsync(result.Token, result.RefreshToken);
             }
 #else
             var authResult = await WebAuthenticator.AuthenticateAsync(
                 new Uri($"{UrlConstants.ExternalAuthUrl}/mobileauth/Google"),
                 new Uri("app://auth.pctor"));
-            var accessToken = authResult.Properties["token"];
+            authResult.Properties.TryGetValue("token", out var token);
+            authResult.Properties.TryGetValue("refresh_token", out var refreshToken);
+            if (!string.IsNullOrEmpty(token))
+            {
+                await CompleteLoginAsync(token, refreshToken);
+            }
 #endif
         }
         catch (Exception ex)
         {
-            Crashes.TrackError(ex);
+            Crashes.TrackError(ex, new Dictionary<string, string>()
+                {
+                    {"Task", nameof(Google)},
+                    {"Sender", nameof(LoginViewModel)}
+                });
+            await Snackbar.Make(ex.Message).Show();
         }
         finally
         {
-            await Application.Current.MainPage.Navigation.PopAsync();
-
+            IsBusy = false;
         }
+    }
+
+    // Shared by direct email/password login and external (Google) login -- both hand this
+    // an issued token/refresh token and expect the same post-login side effects: persist the
+    // tokens, authorize the HTTP client, cache the user, and land on the main page.
+    private async Task CompleteLoginAsync(string token, string refreshToken)
+    {
+        Barrel.Current.Add("Token", token, TimeSpan.FromDays(7));
+        Barrel.Current.Add("RefreshToken", refreshToken, TimeSpan.FromDays(150));
+        BaseHttpClient.Instance.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", token);
+        await GetUserDetails();
+        await Shell.Current.GoToAsync("//main");
     }
 
     private void AddValidations()
@@ -135,12 +154,7 @@ public partial class LoginViewModel : ViewModelBase
                 var result = await response.Content.ReadAsMemoryPackAsync<AuthResult>();
                 if (result.IsSuccess)
                 {
-                    Barrel.Current.Add("Token", result.Token, TimeSpan.FromDays(7));
-                    Barrel.Current.Add("RefreshToken", result.RefreshToken, TimeSpan.FromDays(150));
-                    BaseHttpClient.Instance.DefaultRequestHeaders.Authorization =
-                        new AuthenticationHeaderValue("Bearer", result.Token);
-                    await GetUserDetails();
-                    await Shell.Current.GoToAsync("//main");
+                    await CompleteLoginAsync(result.Token, result.RefreshToken);
                 }
                 else if (result.StatusCode == ApiResultStatusCode.Forbidden)
                 {

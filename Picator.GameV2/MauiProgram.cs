@@ -34,8 +34,6 @@ public static class MauiProgram
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("Kalam-Bold.ttf", "KalamBold");
-                fonts.AddFont("Kalam-Regular.ttf", "KalamRegular");
-                fonts.AddFont("Kalam-Light.ttf", "KalamLight");
                 fonts.AddFont("PatrickHand-Regular.ttf", "PatrickHandRegular");
                 fonts.AddFont("SpaceMono-Regular.ttf", "SpaceMonoRegular");
                 fonts.AddFont("SpaceMono-Bold.ttf", "SpaceMonoBold");
