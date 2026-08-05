@@ -18,5 +18,5 @@ public sealed class Constants
     /// <summary>
     /// RustFs blob storage endpoint.
     /// </summary>
-    public static string BlobStorageEndpoint => "http://localhost:9100/avatars/";
+    public static string BlobStorageEndpoint => "http://84.32.83.4:30101/avatars/";
 }

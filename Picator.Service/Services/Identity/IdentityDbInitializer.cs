@@ -43,8 +43,7 @@ public class IdentityDbInitializer : IIdentityDbInitializer
     {
         using var serviceScope = _scopeFactory.CreateScope();
         using var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
-        context?.Database.EnsureCreated();
-        //context?.Database.Migrate();
+        // context?.Database.Migrate();
     }
 
     /// <summary>

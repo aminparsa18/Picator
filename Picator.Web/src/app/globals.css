@@ -131,3 +131,19 @@ body {
     margin-top: -50vh;
   }
 }
+
+/*
+ * Applied to <html> while VideoScrollHero's section is anywhere in the
+ * viewport (see its IntersectionObserver). Scrolling itself must stay live —
+ * frame-scrubbing reads real scroll position off the page — this only
+ * suppresses the visible scrollbar track/thumb so it doesn't intrude on the
+ * full-bleed video, cross-browser.
+ */
+html.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* legacy Edge/IE */
+}
+
+html.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
