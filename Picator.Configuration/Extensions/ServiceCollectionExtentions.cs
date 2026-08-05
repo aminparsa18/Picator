@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Npgsql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,7 +37,16 @@ public static class ServiceCollectionExtentions
     public static IServiceCollection ConfigureDatabaseConnection(this WebApplicationBuilder builder, IConfiguration configuration)
     {
         Barrel.ApplicationId = "PicatorAPI";
-        builder.AddNpgsqlDbContext<ApplicationDbContext>("PicatorDB");
+        builder.AddNpgsqlDbContext<ApplicationDbContext>("PicatorDB", configureDbContextOptions: options =>
+        {
+            // Picator.Api never registers TickerQ (Picator.Realtime does), so this context's
+            // model doesn't know about the ticker.* tables that TickerQ's EF model customizer
+            // adds there. EF's pending-model-changes check compares against that fuller model
+            // and — seeing the ticker tables "missing" here — refuses to run Migrate() at all.
+            // Those tables are already tracked as applied in __EFMigrationsHistory and are
+            // exclusively owned/migrated by Realtime, so it's safe to ignore the mismatch here.
+            options.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
+        });
         builder.Services.AddTransient<IDbConnection>(sp => new NpgsqlConnection(builder.Configuration.GetConnectionString("PicatorContext")));
 
         //  services.AddHangfire(x => x.UseSqlServerStorage(configuration.GetConnectionString("HangfireContext")));
