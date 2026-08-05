@@ -20,6 +20,8 @@ var ingress = k8s.AddIngress("public")
 
 const string apiHostname = "api.picator.online";
 const string externalAuthHostname = "auth.picator.online";
+const string externalAuthTlsSecretName = "auth-picator-online-tls";
+const string clusterIssuerName = "letsencrypt-prod";
 
 var sqlServer = builder.AddPostgres("sql", password: dbPassword)
     // Kubernetes volume names can't contain dots; the auto-generated name derives
@@ -100,6 +102,14 @@ var externalAuth = builder.AddProject<Projects.Picator_ExternalAuth>("picator-ex
     .WithExternalHttpEndpoints();
 
 ingress.WithPath(externalAuthHostname, "/", externalAuth.GetEndpoint("http"));
+
+// TLS for the OAuth callback host only -- api/docs/web stay on plain HTTP for now.
+// Aspire bootstraps a self-signed placeholder for this Secret on first deploy; cert-manager
+// (installed separately on the cluster, not by Aspire) replaces it with a real Let's Encrypt
+// cert using the ClusterIssuer named below.
+ingress.WithHostname(externalAuthHostname)
+    .WithTls(externalAuthTlsSecretName)
+    .WithIngressAnnotation("cert-manager.io/cluster-issuer", clusterIssuerName);
 
 // builder.AddProject<Projects.Picator_Invitement>("picator-invitement");
 
