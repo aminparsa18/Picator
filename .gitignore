@@ -383,3 +383,9 @@ graphify-out/
 
 # Local mkcert dev certificate (private key material, machine-specific)
 Picator.Api/certs/
+
+# Generated Helm chart output from `aspire publish`/`aspire deploy` (Kubernetes target)
+Picator.AppHost/aspire-output/
+
+# Generated output from the old `aspirate`/Aspir8 tool, superseded by Aspire.Hosting.Kubernetes
+Picator.AppHost/aspirate-output/
