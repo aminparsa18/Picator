@@ -50,4 +50,6 @@ jobs:
           Parameters__DbPassword: ${{ secrets.DB_PASSWORD }}
           Parameters__rustfs_access_key: ${{ secrets.RUSTFS_ACCESS_KEY }}
           Parameters__rustfs_secret_key: ${{ secrets.RUSTFS_SECRET_KEY }}
+          Parameters__google_client_id: ${{ secrets.GOOGLE_CLIENT_ID }}
+          Parameters__google_client_secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: aspire deploy --environment production --non-interactive
