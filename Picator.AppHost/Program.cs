@@ -34,9 +34,28 @@ if (!builder.ExecutionContext.IsPublishMode)
 
 var postgres = sqlServer.AddDatabase("PicatorDB");
 
+const string rustfsConsoleHostname = "docs.picator.online";
+
 var rustfs = builder.AddRustFs("rustfs", port: 9100, accessKey: rustfsAccessKey, secretKey: rustfsSecretKey)
     .WithDataVolume("rustfs-data")
-    .WithLifetime(ContainerLifetime.Persistent);
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithExternalHttpEndpoints()
+    // Storage (S3-compatible) API reachable directly at <server-ip>:30101 for external clients.
+    // The console endpoint keeps its own auto-assigned NodePort too (unused/harmless) since
+    // both endpoints live on the same k8s Service; it's still reached via ingress below.
+    .PublishAsKubernetesService(resource =>
+    {
+        resource.Service!.Spec.Type = "NodePort";
+        foreach (var port in resource.Service.Spec.Ports)
+        {
+            if (port.Name == RustFsResource.PrimaryEndpointName)
+            {
+                port.NodePort = 30101;
+            }
+        }
+    });
+
+ingress.WithPath(rustfsConsoleHostname, "/", rustfs.GetEndpoint(RustFsResource.ConsoleEndpointName));
 
 var apiService = builder.AddProject<Projects.Picator_Api>("picator-api")
     .WithReference(postgres)
