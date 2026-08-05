@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Picator.Configuration.Extensions;
 using Picator.Data;
@@ -51,6 +52,14 @@ builder.Services.AddTickerQ(options =>
 });
 
 var app = builder.Build();
+
+// Realtime runs as its own pod and can restart independently of picator-api, so it can't
+// rely on the API having already migrated the shared database first. Migrate() is safe to
+// call from multiple services on startup — it no-ops once the schema is current.
+using (var migrationScope = app.Services.CreateScope())
+{
+    migrationScope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+}
 
 app.MapDefaultEndpoints();
 

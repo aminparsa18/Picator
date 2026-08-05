@@ -3,7 +3,11 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 // Generated via (source video deleted afterward — the frames are the only copy):
-// ffmpeg -i intro.mp4 -vf "fps=15,scale=1280:720:flags=lanczos" -q:v 4 public/intro-frames/%04d.jpg
+// ffmpeg -i intro.mp4 -vf "fps=15,scale=1280:720:flags=lanczos" -q:v 4 intro-frames/%04d.jpg
+// Served from RustFS's S3-compatible API via its fixed NodePort (see picator-api's
+// 30100 gRPC NodePort in Picator.AppHost/Program.cs for the same pattern), not
+// bundled under public/ anymore.
+const INTRO_FRAMES_BASE_URL = "http://84.32.83.4:30101/intro-frames";
 const FRAME_COUNT = 151;
 const FRAME_FPS = 15;
 const INTRO_SECONDS = 2;
@@ -24,7 +28,7 @@ const GRAIN_BACKGROUND_IMAGE =
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
 function frameUrl(index: number) {
-  return `/intro-frames/${String(index).padStart(4, "0")}.jpg`;
+  return `${INTRO_FRAMES_BASE_URL}/${String(index).padStart(4, "0")}.jpg`;
 }
 
 function subscribeToReducedMotion(callback: () => void) {
@@ -121,6 +125,27 @@ export default function VideoScrollHero() {
       if (batchTimer) clearTimeout(batchTimer);
     };
   }, [drawFrame]);
+
+  // Hide the browser's scrollbar chrome for as long as any part of the video
+  // section is in the viewport. Scrolling itself must stay enabled — scrubbing
+  // reads real scroll position (see computeScrollProgress below) — so this
+  // can't just be overflow:hidden; it only suppresses the visible track/thumb.
+  // Re-runs on reducedMotion because that's what swaps which <section> (and
+  // thus which DOM node sectionRef points at) is actually mounted.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const html = document.documentElement;
+    const observer = new IntersectionObserver(
+      ([entry]) => html.classList.toggle("hide-scrollbar", entry.isIntersecting),
+      { threshold: 0 },
+    );
+    observer.observe(section);
+    return () => {
+      observer.disconnect();
+      html.classList.remove("hide-scrollbar");
+    };
+  }, [reducedMotion]);
 
   // Lock page scroll for the 2s auto-play intro. Without this, a scroll during
   // that window still moves the real page (just with no visible effect on the
@@ -230,7 +255,7 @@ export default function VideoScrollHero() {
 
   if (reducedMotion) {
     return (
-      <section className="relative h-dvh w-full overflow-hidden bg-black">
+      <section ref={sectionRef} className="relative h-dvh w-full overflow-hidden bg-black">
         <canvas ref={canvasRef} className="h-full w-full object-cover" />
         <div
           aria-hidden
