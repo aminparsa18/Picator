@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:Picator.Game.ViewModels"
+             xmlns:controls="clr-namespace:Picator.Game.Controls"
+             xmlns:cmp="clr-namespace:Picator.GameV2.Views.Components"
+             xmlns:converters="clr-namespace:Picator.Game.Converters"
+             x:Class="Picator.Game.Views.SoloRoomPage"
+             x:DataType="viewModels:SoloRoomViewModel"
+             BackgroundColor="{StaticResource PaperBackground}"
+             NavigationPage.HasNavigationBar="False">
+    <ContentPage.BindingContext>
+        <viewModels:SoloRoomViewModel />
+    </ContentPage.BindingContext>
+    <ContentPage.Resources>
+        <converters:GameCodeUrlConverter x:Key="GameCodeUrlConverter" />
+    </ContentPage.Resources>
+    <Grid>
+
+        <controls:DotGridBackground DotColor="{StaticResource BorderHairline}" Spacing="18" DotRadius="1" />
+
+        <ScrollView>
+            <Grid Margin="22,28,22,32" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="22">
+
+                <!--Header-->
+                <Grid Grid.Row="0" ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                    <Border WidthRequest="40" HeightRequest="40" Padding="0"
+                            StrokeShape="RoundRectangle 20" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                            BackgroundColor="{StaticResource Surface}">
+                        <Image Source="icon_back.svg" WidthRequest="18" HeightRequest="18"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding LeaveRoomCommand}" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                    <Label Grid.Column="1" Text="Solo Room" FontFamily="KalamBold" FontSize="24"
+                           TextColor="{StaticResource InkStrong}" Rotation="-1" VerticalOptions="Center" />
+                </Grid>
+
+                <!--Subtitle-->
+                <Label Grid.Row="1" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkMuted}"
+                       Text="Share the code or QR below — the game starts as soon as your friend joins." />
+
+                <!--Room code card-->
+                <Border Grid.Row="2" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}"
+                        StrokeThickness="3" StrokeShape="RoundRectangle 20" Padding="20" Rotation="-0.5">
+                    <Border.Shadow>
+                        <Shadow Brush="{StaticResource InkStrongBrush}" Opacity="0.9" Radius="0" Offset="3,3" />
+                    </Border.Shadow>
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Room code" FontFamily="PatrickHandRegular" FontSize="14"
+                               TextColor="{StaticResource InkMuted}" HorizontalOptions="Center" />
+                        <HorizontalStackLayout HorizontalOptions="Center" Spacing="12">
+                            <Label Text="{Binding RoomCode}" FontFamily="SpaceMonoBold" FontSize="34"
+                                   CharacterSpacing="2" TextColor="{StaticResource Accent}" VerticalOptions="Center" />
+                            <Border WidthRequest="38" HeightRequest="38" Padding="0"
+                                    StrokeShape="RoundRectangle 10" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                    BackgroundColor="{StaticResource SurfaceAlt}">
+                                <Image Source="icon_copy.svg" WidthRequest="16" HeightRequest="16"
+                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding CopyCodeCommand}" />
+                                </Border.GestureRecognizers>
+                            </Border>
+                        </HorizontalStackLayout>
+                        <Label Text="{Binding CopiedLabel}" FontFamily="PatrickHandRegular" FontSize="13"
+                               TextColor="{StaticResource Success}" HorizontalOptions="Center" HeightRequest="16" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!--QR card-->
+                <Border Grid.Row="3" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}"
+                        StrokeThickness="3" StrokeDashArray="5,3" StrokeShape="RoundRectangle 20" Padding="20" Rotation="0.4">
+                    <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
+                        <Label Text="Or scan to join" FontFamily="PatrickHandRegular" FontSize="14"
+                               TextColor="{StaticResource InkMuted}" />
+                        <Border WidthRequest="168" HeightRequest="168" Padding="8" BackgroundColor="White"
+                                Stroke="{StaticResource InkStrong}" StrokeThickness="2" StrokeShape="RoundRectangle 12">
+                            <cmp:QrCodeView Data="{Binding RoomCode, Converter={StaticResource GameCodeUrlConverter}}"
+                                            QrType="Url" Color="{StaticResource InkStrong}"
+                                            WidthRequest="152" HeightRequest="152" />
+                        </Border>
+                        <Border HeightRequest="44" Padding="20,0" StrokeShape="RoundRectangle 12"
+                                Stroke="{StaticResource InkStrong}" StrokeThickness="2" BackgroundColor="{StaticResource SurfaceAlt}">
+                            <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="8">
+                                <Image Source="icon_upload.svg" WidthRequest="16" HeightRequest="16" VerticalOptions="Center" />
+                                <Label Text="Send to a friend" FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource InkStrong}" />
+                            </HorizontalStackLayout>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ShareQrCommand}" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!--Players-->
+                <VerticalStackLayout Grid.Row="4" Spacing="10">
+                    <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                            StrokeShape="RoundRectangle 14" Padding="16,14">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <HorizontalStackLayout Spacing="10">
+                                <Border WidthRequest="34" HeightRequest="34" Padding="0" StrokeShape="RoundRectangle 17"
+                                        Stroke="{StaticResource InkStrong}" StrokeThickness="2" BackgroundColor="{StaticResource AccentStrong}">
+                                    <Label Text="Y" FontFamily="PatrickHandRegular" FontSize="15" TextColor="{StaticResource OnAccentStrong}"
+                                           HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <Label Text="You" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}"
+                                       VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                            <Label Grid.Column="1" Text="Ready" FontFamily="PatrickHandRegular" FontSize="14"
+                                   TextColor="{StaticResource Success}" VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+
+                    <Border StrokeDashArray="4,3" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                            StrokeShape="RoundRectangle 14" BackgroundColor="Transparent" Padding="16,14">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <HorizontalStackLayout Spacing="10">
+                                <Border WidthRequest="34" HeightRequest="34" Padding="0" StrokeShape="RoundRectangle 17"
+                                        StrokeDashArray="3,2" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
+                                        BackgroundColor="{StaticResource PaperBackground}" />
+                                <Label FontFamily="PatrickHandRegular" FontSize="16" VerticalOptions="Center">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding FriendJoined}" Value="True">
+                                            <Setter Property="Text" Value="Friend joined!" />
+                                            <Setter Property="TextColor" Value="{StaticResource Success}" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Label" Binding="{Binding FriendJoined}" Value="False">
+                                            <Setter Property="Text" Value="Waiting for a friend…" />
+                                            <Setter Property="TextColor" Value="{StaticResource InkFaint}" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </HorizontalStackLayout>
+                            <cmp:PulsingDots Grid.Column="1" DotColor="{StaticResource InkFaint}" VerticalOptions="Center">
+                                <cmp:PulsingDots.Triggers>
+                                    <DataTrigger TargetType="cmp:PulsingDots" Binding="{Binding FriendJoined}" Value="False">
+                                        <Setter Property="IsRunning" Value="True" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="cmp:PulsingDots" Binding="{Binding FriendJoined}" Value="True">
+                                        <Setter Property="IsRunning" Value="False" />
+                                    </DataTrigger>
+                                </cmp:PulsingDots.Triggers>
+                            </cmp:PulsingDots>
+                        </Grid>
+                    </Border>
+                </VerticalStackLayout>
+
+            </Grid>
+        </ScrollView>
+    </Grid>
+</ContentPage>
