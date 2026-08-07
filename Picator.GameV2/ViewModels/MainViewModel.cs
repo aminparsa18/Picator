@@ -262,10 +262,20 @@ public sealed partial class MainViewModel : ViewModelBase
     private void OpenFriendsPicker() => OverlayMode = HomeOverlayMode.Friends;
 
     [RelayCommand]
-    private void ChooseSolo()
+    private async Task ChooseSolo()
     {
+        if (!Barrel.Current.Exists("Token"))
+        {
+            OverlayMode = HomeOverlayMode.None;
+            await Shell.Current.GoToAsync("//login");
+            return;
+        }
+
         ChosenFormat = "solo";
+        await Task.Delay(700);
         OverlayMode = HomeOverlayMode.None;
+        await Application.Current.MainPage.Navigation.PushAsync(new SoloRoomPage());
+        ChosenFormat = null;
     }
 
     [RelayCommand]

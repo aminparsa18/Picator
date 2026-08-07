@@ -84,6 +84,16 @@ public class GameHub : IGameDrawingReceiver, IAsyncDisposable
         await _client.SubmitTimeoutAsync();
     }
 
+    // Best-effort: tells the server this connection is stepping away from the game/room (e.g.
+    // a Solo Room host backing out before anyone joins) so it can be released for others.
+    public async ValueTask LeaveAsync()
+    {
+        if (_client is null)
+            return;
+
+        await _client.LeaveAsync();
+    }
+
     public async ValueTask SendDrawingPoint(string gameCode, float x, float y)
     {
         if (_client is null)
