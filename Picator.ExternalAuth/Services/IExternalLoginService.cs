@@ -2,5 +2,5 @@
 
 public interface IExternalLoginService
 {
-    Task<ExtrenalAuthResult> Login(string email);
+    Task<ExtrenalAuthResult> Login(string email, string? name);
 }
