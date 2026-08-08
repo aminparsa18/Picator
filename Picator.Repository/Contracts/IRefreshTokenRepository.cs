@@ -20,4 +20,11 @@ public interface IRefreshTokenRepository : IBaseRepository<RefreshToken>
     /// <param name="refreshTokenId">Refresh token identifier.</param>
     /// <returns>Number of affected rows.</returns>
     Task<int> SetUsed(string refreshTokenId);
+
+    /// <summary>
+    /// Update flag for token to be invalidated.
+    /// </summary>
+    /// <param name="refreshTokenId">Refresh token identifier.</param>
+    /// <returns>Number of affected rows.</returns>
+    Task<int> SetInvalidated(string refreshTokenId);
 }

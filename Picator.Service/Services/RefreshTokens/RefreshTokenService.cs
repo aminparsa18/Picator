@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using Picator.Common.Data.Dtos.Api;
 using Picator.Common.Data.Dtos.Api.Auth;
 using Picator.Common.Data.Dtos.Data.Dtos.Api;
 using Picator.Data;
@@ -18,13 +19,15 @@ public class RefreshTokenService : IRefreshTokenService
     private readonly ITokenService _tokenService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IValidator<RefreshTokenRequest> _validator;
+    private readonly IValidator<LogoutRequest> _logoutValidator;
     private readonly UserManager<User> _userManager;
 
-    public RefreshTokenService(ITokenService tokenService, IUnitOfWork unitOfWork, IValidator<RefreshTokenRequest> validator, UserManager<User> userManager)
+    public RefreshTokenService(ITokenService tokenService, IUnitOfWork unitOfWork, IValidator<RefreshTokenRequest> validator, IValidator<LogoutRequest> logoutValidator, UserManager<User> userManager)
     {
         _tokenService = tokenService;
         _unitOfWork = unitOfWork;
         _validator = validator;
+        _logoutValidator = logoutValidator;
         _userManager = userManager;
     }
 
@@ -120,5 +123,28 @@ public class RefreshTokenService : IRefreshTokenService
             Token = tokenResult.Token,
             RefreshToken = refreshToken.Token
         };
+    }
+
+    public async Task<ApiResult> Logout(string userId, LogoutRequest request)
+    {
+        var validationResult = await _logoutValidator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+            return new ApiResult
+            {
+                StatusCode = ApiResultStatusCode.BadRequest,
+                Errors = validationResult.Errors.Select(e => e.ErrorMessage)
+            };
+
+        var storedRefreshToken = await _unitOfWork.RefreshToken.Get(rt => rt.Token == request.RefreshToken);
+
+        // Logout is idempotent: a token that is missing, already invalidated, or owned by
+        // someone else shouldn't block the client from clearing its local session.
+        if (storedRefreshToken == null || storedRefreshToken.UserId.ToString() != userId)
+            return new ApiResult { IsSuccess = true };
+
+        if (!storedRefreshToken.IsInvalidated)
+            await _unitOfWork.RefreshToken.SetInvalidated(storedRefreshToken.Id.ToString());
+
+        return new ApiResult { IsSuccess = true };
     }
 }

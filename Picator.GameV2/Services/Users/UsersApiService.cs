@@ -32,6 +32,13 @@ public class UsersApiService : IUsersApiService
     }
 
     /// <inheritdoc/>
+    public Task<HttpResponseMessage> Logout(LogoutRequest request)
+    {
+        return BaseHttpClient.Instance.PostAsMemoryPackAsync(new Uri($"{UrlConstants.ApiUrl}users/logout"),
+            request);
+    }
+
+    /// <inheritdoc/>
     public Task<HttpResponseMessage> RegisterUser(RegisterUserRequest registerUserDto)
     {
         return BaseHttpClient.Instance.PostAsMemoryPackAsync(new Uri($"{UrlConstants.ApiUrl}users/register"),

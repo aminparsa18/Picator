@@ -6,7 +6,10 @@ namespace Picator.GameV2;
 
 public partial class App : Application
 {
+    private const string SoundEffectsPreferenceKey = "SoundEffectsEnabled";
+
     private IAudioPlayer _audioPlayer;
+    private IAudioPlayer? _clickPlayer;
 
     public Uri? AppUri { get; }
 
@@ -41,6 +44,19 @@ public partial class App : Application
                 System.Diagnostics.Trace.TraceError($"Failed to start background music: {ex}");
             }
         });
+
+        Dispatcher.DispatchAsync(async () =>
+        {
+            try
+            {
+                using var stream = await FileSystem.OpenAppPackageFileAsync("click.mp3");
+                _clickPlayer = AudioManager.Current.CreatePlayer(stream);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError($"Failed to load click sound: {ex}");
+            }
+        });
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
@@ -53,4 +69,26 @@ public partial class App : Application
     public void PlayMusic() => _audioPlayer?.Play();
 
     public void StopMusic() => _audioPlayer?.Stop();
+
+    public bool IsSoundEffectsOn
+    {
+        get => Preferences.Default.Get(SoundEffectsPreferenceKey, true);
+        set => Preferences.Default.Set(SoundEffectsPreferenceKey, value);
+    }
+
+    public void PlayClickSound()
+    {
+        if (!IsSoundEffectsOn || _clickPlayer is null)
+            return;
+
+        try
+        {
+            _clickPlayer.Stop();
+            _clickPlayer.Play();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Trace.TraceError($"Failed to play click sound: {ex}");
+        }
+    }
 }

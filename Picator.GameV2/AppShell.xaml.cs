@@ -1,4 +1,5 @@
 using Picator.Game.Cache;
+using Picator.GameV2.Services.Audio;
 
 namespace Picator.GameV2;
 
@@ -10,6 +11,7 @@ public partial class AppShell : Shell
     {
         InitializeComponent();
         Routing.RegisterRoute("verifyemail", typeof(VerifyEmailPage));
+        ButtonSoundHook.Attach(this);
     }
 
     protected override async void OnAppearing()

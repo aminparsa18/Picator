@@ -23,4 +23,10 @@ public sealed class RefreshTokenRepository : BaseRepository<RefreshToken>, IRefr
     {
         return Context.Database.ExecuteSqlAsync($"UPDATE [RefreshToken] SET [IsUsed] = 1 WHERE [Id] = {id}");
     }
+
+    /// <inheritdoc/>
+    public Task<int> SetInvalidated(string id)
+    {
+        return Context.Database.ExecuteSqlAsync($"UPDATE [RefreshToken] SET [IsInvalidated] = 1 WHERE [Id] = {id}");
+    }
 }

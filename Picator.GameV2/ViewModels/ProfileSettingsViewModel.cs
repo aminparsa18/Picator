@@ -2,6 +2,7 @@
 using Mafiator.Common.Client.Services.Users;
 using Mopups.Services;
 using Picator.Common.Data.Dtos.Api;
+using Picator.Common.Data.Dtos.Api.Auth;
 using Picator.Common.Data.Dtos.Users;
 using Picator.Game.Cache;
 using Picator.Game.Extensions;
@@ -279,6 +280,30 @@ public partial class ProfileSettingsViewModel : ViewModelBase
     private async Task SkipAsync()
     {
         await Application.Current.MainPage.Navigation.PopAsync();
+    }
+
+    [RelayCommand]
+    private async Task LogoutAsync()
+    {
+        var refreshToken = Barrel.Current.Exists("RefreshToken") ? Barrel.Current.Get<string>("RefreshToken") : null;
+        if (!string.IsNullOrEmpty(refreshToken))
+        {
+            try
+            {
+                // Best-effort: revoke the refresh token server-side so it can't be replayed.
+                // The local session is cleared below regardless of whether this succeeds.
+                await _usersApiService.Logout(new LogoutRequest { RefreshToken = refreshToken });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"LogoutAsync: server-side revoke failed - {ex}");
+            }
+        }
+
+        Barrel.Current.Empty("Token", "RefreshToken", "TokenExpiration", "User", "UserImage");
+        BaseHttpClient.Instance.DefaultRequestHeaders.Authorization = null;
+
+        await Shell.Current.GoToAsync("//login");
     }
 
     public void RefreshImage()

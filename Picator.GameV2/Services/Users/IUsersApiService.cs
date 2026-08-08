@@ -31,6 +31,13 @@ public interface IUsersApiService
     Task<HttpResponseMessage> RefreshToken(RefreshTokenRequest refreshTokenRequest);
 
     /// <summary>
+    /// Logs out the current user, invalidating their refresh token.
+    /// </summary>
+    /// <param name="request">Logout request.</param>
+    /// <returns>HTTP response message.</returns>
+    Task<HttpResponseMessage> Logout(LogoutRequest request);
+
+    /// <summary>
     /// Registers a new user.
     /// </summary>
     /// <param name="request">Register user request.</param>

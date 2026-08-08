@@ -291,8 +291,11 @@
                         </Grid>
                         <BoxView HeightRequest="2" Color="{StaticResource BorderDashed}" />
                         <Grid ColumnDefinitions="*,Auto" Padding="2,10">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ToggleSoundEffectsCommand}" />
+                            </Grid.GestureRecognizers>
                             <Label Text="Sound effects" FontFamily="PatrickHandRegular" FontSize="16" TextColor="{StaticResource InkStrong}" />
-                            <Label Grid.Column="1" Text="On" FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" />
+                            <Label Grid.Column="1" Text="{Binding SoundEffectsStatusDisplay}" FontFamily="PatrickHandRegular" FontSize="14" TextColor="{StaticResource InkMuted}" />
                         </Grid>
                         <BoxView HeightRequest="2" Color="{StaticResource BorderDashed}" />
                         <Grid ColumnDefinitions="*,Auto" Padding="2,10">

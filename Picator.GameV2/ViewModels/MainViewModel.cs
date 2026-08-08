@@ -45,6 +45,9 @@ public sealed partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isMusicOn = true;
 
+    [ObservableProperty]
+    private bool _isSoundEffectsOn = true;
+
     public bool IsOverlayVisible => OverlayMode != HomeOverlayMode.None;
     public bool IsSearching => OverlayMode == HomeOverlayMode.Searching;
     public bool IsMatchFound => OverlayMode == HomeOverlayMode.MatchFound;
@@ -65,6 +68,8 @@ public sealed partial class MainViewModel : ViewModelBase
 
     public string MusicStatusDisplay => IsMusicOn ? "On" : "Off";
 
+    public string SoundEffectsStatusDisplay => IsSoundEffectsOn ? "On" : "Off";
+
     public string ChosenFormatNote => ChosenFormat switch
     {
         "solo" => "Opening Solo Room — share a code, wait for one friend.",
@@ -74,6 +79,8 @@ public sealed partial class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
+        IsSoundEffectsOn = (Application.Current as App)?.IsSoundEffectsOn ?? true;
+
         if (Barrel.Current.Exists("User"))
         {
             var user = MemoryPack.MemoryPackSerializer.Deserialize<Picator.Common.Data.Dtos.Users.UserDetailsResult>(Barrel.Current.Get<byte[]>("User"));
@@ -121,6 +128,8 @@ public sealed partial class MainViewModel : ViewModelBase
     partial void OnChosenFormatChanged(string? value) => OnPropertyChanged(nameof(ChosenFormatNote));
 
     partial void OnIsMusicOnChanged(bool value) => OnPropertyChanged(nameof(MusicStatusDisplay));
+
+    partial void OnIsSoundEffectsOnChanged(bool value) => OnPropertyChanged(nameof(SoundEffectsStatusDisplay));
 
     partial void OnHowToTabChanged(string value)
     {
@@ -313,6 +322,14 @@ public sealed partial class MainViewModel : ViewModelBase
             (Application.Current as App)?.PlayMusic();
         else
             (Application.Current as App)?.StopMusic();
+    }
+
+    [RelayCommand]
+    private void ToggleSoundEffects()
+    {
+        IsSoundEffectsOn = !IsSoundEffectsOn;
+        if (Application.Current is App app)
+            app.IsSoundEffectsOn = IsSoundEffectsOn;
     }
 
     [RelayCommand]
