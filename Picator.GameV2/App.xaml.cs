@@ -7,6 +7,7 @@ namespace Picator.GameV2;
 public partial class App : Application
 {
     private const string SoundEffectsPreferenceKey = "SoundEffectsEnabled";
+    private const string MusicPreferenceKey = "MusicEnabled";
 
     private IAudioPlayer _audioPlayer;
     private IAudioPlayer? _clickPlayer;
@@ -37,7 +38,8 @@ public partial class App : Application
                 using var stream = await FileSystem.OpenAppPackageFileAsync("picator.mp3");
                 _audioPlayer = AudioManager.Current.CreatePlayer(stream);
                 _audioPlayer.Loop = true;
-                _audioPlayer.Play();
+                if (IsMusicOn)
+                    _audioPlayer.Play();
             }
             catch (Exception ex)
             {
@@ -65,6 +67,12 @@ public partial class App : Application
     }
 
     public bool IsMusicPlaying => _audioPlayer?.IsPlaying ?? false;
+
+    public bool IsMusicOn
+    {
+        get => Preferences.Default.Get(MusicPreferenceKey, true);
+        set => Preferences.Default.Set(MusicPreferenceKey, value);
+    }
 
     public void PlayMusic() => _audioPlayer?.Play();
 
