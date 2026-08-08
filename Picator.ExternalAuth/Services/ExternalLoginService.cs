@@ -23,7 +23,7 @@ public class ExternalLoginService : IExternalLoginService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<ExtrenalAuthResult> Login(string email)
+    public async Task<ExtrenalAuthResult> Login(string email, string? name)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
@@ -36,7 +36,8 @@ public class ExternalLoginService : IExternalLoginService
                 EmailConfirmed = true,
                 Id = Guid.NewGuid(),
                 Code = RandomHelper.CreateRandomText(10),
-                Score = 100
+                Score = 100,
+                DisplayName = string.IsNullOrWhiteSpace(name) ? null : name.Trim()
             };
             var createdUser = await _userManager.CreateAsync(user, RandomHelper.CreateRandomText(10));
             if (!createdUser.Succeeded)

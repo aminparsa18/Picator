@@ -113,7 +113,7 @@ app.MapGet("/mobileauth/{scheme}", async ([FromRoute] string scheme, [FromServic
         var claims = auth.Principal.Identities.FirstOrDefault()?.Claims;
         var email = claims?.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Email)?.Value;
         var name = claims?.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name)?.Value;
-        var authResult = await _userLoginService.Login(email);
+        var authResult = await _userLoginService.Login(email, name);
         // Get parameters to send back to the callback
         var qs = new Dictionary<string, string>
                 {
