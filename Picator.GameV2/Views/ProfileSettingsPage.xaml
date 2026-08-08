@@ -44,7 +44,7 @@
                                 StrokeShape="RoundRectangle 19" Stroke="{StaticResource InkStrong}" StrokeThickness="2"
                                 BackgroundColor="{StaticResource Surface}">
                             <Path Data="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"
-                                  Stroke="{StaticResource InkStrong}"
+                                  Stroke="{StaticResource Error}"
                                   StrokeThickness="2"
                                   Aspect="Uniform"
                                   WidthRequest="18"
@@ -53,6 +53,9 @@
                                   StrokeLineJoin="Round"
                                   HorizontalOptions="Center"
                                   VerticalOptions="Center" />
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding LogoutCommand}" />
+                            </Border.GestureRecognizers>
                         </Border>
                     </Grid>
 
