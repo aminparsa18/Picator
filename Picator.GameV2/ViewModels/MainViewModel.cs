@@ -80,6 +80,7 @@ public sealed partial class MainViewModel : ViewModelBase
     public MainViewModel()
     {
         IsSoundEffectsOn = (Application.Current as App)?.IsSoundEffectsOn ?? true;
+        IsMusicOn = (Application.Current as App)?.IsMusicOn ?? true;
 
         if (Barrel.Current.Exists("User"))
         {
@@ -318,10 +319,14 @@ public sealed partial class MainViewModel : ViewModelBase
     private void ToggleMusic()
     {
         IsMusicOn = !IsMusicOn;
-        if (IsMusicOn)
-            (Application.Current as App)?.PlayMusic();
-        else
-            (Application.Current as App)?.StopMusic();
+        if (Application.Current is App app)
+        {
+            app.IsMusicOn = IsMusicOn;
+            if (IsMusicOn)
+                app.PlayMusic();
+            else
+                app.StopMusic();
+        }
     }
 
     [RelayCommand]
